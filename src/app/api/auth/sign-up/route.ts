@@ -14,16 +14,6 @@ export async function POST(request: Request) {
       isVerified: true,
     })
 
-    if (!username || !email || !password) {
-      return createResponse(
-        {
-          success: false,
-          message: 'missing fields',
-        },
-        StatusCode.UNAUTHORIZED
-      )
-    }
-
     if (existingUserVerifiedByUsername) {
       return createResponse(
         {
@@ -31,6 +21,16 @@ export async function POST(request: Request) {
           message: 'Username is already taken',
         },
         StatusCode.BAD_REQUEST
+      )
+    }
+
+    if (!username || !email || !password) {
+      return createResponse(
+        {
+          success: false,
+          message: 'missing fields',
+        },
+        StatusCode.UNAUTHORIZED
       )
     }
 
@@ -96,7 +96,7 @@ export async function POST(request: Request) {
       const expiryDate = new Date()
       expiryDate.setHours(expiryDate.getHours() + 1)
 
-      const newUser = await User.create({
+      await User.create({
         username,
         email,
         password: hashedPassword,

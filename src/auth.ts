@@ -52,6 +52,8 @@ export const { handlers, auth } = NextAuth({
             throw new Error('Not authorized')
           }
 
+          console.log("Returned User From Auth.js: ", user)
+
           return user
 
         } catch (error) {
@@ -71,6 +73,7 @@ export const { handlers, auth } = NextAuth({
       }
       return token
     },
+
     session({ session, token }) {
       session.user.id = token.id as string
       session.user.email = token.email as string

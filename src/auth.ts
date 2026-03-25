@@ -128,8 +128,8 @@ export const { handlers, auth } = NextAuth({
   },
 
   pages: {
-    signIn: '/sign-in',
-    error: '/sign-in',
+    signIn: '/auth/signin',
+    error: '/auth/signin',
   },
 
   session: {

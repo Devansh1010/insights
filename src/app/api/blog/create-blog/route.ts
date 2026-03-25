@@ -9,8 +9,6 @@ export async function POST(req: NextRequest) {
     try {
         const auth = await VerifyUser();
 
-        console.log("Auth in Create: ", auth)
-
         if (!auth.success || !auth.user?._id) {
             return createResponse(
                 { success: false, message: "Unauthorized" },

@@ -7,22 +7,25 @@ import { NextRequest } from "next/server";
 export async function DELETE(req: NextRequest) {
     try {
         //Add verify  User
-        const auth = await VerifyUser()
+        const auth = await VerifyUser();
 
-        if (!auth.success) {
+        if (!auth.success || !auth.user?._id) {
             return createResponse(
                 { success: false, message: "Unauthorized" },
                 StatusCode.UNAUTHORIZED
-            )
+            );
         }
+        const userId = auth.user._id;
 
-        const userId = auth.user?._id
+        await dbConnect()
 
-        const { title } = await req.json();
+        const url = new URL(req.url)
 
-        await dbConnect();
+        const id = url.searchParams.get("id")
 
-        const deletedBlog = await Blog.findOneAndDelete({ title, author: userId })
+        const deletedBlog = await Blog.findOneAndDelete({ _id: id, author: userId })
+
+        console.log(deletedBlog)
 
         if (!deletedBlog) {
             return createResponse({ success: false, message: 'Blog not found' }, StatusCode.NOT_FOUND)

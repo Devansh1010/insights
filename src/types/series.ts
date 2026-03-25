@@ -1,0 +1,21 @@
+import { Types } from "mongoose"
+
+export interface ISeries {
+    id?: Types.ObjectId,
+    author: Types.ObjectId | string; // Creator of Series
+
+    title: string, //Series Name
+    slug: string, //Series Slug
+    desc?: string,
+
+    blogs: Types.ObjectId[]
+
+    coverImage?: string
+    tags?: string[]
+
+    isPublished: boolean
+    publishedAt?: Date | null
+
+    createdAt: Date,
+    updatedAt: Date,
+}

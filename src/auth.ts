@@ -52,9 +52,16 @@ export const { handlers, auth } = NextAuth({
             throw new Error('Not authorized')
           }
 
-          console.log("Returned User From Auth.js: ", user)
+          const updatedUser = {
+            _id: user._id,
+            username: user.username,
+            email: user.email,
+            isVerified: user.isVerified,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt
+          }
 
-          return user
+          return updatedUser
 
         } catch (error) {
           console.error('Authorization Error:', error)
@@ -65,19 +72,32 @@ export const { handlers, auth } = NextAuth({
   ],
 
   callbacks: {
-    jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
-        token.id = user.id
-        token.email = user.email
-        token.isVerified = user.isVerified
+        token._id = user._id?.toString();
+        token.isVerified = user.isVerified;
+        token.username = user.username;
       }
-      return token
+      //If user login with Github
+      if (account?.provider === "github" && !token._id) {
+        await dbConnect();
+        const dbUser = await User.findOne({ email: token.email })
+          .select('_id isVerified username');
+        if (dbUser) {
+          token._id = dbUser._id.toString();
+          token.isVerified = dbUser.isVerified;
+          token.username = dbUser.username
+        }
+      }
+      return token;
     },
 
     session({ session, token }) {
-      session.user.id = token.id as string
-      session.user.email = token.email as string
-      session.user.isVerified = token.isVerified as boolean
+      if (token?._id) {
+        session.user._id = token._id as string
+        session.user.email = token.email as string
+        session.user.isVerified = token.isVerified as boolean
+      }
       return session
     },
 

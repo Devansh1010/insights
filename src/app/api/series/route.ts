@@ -5,7 +5,6 @@ import { generateSlug } from "@/lib/slug-generater";
 import { VerifyUser } from "@/lib/verifyUser/userVerification";
 import Series from "@/models/series_models/series.model";
 import { NextRequest } from "next/server";
-import valkey from '@/lib/valkey'
 
 
 export async function POST(req: NextRequest) {
@@ -75,7 +74,7 @@ export async function POST(req: NextRequest) {
     }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
     try {
         const auth = await VerifyUser();
 
@@ -86,29 +85,29 @@ export async function GET() {
             );
         }
 
-        const cachedSeries = await valkey.get('all-series')
+        const { searchParams } = new URL(req.url);
 
-        if (cachedSeries) {
-            return createResponse(
-                {
-                    success: true,
-                    message: 'Series found (cached)',
-                    data: JSON.parse(cachedSeries),
-                },
-                StatusCode.OK
-            )
-        }
+        const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
+        const limit = Math.min(20, parseInt(searchParams.get("limit") || "10"));
+
+        const skip = (page - 1) * limit;
 
         await dbConnect()
 
-        const allSeries = await Series.find({})
-            .select('title slug desc coverImage tags')
+        const series = await Series.find({ isPublished: true })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
+            .select('title slug desc coverImage tags createdAt')
             .populate({
                 path: 'author',
                 select: 'username -_id'
             })
+            .lean()
 
-        if (!allSeries) {
+        const total = await Series.countDocuments({ isPublished: true });
+
+        if (!series) {
             createResponse(
                 {
                     success: false,
@@ -118,13 +117,19 @@ export async function GET() {
             )
         }
 
-        await valkey.setEx('all-series', 600, JSON.stringify(allSeries))
-
-        createResponse(
+        return createResponse(
             {
                 success: true,
                 message: "Found Series",
-                data: allSeries
+                data: {
+                    series,
+                    pagination: {
+                        total,
+                        page,
+                        limit,
+                        totalPages: Math.ceil(total / limit),
+                    },
+                }
             },
             StatusCode.OK
         )

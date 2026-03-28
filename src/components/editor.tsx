@@ -5,10 +5,11 @@ import type EditorJS from "@editorjs/editorjs"
 import type { OutputData } from "@editorjs/editorjs"
 
 interface EditorProps {
-  onChange: (data: OutputData) => void
+  onChange: (data: OutputData) => void;
+  data?: OutputData | null;
 }
 
-export default function Editor({ onChange }: EditorProps) {
+export default function Editor({ onChange, data }: EditorProps) {
   const editorRef = useRef<EditorJS | null>(null)
 
   useEffect(() => {
@@ -28,6 +29,8 @@ export default function Editor({ onChange }: EditorProps) {
           list: List,
         },
         placeholder: "Start writing your story...",
+
+        data: data || { blocks: [] },
 
         async onChange(api) {
           clearTimeout(timeout)

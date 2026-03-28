@@ -72,21 +72,24 @@ export const { handlers, auth } = NextAuth({
   ],
 
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }) {
+
       if (user) {
         token._id = user._id?.toString();
         token.isVerified = user.isVerified;
         token.username = user.username;
       }
       //If user login with Github
-      if (account?.provider === "github" && !token._id) {
+      if (!token._id && token.email) {
         await dbConnect();
+
         const dbUser = await User.findOne({ email: token.email })
           .select('_id isVerified username');
+
         if (dbUser) {
           token._id = dbUser._id.toString();
           token.isVerified = dbUser.isVerified;
-          token.username = dbUser.username
+          token.username = dbUser.username;
         }
       }
       return token;

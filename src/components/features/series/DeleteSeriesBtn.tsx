@@ -10,7 +10,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
-import { deleteSeries } from "@/services/series";
+import { deleteSeries } from "@/services/series.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 

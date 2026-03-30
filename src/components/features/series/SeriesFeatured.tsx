@@ -12,7 +12,7 @@ const SeriesFeatured = ({ series, page }: { series: Series, page: number }) => {
         <div>
             {series && page === 1 && (
                 <section className="group mb-24 px-4 lg:px-0">
-                    <Link href={`/series/${series.slug}`}>
+                    <Link href={`series/${series._id}`}>
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
 
 

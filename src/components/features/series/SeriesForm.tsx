@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/popover";
 
 import { seriesFormSchema } from "@/lib/schemas/series/series.schema";
-import { createSeries } from "@/services/series";
+import { createSeries } from "@/services/series.service";
 
 const AVAILABLE_TAGS = [
   { label: "Frontend", value: "frontend" },

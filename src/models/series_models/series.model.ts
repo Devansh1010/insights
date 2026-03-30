@@ -28,12 +28,7 @@ const seriesSchema = new Schema<ISeries>(
             type: String,
             maxlength: [500, "Description is too long"],
         },
-        blogs: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: "Blog",
-            },
-        ],
+
         coverImage: {
             type: String,
             default: "",

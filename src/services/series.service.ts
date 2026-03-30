@@ -55,3 +55,20 @@ export const deleteSeries = async (id: string) => {
         throw new Error("Something went wrong");
     }
 }
+
+export const getSeriesById = async ({ id, page, limit }: { id: string, page: number, limit: number }) => {
+    try {
+        const res = await seriesApi.get(`/${id}?${page}&${limit}`);
+
+        return res.data.data;
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            throw new Error(
+                error.response?.data?.message || "Failed to fetch series"
+            );
+        }
+
+        throw new Error("Something went wrong");
+    }
+}
+

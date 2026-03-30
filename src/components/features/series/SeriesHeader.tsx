@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useSeriesFilters } from "@/hooks/series/useServiceFilter";
-import { getSeries } from "@/services/series";
+import { getSeries } from "@/services/series.service";
 import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { SeriesSkeleton } from "./loader/SeriesListLoader";

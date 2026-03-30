@@ -1,6 +1,6 @@
 'use client'
 
-import { getSeries } from "@/services/series"
+import { getSeries } from "@/services/series.service"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useEffect, useState } from "react";
 import { PaginationUI } from "./PaginationUi";

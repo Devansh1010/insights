@@ -1,6 +1,8 @@
 import { createResponse, StatusCode } from "@/lib/createResponse";
 import { dbConnect } from "@/lib/db";
 import { VerifyUser } from "@/lib/verifyUser/userVerification";
+import Blog from "@/models/blog_modles/blog.model";
+import SeriesBlog from "@/models/series_models/series-blog.model";
 import Series from "@/models/series_models/series.model";
 import { NextRequest } from "next/server";
 
@@ -24,8 +26,11 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
         const series = await Series.findOne({
             _id: id,
-            author: userId // for safety check
+            author: userId
         })
+            .select('title desc coverImage tags')
+            .populate('author', 'username -_id')
+            .lean()
 
         if (!series) {
             return createResponse(
@@ -34,11 +39,29 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
             );
         }
 
+        const { searchParams } = new URL(req.url)
+
+        const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
+        const limit = Math.min(20, parseInt(searchParams.get("limit") || "10"));
+
+        const skip = (page - 1) * limit;
+
+        const mappings = await SeriesBlog.find({ series: id })
+            .sort({ order: 1 })
+            .limit(10)
+            .skip(skip)
+            .lean()
+
+        const blogIds = mappings.map(m => m.blog);
+
+        const blogs = await Blog.find({ _id: { $in: blogIds } })
+            .select("title excerpt coverImage tags slug");
+
         return createResponse(
             {
                 success: true,
                 message: "Found Series",
-                data: series
+                data: { series, blogs, totalPages: Math.ceil(blogIds.length / limit) }
             },
             StatusCode.OK
         );

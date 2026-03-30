@@ -1,8 +1,9 @@
-import { Card, CardContent, CardTitle } from "@/components/ui/card"
+import { CardTitle } from "@/components/ui/card"
 import { Series } from "./SeriesList"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { AspectRatio } from "@/components/ui/aspect-ratio"
 
 
 const SeriesRest = ({ series }: { series: Series[] }) => {
@@ -14,9 +15,11 @@ const SeriesRest = ({ series }: { series: Series[] }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                 {series.map((item: Series) => (
                     <Link href={`series/${item._id}`} key={item._id} >
-                        <Card className="relative group flex flex-col overflow-hidden rounded-[2rem] shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
 
-                            <div className="h-48 overflow-hidden">
+                        <div className="group flex flex-col overflow-hidden rounded-[2rem] shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
+                            <AspectRatio
+                                ratio={16 / 9}
+                                className="overflow-hidden rounded-[2rem]">
                                 <Image
                                     src={item.coverImage ? item.coverImage : FALLBACK}
                                     alt={item.title}
@@ -24,19 +27,13 @@ const SeriesRest = ({ series }: { series: Series[] }) => {
                                     className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                                 />
 
-                            </div>
-
-                            <CardContent className="relative z-10  md:px-12 w-full flex flex-col justify-end">
-
-
-                                {/* Bottom Row Container */}
-                                <div className="flex items-end justify-between gap-4">
+                                <div className="flex items-end justify-between gap-4 relative h-full p-5 z-10 bg-background/60 backdrop-blur-lg">
 
                                     <div className="flex-1 min-w-0">
-                                        <CardTitle className="text-xl font-bold text-slate-900 group-hover:text-primary transition-colors line-clamp-1 leading-snug">
+                                        <CardTitle className="text-xl font-serif font-bold leading-[1.1] text-slate-900 group-hover:text-primary transition-colors line-clamp-1">
                                             {item.title}
                                         </CardTitle>
-                                        <p className="text-slate-500 text-sm leading-relaxed line-clamp-2 mt-1">
+                                        <p className="font-serif font-bold text-muted-foreground leading-relaxed text-md">
                                             {item.desc}
                                         </p>
                                     </div>
@@ -51,13 +48,13 @@ const SeriesRest = ({ series }: { series: Series[] }) => {
                                         </Button>
                                     </div>
                                 </div>
-                            </CardContent>
-                        </Card>
+                            </AspectRatio>
+                        </div>
                     </Link>
 
                 ))}
             </div>
-        </div>
+        </div >
     )
 }
 

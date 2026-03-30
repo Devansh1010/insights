@@ -19,3 +19,11 @@ export interface ISeries {
     createdAt: Date,
     updatedAt: Date,
 }
+
+export interface ISeriesBlog {
+  series: Types.ObjectId;
+  blog: Types.ObjectId;
+  order: number;
+  isFeatured?: boolean;
+  addedAt?: Date;
+}

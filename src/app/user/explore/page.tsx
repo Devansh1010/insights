@@ -22,7 +22,6 @@ const BlogList = () => {
     return (
         <div className="max-w-7xl mx-auto px-6 py-20">
 
-            {/* HEADER SECTION */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
                 <div className="space-y-4">
                     <Badge variant="outline" className="px-3 py-1 uppercase tracking-tighter text-[10px] border-primary/30 text-primary">

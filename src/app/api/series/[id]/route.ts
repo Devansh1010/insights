@@ -3,7 +3,6 @@ import { dbConnect } from "@/lib/db";
 import { VerifyUser } from "@/lib/verifyUser/userVerification";
 import Series from "@/models/series_models/series.model";
 import { NextRequest } from "next/server";
-import valkey from '@/lib/valkey'
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
     try {
@@ -17,7 +16,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         }
 
         const userId = auth.user._id;
-        const id = params.id;
+        const { id } = await params
 
         //validate the Id
 
@@ -57,6 +56,54 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }
 }
 
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+    try {
+        const auth = await VerifyUser();
+
+        if (!auth.success || !auth.user?._id) {
+            return createResponse(
+                { success: false, message: "Unauthorized" },
+                StatusCode.UNAUTHORIZED
+            );
+        }
+
+        // const { searchParams } = new URL(req.url);
+        // const id = searchParams.get("id");
+
+        const { id } = await params
+
+        await dbConnect()
+
+        const deletedSeries = await Series.findByIdAndDelete(id)
+
+        if (!deletedSeries) {
+            return createResponse(
+                { success: false, message: "Series Not deleted" },
+                StatusCode.CONFLICT
+            );
+        }
+
+        return createResponse(
+            {
+                success: true,
+                message: "Series Deleted Successfully",
+            },
+            StatusCode.OK
+        );
+
+    } catch (error) {
+        console.error("Error while deleting Series:", error)
+
+        return createResponse(
+            {
+                success: false,
+                message: "Internal Server Error",
+            },
+            StatusCode.INTERNAL_ERROR
+        )
+    }
+}
+
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
     try {
         const auth = await VerifyUser();
@@ -68,7 +115,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
             );
         }
 
-        const id = params.id
+        const { id } = await params
 
         const { title, desc, blogs, coverImage, tags, isPublished } = await req.json()
 
@@ -96,8 +143,6 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
             );
         }
 
-        await valkey.del('all-series')
-
         return createResponse(
             {
                 success: true,
@@ -119,49 +164,3 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-    try {
-        const auth = await VerifyUser();
-
-        if (!auth.success || !auth.user?._id) {
-            return createResponse(
-                { success: false, message: "Unauthorized" },
-                StatusCode.UNAUTHORIZED
-            );
-        }
-
-        const id = params.id
-
-        await dbConnect()
-
-        const deletedSeries = await Series.findByIdAndDelete(id)
-
-        if (!deletedSeries) {
-            return createResponse(
-                { success: false, message: "Series Not deleted" },
-                StatusCode.CONFLICT
-            );
-        }
-
-        await valkey.del('all-series')
-
-        return createResponse(
-            {
-                success: true,
-                message: "Series Deleted Successfully",
-            },
-            StatusCode.OK
-        );
-
-    } catch (error) {
-        console.error("Error while deleting Series:", error)
-
-        return createResponse(
-            {
-                success: false,
-                message: "Internal Server Error",
-            },
-            StatusCode.INTERNAL_ERROR
-        )
-    }
-}

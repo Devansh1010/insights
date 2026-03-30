@@ -40,3 +40,18 @@ export const createSeries = async (data: FormData) => {
         throw new Error("Something went wrong");
     }
 }
+
+export const deleteSeries = async (id: string) => {
+    try {
+        const res = await seriesApi.delete(`/${id}`)
+        return res.data;
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            throw new Error(
+                error.response?.data?.message || "Failed to delete series"
+            );
+        }
+
+        throw new Error("Something went wrong");
+    }
+}

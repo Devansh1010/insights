@@ -1,181 +1,190 @@
 'use client'
+
 import {
     FileText,
     Plus,
-    Eye,
-    Clock,
-    TrendingUp,
     Trash2,
-    Pencil
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
-import { getUserBlogs } from "@/utils/get-user-blogs";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+    Pencil,
+    FileEdit
+} from "lucide-react"
+
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card"
+import Link from "next/link"
+import { useEffect, useState } from "react"
+import { getUserBlogs } from "@/utils/get-user-blogs"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger
+} from "@/components/ui/alert-dialog"
+import { deleteBlog } from "@/utils/delete-blog"
+import { toast } from "sonner"
+import { Badge } from "@/components/ui/badge"
+
+type Blog = {
+    _id: string
+    title: string
+    slug: string
+    isPublished: boolean
+    createdAt: string
+    views: number
+}
 
 export default function Dashboard() {
-    const [blogs, setBlogs] = useState([]);
+    const [blogs, setBlogs] = useState<Blog[]>([])
 
     useEffect(() => {
         const fetchBlogs = async () => {
-            const data = await getUserBlogs();
-            setBlogs(data);
+            const data = await getUserBlogs()
+            setBlogs(data)
         }
-        fetchBlogs();
-    }, []);
+        fetchBlogs()
+    }, [])
+
+    const handleDeleteBlog = async (id: string) => {
+        try {
+            const res = await deleteBlog(id)
+
+            if (res.success) {
+                toast.success("Blog Deleted Successfully")
+
+                // 🔥 remove from UI
+                setBlogs(prev => prev.filter(blog => blog._id !== id))
+            }
+        } catch (error) {
+            toast.error("Error Deleting Blog")
+        }
+    }
 
     return (
-        <div className="min-h-screen pt-24 pb-20">
-            <div className="max-w-7xl mx-auto px-6 py-10 space-y-10">
+        <div className="min-h-screen bg-background/50 pt-24 pb-20">
+            <div className="max-w-5xl mx-auto px-6 space-y-8">
 
-                {/* 1. HEADER SECTION */}
-                <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                {/* HEADER SECTION */}
+                <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
-                        <h1 className="text-3xl font-serif font-bold tracking-tight">Command Center</h1>
-                        <p className="text-muted-foreground text-sm">Monitor your insights and manage your engineering journal.</p>
+                        <h1 className="text-4xl font-extrabold tracking-tight">Dashboard</h1>
+                        <p className="text-muted-foreground mt-1">
+                            You have <span className="text-foreground font-medium">{blogs.length}</span> published stories.
+                        </p>
                     </div>
                     <Link href="/user/write">
-                        <Button className="rounded-full shadow-lg shadow-primary/20 gap-2 px-6">
-                            <Plus className="w-4 h-4" /> New Insight
+                        <Button className="rounded-full shadow-lg hover:shadow-primary/20 transition-all gap-2 px-6">
+                            <Plus className="w-4 h-4" /> New Post
                         </Button>
                     </Link>
                 </header>
 
-                {/* 2. THE PULSE (METRICS) */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <MetricCard title="Total Insights" value="24" icon={<FileText className="w-4 h-4" />} trend="+2 this month" />
-                    <MetricCard title="Total Reads" value="12.5k" icon={<Eye className="w-4 h-4" />} trend="+14% vs last week" />
-                    <MetricCard title="Avg. Read Time" value="4.2m" icon={<Clock className="w-4 h-4" />} trend="Stable" />
-                    <MetricCard title="Engagement" value="68%" icon={<TrendingUp className="w-4 h-4" />} trend="+5% increase" />
+                {/* STATS OVERVIEW (Optional but Recommended) */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <Card className="bg-card/50 backdrop-blur">
+                        <CardContent className="p-6 flex items-center gap-4">
+                            <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                                <FileText className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <p className="text-sm text-muted-foreground">Total Posts</p>
+                                <p className="text-2xl font-bold">{blogs.length}</p>
+                            </div>
+                        </CardContent>
+                    </Card>
+                    {/* Add more stat cards as needed */}
                 </div>
 
-                {/* 3. THE WORKBENCH (ARTICLE LIST) */}
-                <section className="space-y-6">
-                    <div className="flex items-center justify-between border-b pb-4">
-                        <h2 className="text-xl font-serif font-bold">Recent Insights</h2>
-                        <Button variant="ghost" size="sm" className="text-xs font-bold uppercase tracking-widest opacity-60">View All</Button>
-                    </div>
+                {/* BLOG LIST SECTION */}
+                <div className="space-y-4">
+                    <h3 className="text-lg font-semibold px-1">Recent Stories</h3>
 
-                    <div className="grid gap-4">
-                        {
-                            blogs.length === 0 ? (
-                                <Card className="border-none bg-muted/30 shadow-none">
-                                    <CardContent className="text-center py-10">
-                                        <FileText className="w-8 h-8 mx-auto mb-4 text-muted-foreground" />
-                                        <p className="text-sm text-muted-foreground">No insights yet. Start writing to see them here!</p>
-                                    </CardContent>
-                                </Card>
-                            ) : (
-                                blogs.map((blog: { id: string; title: string; isPublished: boolean; createdAt: string; views: number }) => (
-                                    <ArticleRow
-                                        key={blog.id}
-                                        title={blog.title}
-                                        status={blog.isPublished ? "Published" : "Draft"}
-                                        date={new Date(blog.createdAt).toLocaleDateString()}
-                                    />
-                                ))
-                            )
-                        }
-                    </div>
-                </section>
-            </div>
-        </div>
-    );
-}
-
-// --- SUB-COMPONENTS FOR CLEANER CODE ---
-
-function MetricCard({ title, value, icon, trend }: { title: string, value: string, icon: React.ReactNode, trend: string }) {
-    return (
-        <Card className="border-none bg-muted/30 shadow-none hover:bg-muted/50 transition-colors">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{title}</CardTitle>
-                <div className="text-muted-foreground">{icon}</div>
-            </CardHeader>
-            <CardContent>
-                <div className="text-2xl font-bold">{value}</div>
-                <p className="text-[10px] font-medium text-primary mt-1">{trend}</p>
-            </CardContent>
-        </Card>
-    );
-}
-
-function ArticleRow({ title, status, date, views }: { title: string, status: "Published" | "Draft", date: string, views?: string }) {
-    return (
-        <div className="group flex items-center justify-between p-4 rounded-2xl bg-background border border-border/50 hover:border-primary/30 transition-all hover:shadow-md">
-            <div className="flex items-center gap-4">
-                <div className={cn(
-                    "w-2 h-2 rounded-full",
-                    status === "Published" ? "bg-emerald-500" : "bg-orange-500"
-                )} />
-                <div>
-                    <h4 className="font-bold text-sm md:text-base group-hover:text-primary transition-colors cursor-pointer">{title}</h4>
-                    <p className="text-xs text-muted-foreground">{date} • {status}</p>
-                </div>
-            </div>
-
-            <div className="flex items-center gap-6">
-                <div className="hidden md:block text-right">
-                    <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Views</p>
-                    <p className="text-sm font-mono font-bold">{views}</p>
-                </div>
-                <div className="flex items-center gap-1">
-                    {/* EDIT BUTTON */}
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="rounded-full h-9 w-9 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-                    >
-                        <Pencil className="w-4 h-4" />
-                        <span className="sr-only">Edit</span>
-                    </Button>
-
-                    {/* DELETE BUTTON */}
-                    <AlertDialog>
-                        {/* 1. THE TRIGGER (Your existing button style) */}
-                        <AlertDialogTrigger asChild>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="rounded-full h-9 w-9 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                            >
-                                <Trash2 className="w-4 h-4" />
-                                <span className="sr-only">Delete</span>
-                            </Button>
-                        </AlertDialogTrigger>
-
-                        {/* 2. THE MODAL CONTENT */}
-                        <AlertDialogContent className="rounded-3xl border-border/40 shadow-2xl">
-                            <AlertDialogHeader>
-                                <AlertDialogTitle className="font-serif text-xl">
-                                    Delete this insight?
-                                </AlertDialogTitle>
-                                <AlertDialogDescription className="text-sm text-muted-foreground leading-relaxed">
-                                    This action is irreversible. The article, its metrics, and all
-                                    associated metadata will be permanently purged from the system.
-                                </AlertDialogDescription>
-                            </AlertDialogHeader>
-
-                            {/* 3. THE ACTIONS */}
-                            <AlertDialogFooter className="gap-2 mt-4">
-                                <AlertDialogCancel className="rounded-full border-none bg-muted hover:bg-muted/80 font-bold text-xs uppercase tracking-widest h-10 px-6">
-                                    Keep Article
-                                </AlertDialogCancel>
-                                <AlertDialogAction
-                                    onClick={() => {}}
-                                    className="rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90 font-bold text-xs uppercase tracking-widest h-10 px-6"
+                    {blogs.length === 0 ? (
+                        <Card className="border-dashed py-20">
+                            <CardContent className="flex flex-col items-center justify-center text-center">
+                                <div className="bg-muted rounded-full p-4 mb-4">
+                                    <FileEdit className="w-8 h-8 text-muted-foreground" />
+                                </div>
+                                <CardTitle className="text-xl">No stories found</CardTitle>
+                                <CardDescription className="max-w-62.5 mt-2">
+                                    Ready to share your thoughts? Start writing your first blog post today.
+                                </CardDescription>
+                                <Link href="/user/write" className="mt-6">
+                                    <Button variant="outline">Create Post</Button>
+                                </Link>
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        <div className="grid gap-3">
+                            {blogs.map((blog) => (
+                                <Card
+                                    key={blog._id}
+                                    className="group hover:border-primary/50 transition-colors bg-card/50 overflow-hidden"
                                 >
-                                    Confirm Delete
-                                </AlertDialogAction>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialog>
+                                    <div className="p-4 sm:p-5 flex items-center justify-between gap-4">
+
+                                        {/* INFO */}
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <h4 className="font-semibold truncate text-lg group-hover:text-primary transition-colors">
+                                                    {blog.title}
+                                                </h4>
+                                                <Badge variant={blog.isPublished ? "default" : "secondary"} className="text-[10px] uppercase tracking-wider">
+                                                    {blog.isPublished ? "Live" : "Draft"}
+                                                </Badge>
+                                            </div>
+                                            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                                                <span>{new Date(blog.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                                                <span>•</span>
+                                                {/* <span className="flex items-center gap-1">
+                                                    <Eye className="w-3 h-3" /> {blog.views.toLocaleString()} views
+                                                </span> */}
+                                            </div>
+                                        </div>
+
+                                        {/* ACTIONS */}
+                                        <div className="flex items-center gap-2">
+                                            <Link href={`/write-blog/${blog.slug}`}>
+                                                <Button variant="outline" size="icon" className="h-9 w-9">
+                                                    <Pencil className="w-4 h-4" />
+                                                </Button>
+                                            </Link>
+
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <Button variant="outline" size="icon" className="h-9 w-9 text-destructive hover:bg-destructive/10 hover:text-destructive">
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </Button>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                                        <AlertDialogDescription>
+                                                            This will permanently delete &quot;<span className="font-medium text-foreground">{blog.title}</span>&quot;.
+                                                        </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                        <AlertDialogAction
+                                                            onClick={() => handleDeleteBlog(blog._id)}
+                                                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                                        >
+                                                            Delete Post
+                                                        </AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
+                                        </div>
+                                    </div>
+                                </Card>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
-    );
+    )
 }
-

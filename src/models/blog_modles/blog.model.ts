@@ -1,31 +1,6 @@
 
-import { EditorJSData } from "@/types/blog";
+import { IBlog } from "@/types/blog";
 import { models, Schema, model } from "mongoose";
-
-export interface EditorContent {
-    time: number
-    blocks: EditorJSData[]
-    version: string
-}
-interface IBlog {
-    id?: Schema.Types.ObjectId,
-    author: Schema.Types.ObjectId
-
-    title: string,
-    slug: string,
-    content: EditorContent,
-    excerpt?: string,
-
-    coverImage?: string
-
-    tags?: string[]
-
-    isPublished: boolean
-    publishedAt?: Date
-
-    createdAt: Date,
-    updatedAt: Date,
-}
 
 const blogSchema = new Schema<IBlog>({
     author: {

@@ -5,6 +5,7 @@ import { VerifyUser } from "@/lib/verifyUser/userVerification";
 import Blog from "@/models/blog_modles/blog.model";
 import { NextRequest } from "next/server";
 
+
 export async function POST(req: NextRequest) {
     try {
         const auth = await VerifyUser();
@@ -16,6 +17,13 @@ export async function POST(req: NextRequest) {
             );
         }
         const userId = auth.user._id;
+
+        if (!userId) {
+            return createResponse(
+                { success: false, message: "User ID not found" },
+                StatusCode.NOT_FOUND
+            )
+        }
 
         const { title, content, tags, isPublished, coverImage } = await req.json();
 
@@ -46,7 +54,7 @@ export async function POST(req: NextRequest) {
         const safeTags = Array.isArray(tags) ? tags : []
 
         await dbConnect()
-        
+
         const existingBlog = await Blog.findOne({
             title,
             author: userId
@@ -99,6 +107,72 @@ export async function POST(req: NextRequest) {
 
     } catch (error: unknown) {
         console.error("Error while creating post:", error)
+
+        return createResponse(
+            {
+                success: false,
+                message: "Internal Server Error",
+            },
+            StatusCode.INTERNAL_ERROR
+        )
+    }
+}
+
+export async function GET(req: NextRequest) {
+    try {
+
+        const auth = await VerifyUser();
+
+        if (!auth.success || !auth.user?._id) {
+            return createResponse(
+                { success: false, message: "Unauthorized" },
+                StatusCode.UNAUTHORIZED
+            );
+        }
+        const userId = auth.user._id;
+
+        if (!userId) {
+            return createResponse(
+                { success: false, message: "User ID not found" },
+                StatusCode.NOT_FOUND
+            )
+        }
+
+        const { searchParams } = new URL(req.url);
+
+        const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
+        const limit = Math.min(20, parseInt(searchParams.get("limit") || "10"));
+
+        const skip = (page - 1) * limit;
+
+        await dbConnect()
+
+        const blogs = await Blog.find({ isPublished: true })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
+            .select('username title slug excerpt coverImage tags publishedAt')
+            .lean()
+
+        const total = await Blog.countDocuments({ isPublished: true });
+
+        return createResponse(
+            {
+                success: true, message: "Blogs retrieved successfully", data: {
+                    blogs,
+                    pagination: {
+                        total,
+                        page,
+                        limit,
+                        totalPages: Math.ceil(total / limit),
+                    },
+                }
+            },
+            StatusCode.OK
+        )
+
+    } catch (error) {
+        console.error("Error getting blogs:", error)
 
         return createResponse(
             {

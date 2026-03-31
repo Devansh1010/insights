@@ -9,6 +9,11 @@ const blogSchema = new Schema<IBlog>({
         required: true
     },
 
+    username: {
+        type: String,
+        required: true
+    },
+
     title: {
         type: String,
         required: true,

@@ -62,9 +62,9 @@ export const getBlog = async (blogId: string) => {
     }
 }
 
-export const getBlogs = async () => {
+export const getBlogs = async ({ page, limit }: { page: number, limit: number }) => {
     try {
-        const response = await blogApi.get('/');
+        const response = await blogApi.get(`?${page}&${limit}`);
         if (response.status === 200) {
 
             return response.data.data;

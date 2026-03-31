@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Calendar, Clock, Share2, Bookmark } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { getBlog } from "@/utils/get-blog";
+import { getBlog } from "@/services/blog.service";
 import { parseEditorContent } from "@/utils/editorjsRenderer";
 
 interface PageProps {

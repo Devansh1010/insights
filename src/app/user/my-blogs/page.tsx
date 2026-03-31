@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import { getUserBlogs } from "@/utils/get-user-blogs"
+import { getUserBlogs } from "@/services/blog.service"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -24,7 +24,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger
 } from "@/components/ui/alert-dialog"
-import { deleteBlog } from "@/utils/delete-blog"
+import { deleteBlog } from "@/services/blog.service"
 import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
 
@@ -55,7 +55,6 @@ export default function Dashboard() {
             if (res.success) {
                 toast.success("Blog Deleted Successfully")
 
-                // 🔥 remove from UI
                 setBlogs(prev => prev.filter(blog => blog._id !== id))
             }
         } catch (error) {

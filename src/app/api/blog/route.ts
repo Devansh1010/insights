@@ -3,6 +3,7 @@ import { dbConnect } from "@/lib/db";
 import { generateSlug } from "@/lib/slug-generater";
 import { VerifyUser } from "@/lib/verifyUser/userVerification";
 import Blog from "@/models/blog_modles/blog.model";
+import User from "@/models/user_models/user.model";
 import { NextRequest } from "next/server";
 
 
@@ -83,19 +84,27 @@ export async function POST(req: NextRequest) {
         const excerpt =
             content?.blocks?.[0]?.data?.text?.slice(0, 150) || ""
 
-        const newBlog = new Blog({
+        const user = await User.findById(userId).select("username").lean();
+
+        if (!user) {
+            return createResponse(
+                { success: false, message: "User not found" },
+                StatusCode.NOT_FOUND
+            )
+        }
+
+        const newBlog = await Blog.create({
             title,
             content,
             slug,
             excerpt,
             author: userId,
+            username: user?.username,
             tags: safeTags,
             coverImage,
             isPublished,
             publishedAt,
         })
-
-        await newBlog.save()
 
         return createResponse({
             success: true,

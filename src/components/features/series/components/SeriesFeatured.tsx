@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Series } from "./SeriesList"
+import { Series } from "./SeriesListPage"
 import Image from "next/image"
 import { User } from "lucide-react"
 

@@ -1,4 +1,4 @@
-import SeriesForm from '@/components/features/series/SeriesForm'
+import SeriesForm from '@/components/features/series/components/SeriesForm'
 
 
 const page = () => {

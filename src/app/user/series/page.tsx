@@ -1,4 +1,4 @@
-import SeriesList from '@/components/features/series/SeriesList'
+import SeriesList from '@/components/features/series/SeriesListPage'
 
 const Page = () => {
     

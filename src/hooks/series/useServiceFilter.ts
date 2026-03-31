@@ -1,4 +1,4 @@
-import { Series } from "@/components/features/series/SeriesList";
+import { Series } from "@/components/features/series/SeriesListPage";
 import { useState, useMemo } from "react";
 
 export const useSeriesFilters = (series: Series[]) => {

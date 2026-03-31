@@ -2,7 +2,7 @@
 import { getSeriesById } from "@/services/series.service";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { PaginationUI } from "./PaginationUi";
+import { PaginationUI } from "./components/PaginationUi";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";

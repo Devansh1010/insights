@@ -3,13 +3,13 @@
 import { getSeries } from "@/services/series.service"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useEffect, useState } from "react";
-import { PaginationUI } from "./PaginationUi";
+import { PaginationUI } from "./components/PaginationUi";
 import { SeriesSkeleton } from "./loader/SeriesListLoader";
 import { SeriesError } from "./error/SeriesError";
 import { useSeriesFilters } from "@/hooks/series/useServiceFilter";
-import SeriesFeatured from "./SeriesFeatured";
-import SeriesRest from "./SeriesRest";
-import SeriesHeader from "./SeriesHeader";
+import SeriesFeatured from "@/components/features/series/components/SeriesFeatured";
+import SeriesRest from "@/components/features/series/components/SeriesRest";
+import SeriesHeader from "@/components/features/series/components/SeriesHeader";
 
 
 export type Series = {

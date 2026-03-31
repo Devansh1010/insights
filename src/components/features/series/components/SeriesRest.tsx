@@ -1,5 +1,5 @@
 import { CardTitle } from "@/components/ui/card"
-import { Series } from "./SeriesList"
+import { Series } from "./SeriesListPage"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"

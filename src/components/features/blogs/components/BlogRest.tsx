@@ -10,37 +10,41 @@ const BlogRest = ({ rest }: { rest: Blog[] }) => {
 
     return (
         <div>
-            <div className="space-y-16">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {rest?.map((post: Blog) => (
                     <Link
                         key={post._id}
                         href={`/user/explore/${post.slug}`}
                         className="group block"
                     >
-                        <article className="group flex flex-col overflow-hidden rounded-[2rem] shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
+                        <div className="overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-all duration-500">
 
-                            <AspectRatio ratio={4 / 3} className="overflow-hidden rounded-[2rem] relative">
+                            <AspectRatio ratio={16 / 9} className="relative">
 
-                                {/* IMAGE */}
-                                {/* <Image
-                                    src={post.coverImage? post.coverImage: FALLBACK}
+                                {/* BACKGROUND IMAGE */}
+                                <Image
+                                    src={post.coverImage || FALLBACK}
                                     alt={post.title}
                                     fill
-                                    className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                                /> */}
+                                    priority
+                                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                />
 
-                                {/* OVERLAY CONTENT */}
-                                <div className="flex flex-col justify-end h-full p-6 bg-background/60 backdrop-blur-lg relative z-10">
+                                {/* DARK OVERLAY */}
+                                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition" />
+
+                                {/* CONTENT */}
+                                <div className="absolute bottom-0 w-full p-5 text-white z-10">
 
                                     {/* META */}
-                                    <div className="flex items-center gap-3 text-[10px] uppercase tracking-widest font-bold mb-3">
+                                    <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold mb-2">
                                         <span className="text-primary">
                                             {post.tags?.slice(0, 2).join(" • ") || "General"}
                                         </span>
 
-                                        <span className="w-1 h-1 rounded-full bg-primary/40" />
+                                        <span className="w-1 h-1 rounded-full bg-white/40" />
 
-                                        <span className="text-slate-400 font-serif italic normal-case tracking-normal">
+                                        <span className="italic normal-case tracking-normal text-white/70">
                                             {new Date(post.createdAt).toLocaleDateString("en-US", {
                                                 month: "short",
                                                 year: "numeric",
@@ -49,37 +53,34 @@ const BlogRest = ({ rest }: { rest: Blog[] }) => {
                                     </div>
 
                                     {/* TITLE */}
-                                    <h3 className="text-xl lg:text-2xl font-serif font-bold leading-snug text-slate-900 group-hover:text-primary transition-colors line-clamp-2">
+                                    <h3 className="text-lg md:text-xl font-serif font-bold leading-snug line-clamp-2">
                                         {post.title}
                                     </h3>
 
                                     {/* EXCERPT */}
-                                    <p className="text-sm text-muted-foreground font-serif opacity-80 line-clamp-2 mt-2">
+                                    <p className="text-sm opacity-80 line-clamp-2 mt-1">
                                         {post.excerpt || "No excerpt available."}
                                     </p>
 
                                     {/* FOOTER */}
-                                    <div className="flex items-center justify-between mt-4">
+                                    <div className="flex items-center justify-between mt-3">
 
-                                        {/* Author */}
-                                        <span className="text-xs text-slate-400 font-medium">
+                                        <span className="text-xs opacity-70">
                                             @{post.username || "unknown"}
                                         </span>
 
-                                        {/* CTA */}
-                                        <div className="flex items-center gap-2 text-primary">
-                                            <span className="text-[10px] uppercase tracking-widest font-bold opacity-0 group-hover:opacity-100 transition">
-                                                Read
-                                            </span>
-                                            <ArrowRight className="w-4 h-4 -translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500" />
+                                        <div className="flex items-center gap-1 text-sm opacity-0 group-hover:opacity-100 transition">
+                                            <span>Read</span>
+                                            <ArrowRight className="w-4 h-4 -translate-x-1 group-hover:translate-x-0 transition-all" />
                                         </div>
 
                                     </div>
 
                                 </div>
+
                             </AspectRatio>
 
-                        </article>
+                        </div>
                     </Link>
                 ))}
             </div>

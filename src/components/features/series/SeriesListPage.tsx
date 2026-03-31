@@ -101,7 +101,7 @@ const SeriesList = () => {
                                                 className={`px-4 py-2 text-xs font-semibold rounded-full whitespace-nowrap transition-all
                                             
                             ${isActive
-                                                        ? "bg-slate-900 text-white shadow-md scale-105 hover:bg-slate-900 border border-slate-200"
+                                                        ? "bg-slate-900 dark:text-white text-black shadow-md scale-105 hover:bg-slate-900 border dark:border-slate-200 border-black"
                                                         : "bg-transparent text-slate-600  cursor-pointer "
                                                     }`}
                                             >

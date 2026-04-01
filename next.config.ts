@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
-    domains: ['example.com'],
+    domains: ['example.com', 'ik.imagekit.io'],
   },
 };
 

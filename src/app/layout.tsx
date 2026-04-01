@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "@/components/ui/sonner";
-import { Navbar } from "@/components/navbar";
+import Providers from "@/utils/provider";
 
 const figtree = Figtree({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -40,10 +40,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <SessionProvider>
-            {children}
-            <Toaster />
-          </SessionProvider>
+          <Providers>
+            <SessionProvider>
+              {children}
+              <Toaster />
+            </SessionProvider>
+          </Providers>
         </ThemeProvider>
       </body>
     </html>

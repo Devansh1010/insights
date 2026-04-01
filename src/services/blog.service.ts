@@ -1,22 +1,27 @@
 import blogApi from "@/lib/blogAxios";
 import { OutputData } from "@editorjs/editorjs";
 
-export const createBlog = async (title: string, content: OutputData, isPublished: boolean) => {
+export interface CreateBlogVariables {
+    title: string;
+    content: OutputData | undefined;
+    isPublished: boolean;
+    seriesId: string | undefined;
+    coverImage: string | undefined;
+}
+
+export const createBlog = async (data: CreateBlogVariables) => {
     try {
-        const res = await blogApi.post("/", {
-            title,
-            content,
-            isPublished,
-        })
+
+        const res = await blogApi.post("", data);
 
         if (res.data.success) {
-            return res.data
+            return res.data;
         }
     } catch (error) {
-        console.error("Failed to create blog", error)
-        throw new Error("Failed to create blog")
+        console.error("Failed to create blog", error);
+        throw new Error("Failed to create blog");
     }
-}
+};
 
 export const deleteBlog = async (blogId: string) => {
     try {

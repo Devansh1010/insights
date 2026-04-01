@@ -1,11 +1,10 @@
 import { createResponse, StatusCode } from '@/lib/createResponse'
 import { dbConnect } from '@/lib/db'
-import { NextRequest } from 'next/server'
 import valkey from '@/lib/valkey'
 import { VerifyUser } from '@/lib/verifyUser/userVerification'
 import User from '@/models/user_models/user.model'
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const auth = await VerifyUser()
 

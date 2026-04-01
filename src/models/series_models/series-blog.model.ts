@@ -20,7 +20,6 @@ const seriesBlogSchema = new Schema<ISeriesBlog>(
             required: true,
         },
 
-        // 🔥 Optional (future-proofing)
         isFeatured: {
             type: Boolean,
             default: false,

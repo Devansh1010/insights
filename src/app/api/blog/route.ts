@@ -3,127 +3,102 @@ import { dbConnect } from "@/lib/db";
 import { generateSlug } from "@/lib/slug-generater";
 import { VerifyUser } from "@/lib/verifyUser/userVerification";
 import Blog from "@/models/blog_modles/blog.model";
+import SeriesBlog from "@/models/series_models/series-blog.model";
 import User from "@/models/user_models/user.model";
 import { NextRequest } from "next/server";
+import Series from "@/models/series_models/series.model";
+import { OutputBlockData } from "@editorjs/editorjs";
 
 
-export async function POST(req: NextRequest) {
+
+export async function POST(req: Request) {
     try {
         const auth = await VerifyUser();
-
         if (!auth.success || !auth.user?._id) {
-            return createResponse(
-                { success: false, message: "Unauthorized" },
-                StatusCode.UNAUTHORIZED
-            );
+            return createResponse({ success: false, message: "Unauthorized" }, StatusCode.UNAUTHORIZED);
         }
+
         const userId = auth.user._id;
+        const body = await req.json();
+        const { title, content, tags, isPublished, coverImage, seriesId } = body;
 
-        if (!userId) {
-            return createResponse(
-                { success: false, message: "User ID not found" },
-                StatusCode.NOT_FOUND
-            )
+        // 1. VALIDATION
+        if (!title?.trim()) {
+            return createResponse({ success: false, message: "Title is required" }, StatusCode.BAD_REQUEST);
         }
 
-        const { title, content, tags, isPublished, coverImage } = await req.json();
-
-        //validate the data
-        if (!title) {
-            return createResponse({
-                success: false,
-                message: "Please Provide Title"
-            },
-                StatusCode.BAD_REQUEST
-            )
+        if (!content || !Array.isArray(content.blocks) || content.blocks.length === 0) {
+            return createResponse({ success: false, message: "Content cannot be empty" }, StatusCode.BAD_REQUEST);
         }
 
-        if (!content?.blocks?.length) {
-            return createResponse(
-                { success: false, message: "Content cannot be empty" },
-                StatusCode.BAD_REQUEST
-            )
-        }
+        await dbConnect();
 
-        // if (!coverImage) {
-        //     return createResponse(
-        //         { success: false, message: "Cover image is required" },
-        //         StatusCode.BAD_REQUEST
-        //     )
-        // }
-
-        const safeTags = Array.isArray(tags) ? tags : []
-
-        await dbConnect()
-
-        const existingBlog = await Blog.findOne({
-            title,
-            author: userId
-        })
-
-        //if blog exist then return error
+        // 2. PRE-CHECKS
+        const existingBlog = await Blog.findOne({ title: title.trim(), author: userId });
         if (existingBlog) {
-            return createResponse({
-                success: false,
-                message: "Blog with the same title already exists"
-            },
-                StatusCode.BAD_REQUEST
-            )
+            return createResponse({ success: false, message: "Blog with same title already exists" }, StatusCode.BAD_REQUEST);
         }
-
-        //generate slug
-        const slug = generateSlug(title)
-
-        //if isPublished is true then set publishedAt to current date
-        let publishedAt = undefined
-        if (isPublished) {
-            publishedAt = new Date()
-        }
-
-        //generate excerpt
-        const excerpt =
-            content?.blocks?.[0]?.data?.text?.slice(0, 150) || ""
 
         const user = await User.findById(userId).select("username").lean();
-
         if (!user) {
-            return createResponse(
-                { success: false, message: "User not found" },
-                StatusCode.NOT_FOUND
-            )
+            return createResponse({ success: false, message: "User not found" }, StatusCode.NOT_FOUND);
         }
 
+        // 3. METADATA PREP
+        let slug = generateSlug(title);
+        const slugExists = await Blog.exists({ slug });
+        if (slugExists) slug = `${slug}-${Date.now()}`;
+
+        const firstTextBlock = content.blocks.find((b: OutputBlockData) => b.type === 'paragraph' || b.type === 'header');
+        const excerpt = firstTextBlock?.data?.text?.replace(/<[^>]*>/g, '').slice(0, 150) || "";
+
+        // 4. CREATE BLOG (Direct approach)
         const newBlog = await Blog.create({
-            title,
+            title: title.trim(),
             content,
             slug,
             excerpt,
             author: userId,
-            username: user?.username,
-            tags: safeTags,
+            username: user.username,
+            tags: Array.isArray(tags) ? tags : [],
             coverImage,
             isPublished,
-            publishedAt,
-        })
+            publishedAt: isPublished ? new Date() : undefined,
+        });
 
-        return createResponse({
-            success: true,
-            message: "Blog Created Successfully",
-            data: newBlog
-        },
-            StatusCode.CREATED
-        )
+        // 5. HANDLE SERIES LINKING
+        if (seriesId) {
+            const seriesExists = await Series.findById(seriesId);
 
-    } catch (error: unknown) {
-        console.error("Error while creating post:", error)
+            if (!seriesExists) {
+                // Since we aren't using transactions, we manually handle the "orphan" blog 
+                // if the series check fails, or just proceed. 
+                return createResponse({ success: true, message: "Blog created but series not found", data: newBlog }, StatusCode.CREATED);
+            }
+
+            const lastBlogInSeries = await SeriesBlog.findOne({ series: seriesId }).sort({ order: -1 });
+            const newOrder = lastBlogInSeries ? lastBlogInSeries.order + 1 : 1;
+
+            await SeriesBlog.create({
+                series: seriesId,
+                blog: newBlog._id,
+                order: newOrder,
+            });
+        }
 
         return createResponse(
-            {
-                success: false,
-                message: "Internal Server Error",
-            },
+            { success: true, message: "Blog Created Successfully", data: newBlog },
+            StatusCode.CREATED
+        );
+
+    } catch (error) {
+        console.error("Critical Error:", error);
+
+        const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+        return createResponse(
+            { success: false, message: errorMessage|| "Internal Server Error" },
             StatusCode.INTERNAL_ERROR
-        )
+        );
     }
 }
 

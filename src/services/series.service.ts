@@ -72,3 +72,19 @@ export const getSeriesById = async ({ id, page, limit }: { id: string, page: num
     }
 }
 
+export const getUserSeries = async () => {
+    try {
+        const res = await axios.get('/api/user/get-user-series');
+
+        return res.data.data;
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            throw new Error(
+                error.response?.data?.message || "Failed to fetch series"
+            );
+        }
+
+        throw new Error("Something went wrong");
+    }
+}
+

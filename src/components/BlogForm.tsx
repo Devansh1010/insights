@@ -1,141 +1,201 @@
-import { createBlog } from "@/utils/create-blog";
+import { getUserSeries } from "@/services/series.service";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Editor from "./editor";
+import { useState } from "react";
 import { OutputData } from "@editorjs/editorjs";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import Link from "next/link";
 import { Button } from "./ui/button";
 import { ArrowLeft } from "lucide-react";
-import { ModeToggle } from "./theme";
-import { Textarea } from "./ui/textarea";
-import Editor from "./editor";
-import { updateBlog } from "@/utils/edit-blog";
-import { getBlog } from "@/utils/get-blog";
+import {
+    Combobox,
+    ComboboxContent,
+    ComboboxEmpty,
+    ComboboxInput,
+    ComboboxItem,
+    ComboboxList,
+} from "@/components/ui/combobox"
+import UploadImage, { responceData } from "./Imagekit/ImageUpload";
+import Image from "next/image";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { createBlog, CreateBlogVariables } from "@/services/blog.service";
+
+
 
 export default function BlogForm({ slug }: { slug?: string }) {
-    const router = useRouter();
 
     const [title, setTitle] = useState("");
-    const [content, setContent] = useState<OutputData | null>(null);
-    const [loading, setLoading] = useState(false);
-    const [isFetching, setIsFetching] = useState(!!slug);
+    const [selectedSeries, setSelectedSeries] = useState<string | undefined>();
+    const [imageData, setImageData] = useState<responceData | null>(null);
+    const [content, setContent] = useState<OutputData>();
 
-    const isEditMode = !!slug;
-    useEffect(() => {
-        setIsFetching(true)
-        console.log(slug)
-        try {
-            if (isEditMode) {
-                const fetchBlogData = async () => {
-                    const res = await getBlog(slug)
-                    console.log("Res:-------", res)
-                };
-                fetchBlogData();
-            }
-        } catch (error) {
+    const router = useRouter();
 
-        } finally {
-            setIsFetching(false)
-        }
-    }, [slug, isEditMode]);
+    const { data, isPending, isError, refetch } = useQuery({
+        queryKey: ['user-series'],
+        queryFn: getUserSeries,
+    })
 
-    const handlePublish = async () => {
-        if (!title.trim() || !content) {
-            toast.error("Title and content cannot be empty.");
-            return;
-        }
+    const queryClient = useQueryClient();
 
-        setLoading(true);
-        try {
-            let res;
-            if (isEditMode) {
-                // Call your UPDATE API (PUT/PATCH)
-                res = await updateBlog(slug as string, title, content, true);
-                toast.success("Blog updated successfully!");
-            } else {
-                // Call your CREATE API (POST)
-                res = await createBlog(title, content, true);
-                toast.success("Blog published successfully!");
-            }
+    const mutation = useMutation({
+        // React Query passes the object from mutate() as the first argument here
+        mutationFn: (variables: CreateBlogVariables) => createBlog(variables),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["blogs"] });
+            toast.success("Blog published successfully!");
+            router.push("/user/explore");
+        },
+        onError: () => toast.error("Failed to create blog"),
+    });
 
-            if (res) router.push("/user/my-blogs");
-        } catch (error) {
-            console.error("Action failed:", error);
-            toast.error(isEditMode ? "Update failed" : "Publish failed");
-        } finally {
-            setLoading(false);
-        }
+    const handlePublish = () => {
+        mutation.mutate({
+            title,
+            content,
+            isPublished: true,
+            seriesId: selectedSeries,
+            coverImage: imageData?.url
+        });
+    };
+
+
+    const handleUploadSuccess = (data: responceData) => {
+        setImageData(data);
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center">
-            {/* TOP NAVIGATION BAR */}
-            <nav className="fixed top-0 w-full z-50 border-b bg-background/60 backdrop-blur-md px-6 py-3 flex justify-between items-center">
-                <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="icon" className="rounded-full">
-                        <ArrowLeft className="w-5 h-5" />
-                    </Button>
-                    <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Draft saved</span>
-                </div>
-                {/* <div className="flex items-center gap-3">
-                    <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
-                        <Eye className="w-4 h-4" /> Preview
-                    </Button>
-                    <Button variant="ghost" size="icon" className="rounded-full">
-                        <MoreHorizontal className="w-5 h-5" />
-                    </Button>
-                </div> */}
+        <div className="min-h-screen bg-background selection:bg-primary/10">
+            {/* Header: Enhanced Glassmorphism */}
+            <header className="sticky top-0 z-50 w-full">
+                <div className="absolute inset-0 bg-background/80 backdrop-blur-md border-b border-border/40" />
 
-                {/* Theme Toggle */}
-                <div className="absolute right-6">
-                    <ModeToggle />
-                </div>
-            </nav>
+                <div className="relative max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+                    {/* LEFT: Context & Back */}
+                    <div className="flex items-center gap-5">
+                        <Link href="/user/dashboard">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="rounded-xl hover:bg-muted/80 transition-colors"
+                            >
+                                <ArrowLeft className="w-5 h-5 text-muted-foreground" />
+                            </Button>
+                        </Link>
 
-            {/* READING PROGRESS BAR */}
-            <div className="fixed top-14.25 left-0 w-full h-0.5 bg-muted z-50">
-                <div className="h-full bg-primary w-[30%] transition-all duration-300" />
-            </div>
-
-            <main className="w-full max-w-3xl px-6 pt-32 pb-40">
-                {/* TITLE SECTION */}
-                <div className="group mb-8">
-                    <Textarea
-                        rows={1}
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        placeholder="Article Title"
-                        className="w-full text-5xl md:text-6xl font-serif font-bold leading-tight resize-none bg-transparent border-none p-0 focus-visible:ring-0 placeholder:text-muted-foreground/30 selection:bg-primary/20"
-                    />
-                    {/* <div className="flex items-center gap-4 mt-6 text-sm font-medium text-muted-foreground/60">
-                        <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-linear-to-tr from-orange-400 to-rose-400" />
-                            <span>Your Name</span>
+                        <div className="flex items-center gap-2.5 px-3 py-1 bg-muted/40 rounded-full border border-border/50">
+                            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                                Draft
+                            </span>
                         </div>
-                        <span>•</span>
-                        <span>5 min read</span>
-                    </div> */}
-                </div>
+                    </div>
 
-                {/* EDITOR CONTAINER */}
-                <div className="relative">
-                    <Editor onChange={setContent} data={content} />
+                    {/* RIGHT: Action Hierarchy */}
+                    <div className="flex items-center gap-3">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-muted-foreground hover:text-foreground font-medium"
+                        >
+                            Save Draft
+                        </Button>
+                        <Button
+                            size="sm"
+                            className="rounded-full px-6 bg-foreground text-background hover:opacity-90 shadow-lg shadow-foreground/5 transition-all active:scale-[0.98]"
+                            onClick={handlePublish}
+                        >
+                            Publish
+                        </Button>
+                    </div>
+                </div>
+            </header>
+
+            <main className="max-w-4xl mx-auto px-6 pt-12 pb-24 space-y-12">
+
+                {/* Cover Image Section: Rounded & Cinematic */}
+                <section className="relative group">
+                    <div className="relative aspect-21/9 w-full rounded-[2rem] overflow-hidden bg-muted transition-all duration-500 ring-1 ring-border shadow-2xl">
+                        {!imageData ? (
+                            <UploadImage onUploadSuccess={handleUploadSuccess} />
+                        ) : (
+                            <>
+                                <Image
+                                    src={imageData.url || ''}
+                                    alt="cover"
+                                    fill
+                                    className="object-cover transition duration-700 group-hover:scale-105"
+                                />
+                                {/* Elegant Overlay */}
+                                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
+                                    <Button
+                                        onClick={() => setImageData(null)}
+                                        variant="secondary"
+                                        className="rounded-full bg-white/90 text-black hover:bg-white shadow-xl"
+                                    >
+                                        Change Cover
+                                    </Button>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </section>
+
+                {/* Metadata & Series: Minimalist */}
+                <div className="max-w-3xl mx-auto space-y-8">
+                    <div className="flex items-center gap-4 text-sm">
+                        <span className="text-muted-foreground font-medium">In series:</span>
+                        <div className="flex-1 max-w-60">
+                            <Combobox items={data} onInputValueChange={setSelectedSeries}>
+                                <ComboboxInput
+                                    placeholder="Select a series..."
+                                    className="bg-transparent border-none p-0 focus:ring-0 text-foreground font-medium placeholder:text-muted-foreground/30"
+                                />
+                                <ComboboxContent>
+
+                                    <ComboboxEmpty>No items found.</ComboboxEmpty>
+
+                                    <ComboboxList>
+
+                                        {(item) => (
+
+                                            <ComboboxItem key={item._id} value={item._id}>
+
+                                                {item.title}
+
+                                            </ComboboxItem>
+
+                                        )}
+
+                                    </ComboboxList>
+
+                                </ComboboxContent>
+                            </Combobox>
+                        </div>
+                    </div>
+
+                    {/* Writing Surface */}
+                    <div className="space-y-6">
+                        <textarea
+                            placeholder="Enter a title..."
+                            className="w-full text-5xl md:text-6xl font-black bg-transparent outline-none placeholder:text-muted-foreground/20 resize-none leading-[1.1] tracking-tight"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            rows={1}
+                        />
+
+                        {/* Editor: Styled via Tailwind Typography */}
+                        <div className="prose prose-lg prose-neutral dark:prose-invert max-w-none 
+          prose-headings:font-bold prose-p:text-muted-foreground prose-p:leading-relaxed
+          focus-within:prose-p:text-foreground transition-colors duration-500">
+                            <Editor
+                                onChange={(data) => setContent(data)}
+                                data={content}
+                            />
+                        </div>
+                    </div>
                 </div>
             </main>
-
-            {/* FLOATING ACTION DOCK */}
-            <footer className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50">
-                <div className="flex items-center gap-2 bg-black/90 dark:bg-white/90 text-white dark:text-black px-4 py-2 rounded-full shadow-2xl backdrop-blur-sm border border-white/10">
-                    <Button variant="ghost" className="text-xs font-semibold hover:bg-white/10 rounded-full h-8">
-                        Auto-save: ON
-                    </Button>
-                    <div className="w-px h-4 bg-white/20" />
-                    <Button className="bg-primary text-primary-foreground hover:scale-105 transition-transform text-xs font-bold px-6 rounded-full h-8 cursor-pointer"
-                        onClick={handlePublish}
-                        disabled={loading}>
-                        {loading ? "Saving..." : isEditMode ? "Update Changes" : "Publish Article"}
-                    </Button>
-                </div>
-            </footer>
         </div>
     )
 }

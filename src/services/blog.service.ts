@@ -3,10 +3,11 @@ import { OutputData } from "@editorjs/editorjs";
 
 export interface CreateBlogVariables {
     title: string;
-    content: OutputData | undefined;
+    content: OutputData;
     isPublished: boolean;
-    seriesId: string | undefined;
-    coverImage: string | undefined;
+    seriesId: string;
+    coverImage: string;
+    tags: string[];
 }
 
 export const createBlog = async (data: CreateBlogVariables) => {

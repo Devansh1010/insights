@@ -14,13 +14,13 @@ import { toast } from "sonner";
 import { Input } from "../ui/input";
 
 
-export type responceData = {
+export type ImageKitData = {
     url: string | undefined,
     name: string | undefined,
     id: string | undefined
 }
 
-export const UploadImage = ({ onUploadSuccess }: { onUploadSuccess: (data: responceData) => void }) => {
+export const UploadImage = ({ onUploadSuccess }: { onUploadSuccess: (data: ImageKitData) => void }) => {
     // State to keep track of the current upload progress (percentage)
     const [progress, setProgress] = useState(0);
 
@@ -121,8 +121,6 @@ export const UploadImage = ({ onUploadSuccess }: { onUploadSuccess: (data: respo
                 onUploadSuccess(formatedData);
             }
 
-
-            console.log("Upload response:", uploadResponse);
         } catch (error) {
             // Handle specific error types provided by the ImageKit SDK.
             if (error instanceof ImageKitAbortError) {
@@ -142,7 +140,7 @@ export const UploadImage = ({ onUploadSuccess }: { onUploadSuccess: (data: respo
 
     return (
         <>
-            <div className="w-full">
+            <div className="w-full h-full pt-2 pb-6 pr-2 pl-2">
 
                 {/* Hidden Input */}
                 <Input
@@ -155,7 +153,7 @@ export const UploadImage = ({ onUploadSuccess }: { onUploadSuccess: (data: respo
                 {/* Upload Box */}
                 <div
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-full h-65 flex flex-col items-center justify-center 
+                    className="w-full h-full flex flex-col items-center justify-center 
                  border-2 border-dashed rounded-3xl 
                  text-muted-foreground 
                  hover:border-primary hover:bg-muted/40 

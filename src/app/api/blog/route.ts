@@ -14,12 +14,17 @@ import { OutputBlockData } from "@editorjs/editorjs";
 export async function POST(req: Request) {
     try {
         const auth = await VerifyUser();
+
         if (!auth.success || !auth.user?._id) {
-            return createResponse({ success: false, message: "Unauthorized" }, StatusCode.UNAUTHORIZED);
+            return createResponse(
+                { success: false, message: "Unauthorized" },
+                StatusCode.UNAUTHORIZED
+            );
         }
 
         const userId = auth.user._id;
         const body = await req.json();
+        console.log(body)
         const { title, content, tags, isPublished, coverImage, seriesId } = body;
 
         // 1. VALIDATION
@@ -61,7 +66,7 @@ export async function POST(req: Request) {
             author: userId,
             username: user.username,
             tags: Array.isArray(tags) ? tags : [],
-            coverImage,
+            coverImage: coverImage.url,
             isPublished,
             publishedAt: isPublished ? new Date() : undefined,
         });
@@ -96,7 +101,7 @@ export async function POST(req: Request) {
 
         const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
         return createResponse(
-            { success: false, message: errorMessage|| "Internal Server Error" },
+            { success: false, message: errorMessage || "Internal Server Error" },
             StatusCode.INTERNAL_ERROR
         );
     }

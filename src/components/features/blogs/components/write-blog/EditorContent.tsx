@@ -1,4 +1,5 @@
-import Editor from "@/components/editor";
+// import Editor from "@/components/editor";
+import TipTapEditor from "@/components/tiptap-editor";
 import { useController, useFormContext } from "react-hook-form";
 
 
@@ -16,13 +17,16 @@ export function EditorField() {
 
   return (
     <div className="space-y-2">
-      <div className="prose prose-lg prose-neutral dark:prose-invert max-w-none 
-          prose-headings:font-bold prose-p:text-muted-foreground prose-p:leading-relaxed
-          focus-within:prose-p:text-foreground transition-colors duration-500">
+      <div className="prose prose-lg prose-neutral dark:prose-invert max-w-none prose-headings:font-bold prose-p:text-muted-foreground prose-p:leading-relaxed focus-within:prose-p:text-foreground transition-colors duration-500 ">
 
-        <Editor
+        {/* <Editor
           data={value}
           onChange={(data) => onChange(data)}
+        /> */}
+
+        <TipTapEditor
+          content={value}
+          onChange={((data) => onChange(data))}
         />
 
       </div>

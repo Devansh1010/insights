@@ -1,9 +1,10 @@
 import blogApi from "@/lib/blogAxios";
-import { OutputData } from "@editorjs/editorjs";
+// import { OutputData } from "@editorjs/editorjs";
+import { JSONContent } from "@tiptap/react";
 
 export interface CreateBlogVariables {
     title: string;
-    content: OutputData;
+    content: JSONContent;
     isPublished: boolean;
     seriesId: string;
     coverImage: string;
@@ -37,7 +38,7 @@ export const deleteBlog = async (blogId: string) => {
     }
 }
 
-export const updateBlog = async (blogId: string, title: string, content: OutputData, isPublished: boolean) => {
+export const updateBlog = async (blogId: string, title: string, content: JSONContent, isPublished: boolean) => {
     try {
         const res = await blogApi.patch(`/${blogId}`, {
             title,

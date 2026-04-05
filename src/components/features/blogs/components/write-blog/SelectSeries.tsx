@@ -41,7 +41,7 @@ export function SeriesSelector({ availableSeries }: { availableSeries: Series[] 
                 <ComboboxInput
                     value={currentSeries?.title || ""}
                     placeholder="Select a series..."
-                    className="bg-transparent border-none p-0 focus:ring-0 text-foreground font-medium"
+                    className="bg-transparent border-none p-0 focus:ring-0 text-sm font-semibold text-foreground/80 placeholder:text-muted-foreground/40 hover:text-primary transition-colors cursor-pointer w-auto min-w-30"
                 />
 
                 <ComboboxContent>

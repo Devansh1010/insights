@@ -25,7 +25,7 @@ export function TitleField() {
                 titleRef.current = e;
             }}
             placeholder="Enter a title..."
-            className="w-full text-5xl md:text-6xl font-black bg-transparent outline-none placeholder:text-muted-foreground/20 resize-none leading-[1.1] tracking-tight"
+            className="w-full text-4xl md:text-5xl font-black bg-transparent outline-none border-none placeholder:text-muted-foreground/20 leading-[1.1] tracking-tight"
             rows={1}
         />
     );

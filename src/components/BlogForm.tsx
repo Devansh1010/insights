@@ -16,6 +16,7 @@ import { EditorField } from "./features/blogs/components/write-blog/EditorConten
 import { EditorHeader } from "./features/blogs/components/write-blog/EditorHeader";
 import { TagSelector } from "./features/blogs/components/write-blog/TagSelector";
 import { useEffect } from "react";
+import { Library } from "lucide-react";
 
 export default function BlogForm({ slug }: { slug?: string }) {
     const router = useRouter();
@@ -43,11 +44,13 @@ export default function BlogForm({ slug }: { slug?: string }) {
 
     const mutation = useMutation({
         mutationFn: (variables: CreateBlogVariables) => createBlog(variables),
+
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["blogs"] });
             toast.success("Blog published successfully!");
             router.push("/user/explore");
         },
+        
         onError: () => toast.error("Failed to create blog"),
     });
 
@@ -81,19 +84,32 @@ export default function BlogForm({ slug }: { slug?: string }) {
             <form onSubmit={handleSubmit(onSubmit)} className="min-h-screen bg-background">
                 <EditorHeader isPending={isPending} />
 
-                <main className="max-w-4xl mx-auto px-6 pt-12 pb-24 space-y-12">
-                    <CoverImageSection />
+                <main className="max-w-5xl mx-auto px-6 pt-8 pb-24 selection:bg-primary/10">
+                    {/* 1. Subtle Cover Section */}
+                    <div className="mb-12">
+                        <CoverImageSection />
+                    </div>
 
-                    <div className="max-w-3xl mx-auto space-y-8">
-                        <div className="flex flex-col gap-4">
+                    {/* 2. The Unified Meta Row (Series + Tags) */}
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-4 mb-10 pb-6 border-b border-border/40">
+                        <div className="flex items-center gap-2 group">
+                            <div className="p-1.5 rounded-md bg-primary/5 text-primary group-hover:bg-primary/10 transition-colors">
+                                <Library className="w-4 h-4" />
+                            </div>
                             <SeriesSelector availableSeries={data} />
+                        </div>
+
+                        <div className="h-4 w-px bg-border hidden md:block" />
+
+                        <div className="flex-1">
                             <TagSelector availableTags={categories} />
                         </div>
+                    </div>
 
-                        <div className="space-y-6">
-                            <TitleField />
-                            <EditorField />
-                        </div>
+                    {/* 3. The Writing Canvas */}
+                    <div className="space-y-10">
+                        <TitleField />
+                        <EditorField />
                     </div>
                 </main>
             </form>

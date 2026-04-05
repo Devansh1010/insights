@@ -7,9 +7,24 @@ import SeriesBlog from "@/models/series_models/series-blog.model";
 import User from "@/models/user_models/user.model";
 import { NextRequest } from "next/server";
 import Series from "@/models/series_models/series.model";
-import { OutputBlockData } from "@editorjs/editorjs";
+// import { OutputBlockData } from "@editorjs/editorjs";
+import { JSONContent } from "@tiptap/react";
 
 
+const validateContent = (content: JSONContent) => {
+    // 1. Basic null/undefined check
+    if (!content || !content.content || content.content.length === 0) {
+        return false;
+    }
+
+    // 2. Check if there's actual text inside the blocks
+    // This prevents users from just hitting "Enter" and saving empty lines
+    const hasText = content.content.some(block =>
+        block.content && block.content.some(inline => inline.text && inline.text.trim().length > 0)
+    );
+
+    return hasText;
+};
 
 export async function POST(req: Request) {
     try {
@@ -24,16 +39,20 @@ export async function POST(req: Request) {
 
         const userId = auth.user._id;
         const body = await req.json();
-        console.log(body)
+
         const { title, content, tags, isPublished, coverImage, seriesId } = body;
+
 
         // 1. VALIDATION
         if (!title?.trim()) {
             return createResponse({ success: false, message: "Title is required" }, StatusCode.BAD_REQUEST);
         }
 
-        if (!content || !Array.isArray(content.blocks) || content.blocks.length === 0) {
-            return createResponse({ success: false, message: "Content cannot be empty" }, StatusCode.BAD_REQUEST);
+        if (!validateContent(content)) {
+            return createResponse(
+                { success: false, message: "Content cannot be empty" },
+                StatusCode.BAD_REQUEST
+            );
         }
 
         await dbConnect();
@@ -52,12 +71,25 @@ export async function POST(req: Request) {
         // 3. METADATA PREP
         let slug = generateSlug(title);
         const slugExists = await Blog.exists({ slug });
+
         if (slugExists) slug = `${slug}-${Date.now()}`;
 
-        const firstTextBlock = content.blocks.find((b: OutputBlockData) => b.type === 'paragraph' || b.type === 'header');
-        const excerpt = firstTextBlock?.data?.text?.replace(/<[^>]*>/g, '').slice(0, 150) || "";
+        //If Use Editor Js 
+        // const firstTextBlock = content.blocks.find((b: OutputBlockData) => b.type === 'paragraph' || b.type === 'header');
+        // const excerpt = firstTextBlock?.data?.text?.replace(/<[^>]*>/g, '').slice(0, 150) || "";
 
-        // 4. CREATE BLOG (Direct approach)
+        const firstTextBlock = content.content?.find((block: JSONContent) =>
+            (block.type === 'paragraph' || block.type === 'heading') &&
+            block.content &&
+            block.content[0]?.text
+        );
+        const rawText = firstTextBlock?.content
+            ?.map((node: JSONContent) => node.text || "")
+            .join("") || "";
+
+        const excerpt = rawText.replace(/<[^>]*>/g, '').slice(0, 150) || "";
+
+        // 4. CREATE BLOG 
         const newBlog = await Blog.create({
             title: title.trim(),
             content,
@@ -76,12 +108,11 @@ export async function POST(req: Request) {
             const seriesExists = await Series.findById(seriesId);
 
             if (!seriesExists) {
-                // Since we aren't using transactions, we manually handle the "orphan" blog 
-                // if the series check fails, or just proceed. 
                 return createResponse({ success: true, message: "Blog created but series not found", data: newBlog }, StatusCode.CREATED);
             }
 
             const lastBlogInSeries = await SeriesBlog.findOne({ series: seriesId }).sort({ order: -1 });
+            
             const newOrder = lastBlogInSeries ? lastBlogInSeries.order + 1 : 1;
 
             await SeriesBlog.create({

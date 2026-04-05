@@ -1,8 +1,9 @@
 import { useController, useFormContext } from "react-hook-form";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus } from "lucide-react";
+import { X, Plus, Hash } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+
 
 export function TagSelector({ availableTags }: { availableTags: string[] }) {
     const { control } = useFormContext();
@@ -23,13 +24,27 @@ export function TagSelector({ availableTags }: { availableTags: string[] }) {
     };
 
     return (
-        <div className="space-y-3">
-            <div className="flex items-center gap-4 text-sm">
-                <span className="text-muted-foreground font-medium whitespace-nowrap">Tags:</span>
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+            <Hash className="w-4 h-4 text-muted-foreground/50 shrink-0" />
+            <div className="flex items-center gap-1.5">
+                {selectedTags.map((tag: string) => (
+                    <Badge key={tag} className="bg-secondary/40 hover:bg-secondary/60 border-none text-muted-foreground transition-all px-2 py-0.5 rounded-md">
+                        {tag}
+                        <Button
+                            type="button"
+                            onClick={() => removeTag(tag)}
+                            className="p-0.5 bg-transparent hover:text-destructive rounded-sm transition-colors group border-none"
+                            variant={"outline"}
+                        >
+                            <X className="w-3 h-3 cursor-pointer" />
+                        </Button>
+                    </Badge>
+                ))}
                 <Select onValueChange={addTag}>
-                    <SelectTrigger className="w-fit h-7 border-dashed border-muted-foreground/30 bg-transparent hover:bg-muted/50 transition-colors px-3 rounded-full text-xs">
-                        <Plus className="w-3 h-3 mr-1" />
-                        <SelectValue placeholder="Add tag" />
+                    <SelectTrigger className="h-7 w-auto border-none bg-transparent hover:bg-muted p-2 rounded-md transition-all text-muted-foreground">
+                        <SelectValue>
+                            <Plus className="w-4 h-4" /> Add Tag
+                        </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                         {availableTags.map((tag, index) => (
@@ -43,28 +58,6 @@ export function TagSelector({ availableTags }: { availableTags: string[] }) {
                         ))}
                     </SelectContent>
                 </Select>
-            </div>
-
-            {/* Selected Badges */}
-            <div className="flex flex-wrap gap-2">
-                {selectedTags.map((tag: string, index: number) => {
-                    return (
-                        <Badge
-                            key={index}
-                            variant="secondary"
-                            className="pl-3 pr-1 py-1 rounded-full bg-muted/50 text-xs flex items-center gap-1 group"
-                        >
-                            {tag}
-                            <Button
-                                type="button"
-                                onClick={() => removeTag(tag)}
-                                className="p-0.5 rounded-full hover:bg-destructive hover:text-white transition-colors"
-                            >
-                                <X className="w-3 h-3" />
-                            </Button>
-                        </Badge>
-                    );
-                })}
             </div>
         </div>
     );

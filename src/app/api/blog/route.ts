@@ -11,23 +11,27 @@ import Series from "@/models/series_models/series.model";
 import { JSONContent } from "@tiptap/react";
 
 
+const hasValidText = (nodes?: JSONContent[]): boolean => {
+    if (!nodes) return false;
+
+    return nodes.some(node => {
+        if (node.text && node.text.trim().length > 0) return true;
+        if (node.content) return hasValidText(node.content);
+        return false;
+    });
+};
+
 const validateContent = (content: JSONContent) => {
-    // 1. Basic null/undefined check
-    if (!content || !content.content || content.content.length === 0) {
+    if (!content?.content || content.content.length === 0) {
         return false;
     }
 
-    // 2. Check if there's actual text inside the blocks
-    // This prevents users from just hitting "Enter" and saving empty lines
-    const hasText = content.content.some(block =>
-        block.content && block.content.some(inline => inline.text && inline.text.trim().length > 0)
-    );
-
-    return hasText;
+    return hasValidText(content.content);
 };
 
 export async function POST(req: Request) {
     try {
+        // ================= AUTH =================
         const auth = await VerifyUser();
 
         if (!auth.success || !auth.user?._id) {
@@ -38,14 +42,24 @@ export async function POST(req: Request) {
         }
 
         const userId = auth.user._id;
+
+        // ================= BODY =================
         const body = await req.json();
+        const {
+            title,
+            content,
+            tags = [],
+            isPublished,
+            coverImage,
+            seriesId
+        } = body;
 
-        const { title, content, tags, isPublished, coverImage, seriesId } = body;
-
-
-        // 1. VALIDATION
+        // ================= VALIDATION =================
         if (!title?.trim()) {
-            return createResponse({ success: false, message: "Title is required" }, StatusCode.BAD_REQUEST);
+            return createResponse(
+                { success: false, message: "Title is required" },
+                StatusCode.BAD_REQUEST
+            );
         }
 
         if (!validateContent(content)) {
@@ -57,10 +71,17 @@ export async function POST(req: Request) {
 
         await dbConnect();
 
-        // 2. PRE-CHECKS
-        const existingBlog = await Blog.findOne({ title: title.trim(), author: userId });
+        // ================= PRE-CHECKS =================
+        const existingBlog = await Blog.findOne({
+            title: title.trim(),
+            author: userId
+        });
+
         if (existingBlog) {
-            return createResponse({ success: false, message: "Blog with same title already exists" }, StatusCode.BAD_REQUEST);
+            return createResponse(
+                { success: false, message: "Blog with same title already exists" },
+                StatusCode.BAD_REQUEST
+            );
         }
 
         const user = await User.findById(userId).select("username").lean();
@@ -68,28 +89,24 @@ export async function POST(req: Request) {
             return createResponse({ success: false, message: "User not found" }, StatusCode.NOT_FOUND);
         }
 
-        // 3. METADATA PREP
-        let slug = generateSlug(title);
-        const slugExists = await Blog.exists({ slug });
+        // ================= SLUG =================
+        const slug = `${generateSlug(title)}-${Date.now()}`;
 
-        if (slugExists) slug = `${slug}-${Date.now()}`;
-
-        //If Use Editor Js 
-        // const firstTextBlock = content.blocks.find((b: OutputBlockData) => b.type === 'paragraph' || b.type === 'header');
-        // const excerpt = firstTextBlock?.data?.text?.replace(/<[^>]*>/g, '').slice(0, 150) || "";
-
-        const firstTextBlock = content.content?.find((block: JSONContent) =>
-            (block.type === 'paragraph' || block.type === 'heading') &&
-            block.content &&
-            block.content[0]?.text
+        // ================= EXCERPT =================
+        const firstTextBlock = content.content?.find(
+            (block: JSONContent) =>
+                (block.type === "paragraph" || block.type === "heading") &&
+                block.content
         );
-        const rawText = firstTextBlock?.content
-            ?.map((node: JSONContent) => node.text || "")
-            .join("") || "";
 
-        const excerpt = rawText.replace(/<[^>]*>/g, '').slice(0, 150) || "";
+        const rawText =
+            firstTextBlock?.content
+                ?.map((node: JSONContent) => node.text || "")
+                .join("") || "";
 
-        // 4. CREATE BLOG 
+        const excerpt = rawText.replace(/<[^>]*>/g, "").slice(0, 150);
+
+        // ================= CREATE BLOG =================
         const newBlog = await Blog.create({
             title: title.trim(),
             content,
@@ -98,32 +115,37 @@ export async function POST(req: Request) {
             author: userId,
             username: user.username,
             tags: Array.isArray(tags) ? tags : [],
-            coverImage: coverImage.url,
+            coverImage: coverImage?.url || "",
             isPublished,
             publishedAt: isPublished ? new Date() : undefined,
         });
 
-        // 5. HANDLE SERIES LINKING
+        // ================= SERIES =================
         if (seriesId) {
             const seriesExists = await Series.findById(seriesId);
 
-            if (!seriesExists) {
-                return createResponse({ success: true, message: "Blog created but series not found", data: newBlog }, StatusCode.CREATED);
+            if (seriesExists) {
+                const lastBlog = await SeriesBlog
+                    .findOne({ series: seriesId })
+                    .sort({ order: -1 });
+
+                const order = lastBlog ? lastBlog.order + 1 : 1;
+
+                await SeriesBlog.create({
+                    series: seriesId,
+                    blog: newBlog._id,
+                    order,
+                });
             }
-
-            const lastBlogInSeries = await SeriesBlog.findOne({ series: seriesId }).sort({ order: -1 });
-            
-            const newOrder = lastBlogInSeries ? lastBlogInSeries.order + 1 : 1;
-
-            await SeriesBlog.create({
-                series: seriesId,
-                blog: newBlog._id,
-                order: newOrder,
-            });
         }
 
+        // ================= RESPONSE =================
         return createResponse(
-            { success: true, message: "Blog Created Successfully", data: newBlog },
+            {
+                success: true,
+                message: "Blog Created Successfully",
+                data: newBlog
+            },
             StatusCode.CREATED
         );
 

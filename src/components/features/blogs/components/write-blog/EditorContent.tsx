@@ -1,5 +1,5 @@
 // import Editor from "@/components/editor";
-import TipTapEditor from "@/components/tiptap-editor";
+import TipTapEditor from "@/components/editor/tiptap-editor";
 import { useController, useFormContext } from "react-hook-form";
 
 

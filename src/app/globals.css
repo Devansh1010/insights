@@ -116,6 +116,11 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+.tiptap ::selection {
+  background-color: #bfdbfe; /* blue-200 */
+  color: inherit;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

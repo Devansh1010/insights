@@ -2,36 +2,57 @@
 
 import { Schema } from "mongoose";
 
-export type EditorJSBlock =
-
-  | { type: "header"; data: { text: string; level: number } }
-  | { type: "paragraph"; data: { text: string } }
-  | { type: "list"; data: { style: "ordered" | "unordered"; items: string[] } }
-  | { type: "image"; data: { file: { url: string }; caption?: string } }
-  | { type: "code"; data: { code: string } };
-
-export interface EditorJSData {
-  time?: number;
-  blocks: EditorJSBlock[];
-  version?: string;
+export interface TiptapMark {
+  type: string;
+  attrs?: Record<string, unknown>;
 }
+
+export interface TiptapNode {
+  type: string;
+  attrs?: Record<string, unknown>;
+  content?: TiptapNode[];
+  marks?: TiptapMark[];
+  text?: string;
+}
+
+export interface TiptapContent {
+  type: "doc";
+  content: TiptapNode[];
+}
+
+export interface TiptapContent {
+  type: "doc";
+  content: TiptapNode[];
+}
+
+
 export interface IBlog {
-  id?: Schema.Types.ObjectId,
-  author: Schema.Types.ObjectId
-  username: string,
-  
-  title: string,
-  slug: string,
-  content: EditorJSData,
-  excerpt?: string,
+  id?: Schema.Types.ObjectId;
 
-  coverImage?: string
+  author: Schema.Types.ObjectId;
+  username: string;
 
-  tags?: string[]
+  title: string;
+  slug: string;
 
-  isPublished: boolean
-  publishedAt?: Date
+  content: TiptapContent;
 
-  createdAt: Date,
-  updatedAt: Date,
+  hook?: string;
+  insights?: string[];
+
+  readTime?: number;
+  level?: "Beginner" | "Intermediate" | "Advanced";
+
+  excerpt?: string;
+  coverImage?: string;
+  tags?: string[];
+
+  views?: number;
+  likes?: number;
+
+  isPublished: boolean;
+  publishedAt?: Date;
+
+  createdAt: Date;
+  updatedAt: Date;
 }

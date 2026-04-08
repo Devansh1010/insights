@@ -3,47 +3,80 @@ import { IBlog } from "@/types/blog";
 import { models, Schema, model } from "mongoose";
 
 const blogSchema = new Schema<IBlog>({
-    author: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
 
-    username: {
-        type: String,
-        required: true
-    },
+  username: {
+    type: String,
+    required: true
+  },
 
-    title: {
-        type: String,
-        required: true,
-        trim: true,
-    },
+  title: {
+    type: String,
+    required: true,
+    trim: true,
+  },
 
-    slug: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true
-    },
+  hook: {
+    type: String,
+    trim: true,
+    minlength: 10,
+    maxlength: 120,
+  },
 
-    content: {
-        type: Schema.Types.Mixed,
-        required: true
-    },
+  insights: [{
+    type: String
+  }],
 
-    excerpt: String,
+  readTime: {
+    type: Number,
+    default: 3
+  },
 
-    coverImage: String,
+  level: {
+    type: String,
+    enum: ['Beginner', 'Intermediate', 'Advanced'],
+    default: 'Beginner'
+  },
 
-    tags: [String],
+  slug: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true
+  },
 
-    isPublished: {
-        type: Boolean,
-        default: false
-    },
+  content: {
+    type: Schema.Types.Mixed,
+    required: true
+  },
 
-    publishedAt: Date
+  excerpt: String,
+
+  coverImage: String,
+
+  tags: [String],
+
+  // 👇 Engagement (simple version)
+  views: {
+    type: Number,
+    default: 0
+  },
+
+  likes: {
+    type: Number,
+    default: 0
+  },
+
+  isPublished: {
+    type: Boolean,
+    default: false
+  },
+
+  publishedAt: Date
 
 }, { timestamps: true })
 

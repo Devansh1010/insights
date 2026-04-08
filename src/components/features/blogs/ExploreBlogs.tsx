@@ -67,7 +67,7 @@ const ExploreBlogs = () => {
             <footer className="flex justify-center pt-16 border-t border-slate-100 mt-10">
                 <PaginationUI
                     page={page}
-                    totalPages={data.pagination.totalPages}
+                    totalPages={data.pagination?.totalPages || 1}
                     onPageChange={setPage}
                 />
             </footer>

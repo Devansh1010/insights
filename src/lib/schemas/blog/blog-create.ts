@@ -1,19 +1,56 @@
 import { z } from "zod";
 
 export const createBlogSchema = z.object({
-    title: z.string().min(5, "Title must be at least 5 characters"),
+  title: z
+    .string()
+    .min(5, "Title must be at least 5 characters"),
 
-    content: z.object({}).passthrough().optional(),
+  hook: z
+    .string()
+    .min(10, "Hook must be at least 10 characters")
+    .max(120, "Hook must be under 120 characters")
+    .refine(
+      (val) =>
+        !val.toLowerCase().includes("this article") &&
+        !val.toLowerCase().includes("in this blog"),
+      {
+        message: "Hook should be engaging, avoid generic phrases",
+      }
+    )
+    .optional(),
 
-    isPublished: z.boolean().default(false),
+  insights: z
+    .array(
+      z
+        .string()
+        .min(10, "Insight too short")
+        .max(120, "Insight too long")
+        .refine((val) => val.trim().length > 0, {
+          message: "Insight cannot be empty",
+        })
+    )
+    .max(5, "Maximum 5 insights allowed")
+    .optional(),
 
-    seriesId: z.string().optional().or(z.literal("")),
 
-    coverImage: z.object({
-        url: z.string().url(),
-        name: z.string(),
-        id: z.string()
-    }).nullable().optional(),
+  level: z
+    .enum(["Beginner", "Intermediate", "Advanced"])
+    .default("Beginner"),
 
-    tags: z.array(z.string()).default([]),
+  content: z.object({}).passthrough().optional(),
+
+  isPublished: z.boolean().default(false),
+
+  seriesId: z.string().optional().or(z.literal("")),
+
+  coverImage: z
+    .object({
+      url: z.string().url(),
+      name: z.string(),
+      id: z.string(),
+    })
+    .nullable()
+    .optional(),
+
+  tags: z.array(z.string()).default([]),
 });

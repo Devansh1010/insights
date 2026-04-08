@@ -9,6 +9,7 @@ import { NextRequest } from "next/server";
 import Series from "@/models/series_models/series.model";
 // import { OutputBlockData } from "@editorjs/editorjs";
 import { JSONContent } from "@tiptap/react";
+// import { TiptapContent, TiptapNode } from "@/types/blog";
 
 
 const hasValidText = (nodes?: JSONContent[]): boolean => {
@@ -21,7 +22,7 @@ const hasValidText = (nodes?: JSONContent[]): boolean => {
     });
 };
 
-const validateContent = (content: JSONContent) => {
+const validateContent = (content: JSONContent): boolean => {
     if (!content?.content || content.content.length === 0) {
         return false;
     }
@@ -29,8 +30,37 @@ const validateContent = (content: JSONContent) => {
     return hasValidText(content.content);
 };
 
+// function extractTextFromTiptap(node: TiptapNode): string {
+//     // Text node
+//     if (node.type === "text") {
+//         return node.text ?? "";
+//     }
+
+//     // Recursive children
+//     if (node.content && Array.isArray(node.content)) {
+//         return node.content
+//             .map((child) => extractTextFromTiptap(child))
+//             .join(" ");
+//     }
+
+//     return "";
+// }
+
+// function calculateReadTime(content: TiptapContent): number {
+//     const fullText = content.content
+//         .map((node) => extractTextFromTiptap(node))
+//         .join(" ");
+
+//     const words = fullText.trim().split(/\s+/).filter(Boolean).length;
+
+//     const wordsPerMinute = 200;
+
+//     return Math.max(1, Math.ceil(words / wordsPerMinute));
+// }
+
 export async function POST(req: Request) {
     try {
+
         // ================= AUTH =================
         const auth = await VerifyUser();
 
@@ -45,13 +75,17 @@ export async function POST(req: Request) {
 
         // ================= BODY =================
         const body = await req.json();
+
         const {
             title,
             content,
             tags = [],
             isPublished,
             coverImage,
-            seriesId
+            seriesId,
+            hook,
+            insights,
+            level
         } = body;
 
         // ================= VALIDATION =================
@@ -90,7 +124,7 @@ export async function POST(req: Request) {
         }
 
         // ================= SLUG =================
-        const slug = `${generateSlug(title)}-${Date.now()}`;
+        const slug = generateSlug(title);
 
         // ================= EXCERPT =================
         const firstTextBlock = content.content?.find(
@@ -106,9 +140,12 @@ export async function POST(req: Request) {
 
         const excerpt = rawText.replace(/<[^>]*>/g, "").slice(0, 150);
 
+        // const readTime = calculateReadTime(content);
+
         // ================= CREATE BLOG =================
         const newBlog = await Blog.create({
             title: title.trim(),
+            hook: hook?.trim() || '',
             content,
             slug,
             excerpt,
@@ -116,7 +153,10 @@ export async function POST(req: Request) {
             username: user.username,
             tags: Array.isArray(tags) ? tags : [],
             coverImage: coverImage?.url || "",
+            level,
+            // readTime,
             isPublished,
+            insights,
             publishedAt: isPublished ? new Date() : undefined,
         });
 
@@ -193,7 +233,7 @@ export async function GET(req: NextRequest) {
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
-            .select('username title slug excerpt coverImage tags publishedAt')
+            .select('username title slug excerpt coverImage tags publishedAt hook insights level readTime views likes')
             .lean()
 
         const total = await Blog.countDocuments({ isPublished: true });

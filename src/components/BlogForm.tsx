@@ -1,3 +1,4 @@
+'use client'
 import { getUserSeries } from "@/services/series.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -17,6 +18,9 @@ import { EditorHeader } from "./features/blogs/components/write-blog/EditorHeade
 import { TagSelector } from "./features/blogs/components/write-blog/TagSelector";
 import { useEffect } from "react";
 import { Library } from "lucide-react";
+import { LevelSelector } from "./features/blogs/components/write-blog/LevelSelector";
+import { InsightsField } from "./features/blogs/components/write-blog/InsightsField";
+import { HookField } from "./features/blogs/components/write-blog/HookField";
 
 export default function BlogForm({ slug }: { slug?: string }) {
     const router = useRouter();
@@ -32,8 +36,11 @@ export default function BlogForm({ slug }: { slug?: string }) {
         mode: "onChange",
         defaultValues: {
             title: "",
+            hook: '',
             tags: [],
             content: {},
+            insights: [],
+            level: '',
             isPublished: false,
             seriesId: "",
             coverImage: '',
@@ -50,12 +57,12 @@ export default function BlogForm({ slug }: { slug?: string }) {
             toast.success("Blog published successfully!");
             router.push("/user/explore");
         },
-        
+
         onError: () => toast.error("Failed to create blog"),
     });
 
     const onSubmit = (formData: CreateBlogVariables) => {
-        console.log(formData)
+       
         mutation.mutate({
             ...formData,
             isPublished: true,
@@ -109,6 +116,18 @@ export default function BlogForm({ slug }: { slug?: string }) {
                     {/* 3. The Writing Canvas */}
                     <div className="space-y-10">
                         <TitleField />
+                        <div className="space-y-6 max-w-3xl">
+
+                            {/* HOOK */}
+                            <HookField />
+
+                            {/* INSIGHTS */}
+                            <InsightsField />
+
+                            {/* LEVEL */}
+                            <LevelSelector />
+
+                        </div>
                         <EditorField />
                     </div>
                 </main>

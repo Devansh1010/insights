@@ -1,91 +1,151 @@
 import { AspectRatio } from '@/components/ui/aspect-ratio'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Blog } from '@/hooks/blogs/useBlogsFilter'
-import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
+
+import { useState } from 'react'
+import { Clock, Eye, ArrowRight, Layers } from "lucide-react";
+
 
 const BlogRest = ({ rest }: { rest: Blog[] }) => {
-    const FALLBACK = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop';
+  const FALLBACK = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop';
 
-    return (
-        <div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {rest?.map((post: Blog) => (
-                    <Link
-                        key={post._id}
-                        href={`/user/explore/${post.slug}`}
-                        className="group block"
-                    >
-                        <div className="overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-all duration-500">
+  const formatDate = (date?: Date) => {
+    if (!date || !new Date(date)) return "Recently";
 
-                            <AspectRatio ratio={16 / 9} className="relative">
+    return new Date(date).toLocaleDateString("en-US", {
+      month: "long",
+      year: "numeric",
+    })
+  };
 
-                                {/* BACKGROUND IMAGE */}
-                                <Image
-                                    src={post.coverImage || FALLBACK}
-                                    alt={post.title}
-                                    fill
-                                    priority
-                                    className="object-cover group-hover:scale-105 transition-transform duration-700"
-                                />
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  return (
 
-                                {/* DARK OVERLAY */}
-                                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition" />
 
-                                {/* CONTENT */}
-                                <div className="absolute bottom-0 w-full p-5 text-white z-10">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      {rest?.map((post: Blog) => {
+        const isExpanded = expandedId === post._id;
 
-                                    {/* META */}
-                                    <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold mb-2">
-                                        <span className="text-primary">
-                                            {post.tags?.slice(0, 2).join(" • ") || "General"}
-                                        </span>
+        return (
+          <Card
+            key={post._id}
+            className="group flex flex-col h-full border-border/60 bg-background hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+          >
+            {/* HEADER */}
+            <CardHeader className="flex flex-row items-start justify-between pb-3">
 
-                                        <span className="w-1 h-1 rounded-full bg-white/40" />
+              {/* USER */}
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center text-sm font-medium">
+                  {post?.username?.[0]?.toUpperCase() || "U"}
+                </div>
 
-                                        <span className="italic normal-case tracking-normal text-white/70">
-                                            {new Date(post.createdAt).toLocaleDateString("en-US", {
-                                                month: "short",
-                                                year: "numeric",
-                                            })}
-                                        </span>
-                                    </div>
+                <div className="text-sm leading-tight">
+                  <p className="font-medium">@{post?.username || "unknown"}</p>
+                </div>
+              </div>
 
-                                    {/* TITLE */}
-                                    <h3 className="text-lg md:text-xl font-serif font-bold leading-snug line-clamp-2">
-                                        {post.title}
-                                    </h3>
+              {/* DATE */}
+              <span className="text-xs text-muted-foreground">
+                {formatDate(post?.publishedAt)}
+              </span>
+            </CardHeader>
 
-                                    {/* EXCERPT */}
-                                    <p className="text-sm opacity-80 line-clamp-2 mt-1">
-                                        {post.excerpt || "No excerpt available."}
-                                    </p>
+            {/* CONTENT */}
+            <CardContent className="flex flex-col flex-1 space-y-4">
 
-                                    {/* FOOTER */}
-                                    <div className="flex items-center justify-between mt-3">
+              {/* 🔥 HOOK */}
+              <h2 className="text-base font-semibold leading-snug text-primary line-clamp-2">
+                {post?.hook || "No hook available"}
+              </h2>
 
-                                        <span className="text-xs opacity-70">
-                                            @{post.username || "unknown"}
-                                        </span>
+              {/* TITLE */}
+              <h3 className="text-lg font-serif font-semibold leading-snug text-foreground group-hover:underline underline-offset-4 line-clamp-2">
+                {post?.title || "Untitled"}
+              </h3>
 
-                                        <div className="flex items-center gap-1 text-sm opacity-0 group-hover:opacity-100 transition">
-                                            <span>Read</span>
-                                            <ArrowRight className="w-4 h-4 -translate-x-1 group-hover:translate-x-0 transition-all" />
-                                        </div>
+              {/* INSIGHTS */}
+              <div className="text-sm text-muted-foreground space-y-1">
+                {post?.insights
+                  ?.slice(0, isExpanded ? 5 : 2)
+                  .map((item: string, i: number) => (
+                    <p key={i} className="flex gap-2">
+                      <span className="text-primary">•</span>
+                      <span>{item}</span>
+                    </p>
+                  ))}
+              </div>
 
-                                    </div>
+              {/* EXPAND */}
+              {Array.isArray(post?.insights) && post.insights.length > 2 && (
+                <Button
+                  onClick={() =>
+                    setExpandedId(isExpanded ? null : post._id)
+                  }
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs px-0 w-fit"
+                >
+                  {isExpanded ? "Show less ↑" : "Show more ↓"}
+                </Button>
+              )}
 
-                                </div>
+              {/* IMAGE */}
+              {post?.coverImage && (
+                <div className="mt-2 overflow-hidden rounded-xl">
+                  <Image
+                    src={post.coverImage}
+                    alt="cover"
+                    width={600}
+                    height={300}
+                    className="object-cover w-full h-auto transition-transform duration-700 group-hover:scale-[1.03]"
+                  />
+                </div>
+              )}
 
-                            </AspectRatio>
+              {/* FOOTER */}
+              <div className="flex items-center justify-between pt-3 mt-auto border-t border-border/50">
 
-                        </div>
-                    </Link>
-                ))}
-            </div>
-        </div>
-    )
+                {/* META */}
+                <div className="flex items-center gap-3 text-xs text-muted-foreground">
+
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5" />
+                    {post?.readTime ? `${post.readTime} min` : "—"}
+                  </span>
+
+                  <span className="flex items-center gap-1">
+                    <Eye className="w-3.5 h-3.5" />
+                    {post?.views || 0}
+                  </span>
+
+                  {/* LEVEL */}
+                  <span className="flex items-center gap-1">
+                    <Layers className="w-3.5 h-3.5" />
+                    {post.level}
+                  </span>
+
+                </div>
+
+                {/* CTA */}
+                <Link
+                  href={`/user/explore/${post.slug}`}
+                  className="flex items-center gap-1 text-sm font-medium text-primary group/link"
+                >
+                  Read
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover/link:translate-x-1" />
+                </Link>
+
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
+    </div>
+  )
 }
 
 export default BlogRest

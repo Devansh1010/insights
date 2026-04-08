@@ -7,10 +7,18 @@ export interface Blog {
     tags?: string[];
     coverImage: string;
     title: string;
+    hook: string;
     desc: string;
     excerpt?: string;
+    insights?: string[];
     username: string
-    createdAt: string
+    views: number
+    likes: number
+    readTime: number
+    level: "Beginner" | "Intermediate" | "Advanced"
+    publishedAt: Date
+    isPublished: boolean
+    createdAt: Date
 }
 
 export const useBlogsFilters = (blogs: Blog[]) => {

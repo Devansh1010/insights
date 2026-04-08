@@ -4,7 +4,10 @@ import { JSONContent } from "@tiptap/react";
 
 export interface CreateBlogVariables {
     title: string;
+    hook: string
     content: JSONContent;
+    level: string,
+    insights: string[],
     isPublished: boolean;
     seriesId: string;
     coverImage: string;
@@ -19,6 +22,7 @@ export const createBlog = async (data: CreateBlogVariables) => {
         if (res.data.success) {
             return res.data;
         }
+        console.log(res.data)
     } catch (error) {
         console.error("Failed to create blog", error);
         throw new Error("Failed to create blog");
@@ -32,8 +36,8 @@ export const deleteBlog = async (blogId: string) => {
         if (res.data.success) {
             return res.data
         }
+
     } catch (error) {
-        console.error("Failed to create blog", error)
         throw new Error("Failed to create blog")
     }
 }

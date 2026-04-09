@@ -5,13 +5,54 @@ import { VerifyUser } from "@/lib/verifyUser/userVerification";
 import Blog from "@/models/blog_modles/blog.model";
 import { NextRequest } from "next/server";
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: { blogId: string } }) {
+    try {
+        const { blogId } = await params
 
+        const auth = await VerifyUser()
+
+        if (!auth.success) {
+            return createResponse(
+                { success: false, message: "Unauthorized" },
+                StatusCode.UNAUTHORIZED
+            )
+        }
+
+        await dbConnect()
+
+        const blog = await Blog.findById(blogId)
+
+        if (!blog) {
+            return createResponse(
+                { success: false, message: "Blog not found" },
+                StatusCode.NOT_FOUND
+            )
+        }
+
+        return createResponse(
+            {
+                success: true,
+                message: "Blog found",
+                data: blog
+            },
+            StatusCode.OK
+        )
+    } catch (error: unknown) {
+        console.error("Error updating blog:", error)
+
+        return createResponse(
+            {
+                success: false,
+                message: "Internal Server Error",
+            },
+            StatusCode.INTERNAL_ERROR
+        )
+    }
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: { blogId: string } }) {
     try {
-        const { id } = await params
+        const { blogId } = await params
 
         const { title, content, tags, isPublished, coverImage } =
             await req.json()
@@ -30,7 +71,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
         await dbConnect()
 
-        const blog = await Blog.findById(id)
+        const blog = await Blog.findById(blogId)
 
         if (!blog) {
             return createResponse(
@@ -110,7 +151,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: { blogId: string } }) {
     try {
         //Add verify  User
         const auth = await VerifyUser();
@@ -125,9 +166,9 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
 
         await dbConnect()
 
-        const { id } = await params
+        const { blogId } = await params
 
-        const deletedBlog = await Blog.findOneAndDelete({ _id: id, author: userId })
+        const deletedBlog = await Blog.findOneAndDelete({ _id: blogId, author: userId })
 
 
         if (!deletedBlog) {

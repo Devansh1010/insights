@@ -1,11 +1,13 @@
 
 import { useState, useMemo } from "react";
+import { JSONContent } from "@tiptap/react";
 
 export interface Blog {
     _id: string;
     slug: string;
     tags?: string[];
     coverImage: string;
+    content: JSONContent;
     title: string;
     hook: string;
     desc: string;

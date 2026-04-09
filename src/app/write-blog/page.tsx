@@ -1,6 +1,6 @@
 // page.tsx
 "use client"
-import BlogForm from "@/components/BlogForm"
+import BlogForm from "@/components/features/blogs/components/BlogForm"
 
 const Page = () => {
 

@@ -109,7 +109,7 @@ const BlogFeatured = ({ featured }: { featured: Blog }) => {
 
                         {/* IMAGE SIDE */}
                         <div className="lg:col-span-7 order-1 lg:order-2">
-                            <div className="relative w-full overflow-hidden rounded-[2.5rem] shadow-2xl transition-all duration-700 group-hover:shadow-primary/5">
+                            <div className="relative w-full overflow-hidden rounded-[1rem] shadow-2xl transition-all duration-700 group-hover:shadow-primary/5">
 
                                 <AspectRatio ratio={16 / 9} className="bg-slate-100">
                                     <Image

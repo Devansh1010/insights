@@ -18,7 +18,7 @@ const BlogFeatured = ({ featured }: { featured: Blog }) => {
     return (
         <div>
             <section className="group mb-24 px-4 lg:px-0">
-                <Link href={`/blogs/${featured?.slug}`}>
+                <Link href={`user/explore/${featured?._id}`}>
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-20 items-center">
 
                         {/* TEXT SIDE */}

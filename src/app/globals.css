@@ -132,3 +132,34 @@
     @apply font-sans;
   }
 }
+
+/* Tiptap */
+/* Add this to your global CSS or a styled component */
+.prose .dynamic-content-wrapper {
+    /* Fix for TextAlign: TipTap adds inline styles or classes */
+    & [style*="text-align: center"] {
+        text-align: center;
+    }
+    & [style*="text-align: right"] {
+        text-align: right;
+    }
+    & [style*="text-align: justify"] {
+        text-align: justify;
+    }
+
+    /* Fix for Blockquotes: Give them a high-end editorial look */
+    & blockquote {
+        @apply border-l-4 border-primary pl-6 italic text-foreground/70 my-8;
+        font-family: serif;
+    }
+
+    /* Fix for Lists: Ensure spacing is consistent */
+    & ul, & ol {
+        @apply my-6 space-y-2;
+    }
+
+    /* Fix for Code: Clean inline styling */
+    & code:not(pre code) {
+        @apply bg-muted px-1.5 py-0.5 rounded-md text-sm font-mono text-primary;
+    }
+}

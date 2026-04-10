@@ -10,12 +10,23 @@ import { useMemo } from 'react'
 
 import { generateHTML } from '@tiptap/html'
 import StarterKit from '@tiptap/starter-kit'
+import { TextStyle } from '@tiptap/extension-text-style'
+import Color from '@tiptap/extension-color'
+import Typography from '@tiptap/extension-typography'
+import Heading from '@tiptap/extension-heading'
+// import Placeholder from '@tiptap/extension-placeholder'
 
 const Article = ({ blog }: { blog: Blog }) => {
 
     const htmlContent = useMemo(() => {
         return generateHTML(blog?.content, [
             StarterKit,
+            Heading.configure({
+                levels: [1, 2, 3, 4, 5, 6],
+            }),
+            TextStyle,
+            Color,
+            Typography,
             // Add any other extensions you used in the editor here (e.g., Image, CodeBlock)
         ])
     }, [blog.content])

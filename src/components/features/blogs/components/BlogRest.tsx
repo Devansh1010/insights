@@ -24,123 +24,98 @@ const BlogRest = ({ rest }: { rest: Blog[] }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   return (
 
-
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
       {rest?.map((post: Blog) => {
         const isExpanded = expandedId === post._id;
 
         return (
-          <Link
-            href={`/user/explore/${post._id}`}
-            key={post._id}
-          >
-            <Card
-              className="group flex flex-col h-full border-border/60 bg-background hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
-            >
-              {/* HEADER */}
-              <CardHeader className="flex flex-row items-start justify-between pb-3">
+          <Link href={`/user/explore/${post._id}`} key={post._id} className="group block">
+            <article className="flex flex-col h-full space-y-5 transition-all duration-500">
 
-                {/* USER */}
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center text-sm font-medium">
-                    {post?.username?.[0]?.toUpperCase() || "U"}
+              {/* IMAGE CONTAINER - Sophisticated Shadow & Scale */}
+              {post?.coverImage && (
+                <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-muted border border-border/40 shadow-sm group-hover:shadow-2xl group-hover:shadow-primary/5 transition-all duration-500">
+                  <Image
+                    src={post.coverImage}
+                    alt={post.title}
+                    fill
+                    className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
+                  />
+                  {/* Floating Level Badge */}
+                  <div className="absolute top-4 left-4">
+                    <span className="bg-background/80 backdrop-blur-md text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-border/50">
+                      {post.level}
+                    </span>
                   </div>
+                </div>
+              )}
 
-                  <div className="text-sm leading-tight">
-                    <p className="font-medium">@{post?.username || "unknown"}</p>
+              <div className="flex flex-col flex-1 space-y-4 px-1">
+                {/* META TOP */}
+                <div className="flex items-center justify-between text-[11px] font-medium uppercase tracking-[0.15em] text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <span className="text-primary font-bold">@{post?.username || "unknown"}</span>
+                    <span className="w-1 h-1 rounded-full bg-border" />
+                    <span>{formatDate(post?.publishedAt)}</span>
                   </div>
                 </div>
 
-                {/* DATE */}
-                <span className="text-xs text-muted-foreground">
-                  {formatDate(post?.publishedAt)}
-                </span>
-              </CardHeader>
+                {/* CONTENT */}
+                <div className="space-y-3">
+                  <h2 className="text-sm font-bold text-primary/80 uppercase tracking-wide line-clamp-1">
+                    {post?.hook || "Insight"}
+                  </h2>
+                  <h3 className="text-2xl font-serif font-bold leading-tight text-foreground group-hover:text-primary transition-colors duration-300 line-clamp-2">
+                    {post?.title || "Untitled"}
+                  </h3>
+                </div>
 
-              {/* CONTENT */}
-              <CardContent className="flex flex-col flex-1 space-y-4">
-
-                {/* 🔥 HOOK */}
-                <h2 className="text-base font-semibold leading-snug text-primary line-clamp-2">
-                  {post?.hook || "No hook available"}
-                </h2>
-
-                {/* TITLE */}
-                <h3 className="text-lg font-serif font-semibold leading-snug text-foreground group-hover:underline underline-offset-4 line-clamp-2">
-                  {post?.title || "Untitled"}
-                </h3>
-
-                {/* INSIGHTS */}
-                <div className="text-sm text-muted-foreground space-y-1">
+                {/* INSIGHTS - Refined List style */}
+                <div className="space-y-2 text-muted-foreground/90 text-sm leading-relaxed font-serif italic border-l-2 border-primary/10 pl-4 py-1">
                   {post?.insights
                     ?.slice(0, isExpanded ? 5 : 2)
                     .map((item: string, i: number) => (
-                      <p key={i} className="flex gap-2">
-                        <span className="text-primary">•</span>
-                        <span>{item}</span>
+                      <p key={i} className="line-clamp-2">
+                        {item}
                       </p>
                     ))}
                 </div>
 
-                {/* EXPAND */}
+                {/* EXPAND BUTTON - Pure Minimalist */}
                 {Array.isArray(post?.insights) && post.insights.length > 2 && (
                   <Button
-                    onClick={() =>
-                      setExpandedId(isExpanded ? null : post._id)
-                    }
+                    onClick={(e) => {
+                      e.preventDefault(); // Prevent Link navigation when clicking button
+                      setExpandedId(isExpanded ? null : post._id);
+                    }}
                     variant="ghost"
                     size="sm"
-                    className="text-xs px-0 w-fit"
+                    className="text-[10px] uppercase tracking-widest font-bold h-auto p-0 hover:bg-transparent hover:text-primary transition-colors"
                   >
-                    {isExpanded ? "Show less ↑" : "Show more ↓"}
+                    {isExpanded ? "Less —" : "More +"}
                   </Button>
                 )}
 
-                {/* IMAGE */}
-                {post?.coverImage && (
-                  <div className="mt-2 overflow-hidden rounded-xl">
-                    <Image
-                      src={post.coverImage}
-                      alt="cover"
-                      width={600}
-                      height={300}
-                      className="object-cover w-full h-auto transition-transform duration-700 group-hover:scale-[1.03]"
-                    />
-                  </div>
-                )}
-
-                {/* FOOTER */}
-                <div className="flex items-center justify-between pt-3 mt-auto border-t border-border/50">
-
-                  {/* META */}
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
-
-                    <span className="flex items-center gap-1">
+                {/* FOOTER - Spaced and light */}
+                <div className="flex items-center justify-between pt-6 mt-auto">
+                  <div className="flex items-center gap-4 text-[11px] font-bold text-muted-foreground/60">
+                    <span className="flex items-center gap-1.5">
                       <Clock className="w-3.5 h-3.5" />
-                      {post?.readTime ? `${post.readTime} min` : "—"}
+                      {post?.readTime ? `${post.readTime}m` : "—"}
                     </span>
-
-                    <span className="flex items-center gap-1">
+                    <span className="flex items-center gap-1.5">
                       <Eye className="w-3.5 h-3.5" />
                       {post?.views || 0}
                     </span>
-
-                    {/* LEVEL */}
-                    <span className="flex items-center gap-1">
-                      <Layers className="w-3.5 h-3.5" />
-                      {post.level}
-                    </span>
-
                   </div>
 
-                  {/* CTA */}
-
-                  Read
-                  <ArrowRight className="w-4 h-4 transition-transform group-hover/link:translate-x-1" />
-
+                  <div className="flex items-center gap-1 text-xs font-bold uppercase tracking-widest group-hover:text-primary transition-colors">
+                    Read Article
+                    <ArrowRight className="w-4 h-4 -translate-x-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </article>
           </Link>
         );
       })}

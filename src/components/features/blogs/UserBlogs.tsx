@@ -22,7 +22,7 @@ import { UserBlogsError } from "./error/UserBlogsError"
 import ListBlog from "./components/user-blogs/ListBlog"
 
 const UserBlogs = () => {
-    const router = useRouter();
+    // const router = useRouter();
     const queryClient = useQueryClient();
 
 
@@ -38,7 +38,7 @@ const UserBlogs = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["user-blogs"] });
             toast.success("Blog published successfully!");
-            router.push("/user/explore");
+            // router.push("/user/explore");
         },
 
         onError: () => toast.error("Failed to create blog"),

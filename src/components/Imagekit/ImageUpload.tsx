@@ -12,6 +12,7 @@ import { useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
 import { Input } from "../ui/input";
+import { Upload } from "lucide-react";
 
 
 export type ImageKitData = {
@@ -140,50 +141,66 @@ export const UploadImage = ({ onUploadSuccess }: { onUploadSuccess: (data: Image
 
     return (
         <>
-            <div className="w-full h-full pt-2 pb-6 pr-2 pl-2">
-
-                {/* Hidden Input */}
+            {/* The outer div now uses inset-0 if you want it to perfectly overlap, 
+    or simply w-full h-full to fill the parent's circle/box.
+  */}
+            <div className="w-full h-full flex items-center justify-center">
+                {/* Hidden Input remains the same */}
                 <Input
                     type="file"
                     ref={fileInputRef}
                     className="hidden"
                     onChange={handleUpload}
+                    accept="image/*"
                 />
 
-                {/* Upload Box */}
+                {/* Upload Trigger Area */}
                 <div
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-full h-full flex flex-col items-center justify-center 
-                 border-2 border-dashed rounded-3xl 
-                 text-muted-foreground 
-                 hover:border-primary hover:bg-muted/40 
-                 transition-all duration-300 cursor-pointer group"
+                    className="group relative flex flex-col items-center justify-center w-full h-full 
+                 rounded-full transition-all duration-300 cursor-pointer 
+                 hover:bg-primary/10"
                 >
-                    <div className="flex flex-col items-center gap-2">
-                        <p className="text-sm font-medium group-hover:text-primary transition">
-                            Click to upload image
-                        </p>
-                        <span className="text-xs opacity-60">
-                            PNG, JPG up to 5MB
-                        </span>
+                    {/* Icon/Text Container */}
+                    <div className="flex flex-col items-center justify-center text-center p-2">
+                        {progress > 0 && progress < 100 ? (
+                            // Circular Progress View
+                            <div className="relative flex items-center justify-center">
+                                <svg className="w-10 h-10 transform -rotate-90">
+                                    <circle
+                                        cx="20"
+                                        cy="20"
+                                        r="18"
+                                        stroke="currentColor"
+                                        strokeWidth="3"
+                                        fill="transparent"
+                                        className="text-muted"
+                                    />
+                                    <circle
+                                        cx="20"
+                                        cy="20"
+                                        r="18"
+                                        stroke="currentColor"
+                                        strokeWidth="3"
+                                        fill="transparent"
+                                        strokeDasharray={113}
+                                        strokeDashoffset={113 - (113 * progress) / 100}
+                                        className="text-primary transition-all duration-300"
+                                    />
+                                </svg>
+                                <span className="absolute text-[10px] font-bold">{progress}%</span>
+                            </div>
+                        ) : (
+                            // Default Upload State
+                            <>
+                                <Upload className="w-5 h-5 mb-1 text-muted-foreground group-hover:text-primary transition-colors" />
+                                <span className="text-[10px] font-bold leading-tight opacity-0 group-hover:opacity-100 transition-opacity">
+                                    Upload
+                                </span>
+                            </>
+                        )}
                     </div>
                 </div>
-
-                {/* Progress */}
-                {progress > 0 && (
-                    <div className="mt-4 space-y-2">
-                        <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                            <div
-                                className="h-full bg-primary transition-all duration-300"
-                                style={{ width: `${progress}%` }}
-                            />
-                        </div>
-                        <p className="text-xs text-muted-foreground text-right">
-                            {progress}%
-                        </p>
-                    </div>
-                )}
-
             </div>
         </>
     );

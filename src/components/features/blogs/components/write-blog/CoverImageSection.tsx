@@ -4,7 +4,7 @@ import { AlertCircle } from "lucide-react";
 import Image from "next/image";
 import { useController, useFormContext } from "react-hook-form";
 
-export function CoverImageSection() {
+export function CoverImageSection({ url }: { url: string }) {
     const { control } = useFormContext();
 
     const { field, fieldState } = useController({
@@ -15,10 +15,10 @@ export function CoverImageSection() {
     return (
         <section className="relative group">
             <div className="relative aspect-21/9 w-full rounded-[2rem] overflow-hidden bg-muted transition-all duration-500 ring-1 ring-border shadow-2xl">
-                {!field.value ? (
+                {!field.value && !url ? (
                     <div className="h-full w-full">
                         <UploadImage onUploadSuccess={(data: ImageKitData) => field.onChange({ ...data })} />
-                            
+
                         {fieldState.error && (
                             <div className="flex items-center gap-2 mt-2 text-destructive animate-in fade-in slide-in-from-top-1 duration-300">
                                 <AlertCircle className="w-4 h-4" />
@@ -31,7 +31,7 @@ export function CoverImageSection() {
                 ) : (
                     <>
                         <Image
-                            src={field.value?.url || "/placeholder-aspect.png"}
+                            src={url || field.value?.url}
                             alt="cover"
                             fill
                             sizes="(max-width: 1200px) 100vw, 1200px"

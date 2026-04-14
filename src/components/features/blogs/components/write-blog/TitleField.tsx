@@ -2,7 +2,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useRef } from "react";
 import { useFormContext } from "react-hook-form";
 
-export function TitleField() {
+export function TitleField({articleTitle}: { articleTitle?: string }) {
     const { register, watch } = useFormContext();
     const titleRef = useRef<HTMLTextAreaElement | null>(null);
     const titleValue = watch("title");

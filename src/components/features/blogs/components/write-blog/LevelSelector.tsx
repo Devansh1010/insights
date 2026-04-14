@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 
 const LEVELS = ["Beginner", "Intermediate", "Advanced"] as const;
 
-export function LevelSelector() {
+export function LevelSelector({articleLevel}: { articleLevel?: string }) {
     const { control } = useFormContext();
 
     const {

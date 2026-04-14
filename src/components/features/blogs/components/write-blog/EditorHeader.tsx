@@ -13,7 +13,7 @@ export function EditorHeader({ isPending }: { isPending: boolean }) {
 
                 {/* Left Section: Navigation & Status */}
                 <div className="flex items-center gap-4">
-                    <Link href="/user/dashboard">
+                    <Link href="/user/my-blogs" className="flex items-center gap-2">
                         <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full hover:bg-muted/80 transition-colors">
                             <ArrowLeft className="w-4 h-4 text-muted-foreground" />
                         </Button>

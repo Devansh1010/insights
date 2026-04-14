@@ -11,7 +11,7 @@ const Page = ({ params }: PageProps) => {
 
     const { blogId } = use(params)
 
-    return <BlogForm slug={blogId} />
+    return <BlogForm blogId={blogId} />
 }
 
 export default Page

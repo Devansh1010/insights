@@ -19,12 +19,12 @@ import { TitleField } from "@/components/features/blogs/components/write-blog/Ti
 import { WriteBlogError } from "@/components/features/blogs/error/WriteBlogError";
 import { WriteBlogLoader } from "@/components/features/blogs/loader/WriteBlogLoader";
 import { createBlogSchema } from "@/lib/schemas/blog/blog-create";
-import { createBlog, CreateBlogVariables } from "@/services/blog.service";
+import { createBlog, CreateBlogVariables, getBlog } from "@/services/blog.service";
 import { getUserSeries } from "@/services/series.service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
-export default function BlogForm({ slug }: { slug?: string }) {
+export default function BlogForm({ blogId }: { blogId?: string }) {
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -32,6 +32,12 @@ export default function BlogForm({ slug }: { slug?: string }) {
     queryKey: ['user-series'],
     queryFn: getUserSeries,
   })
+
+  const { data: existingBlog, isPending: isBlogLoading } = useQuery({
+    queryKey: ['blog', blogId],
+    queryFn: () => getBlog(blogId!),
+    enabled: !!blogId, // Only run this query if slug is truthy
+  });
 
   const methods = useForm<CreateBlogVariables>({
     resolver: zodResolver(createBlogSchema),
@@ -85,8 +91,10 @@ export default function BlogForm({ slug }: { slug?: string }) {
 
   const categories = ['All Series', 'Architecture', 'Frontend', 'Backend', 'System Design', 'Soft Skills']
 
-  if (isPending) return <WriteBlogLoader />
+  if (isPending || isBlogLoading) return <WriteBlogLoader />
   if (isError) return <WriteBlogError />
+
+  console.log(existingBlog)
 
   return (
     <FormProvider {...methods}>
@@ -96,16 +104,16 @@ export default function BlogForm({ slug }: { slug?: string }) {
         <main className="max-w-4xl mx-auto px-6 pt-6 pb-32">
           {/* 1. Cover Image - Reduced margin to pull content up */}
           <section className="mb-6">
-            <CoverImageSection />
+            <CoverImageSection url={existingBlog?.coverImage || ''} />
           </section>
 
           {/* 2. Unified Meta & Configuration Row */}
           <div className="space-y-4 mb-8">
             {/* Core Metadata: Series & Tags */}
             <div className="flex items-center gap-3 pb-4 border-b border-border/40">
-              <SeriesSelector availableSeries={data} />
+              <SeriesSelector availableSeries={data}  />
               <div className="h-4 w-px bg-border/60" />
-              <TagSelector availableTags={categories} />
+              <TagSelector availableTags={categories} articleTags={existingBlog?.tags || []} />
             </div>
 
             {/* Technical Configuration: Using shadcn Accordion */}
@@ -124,11 +132,11 @@ export default function BlogForm({ slug }: { slug?: string }) {
                   {/* Using a grid to save even more vertical space */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-muted/20 p-6 rounded-2xl border border-muted/50">
                     <div className="space-y-6">
-                      <HookField />
-                      <LevelSelector />
+                      <HookField articleHook={existingBlog?.hook || ''} />
+                      <LevelSelector articleLevel={existingBlog?.level || ''} />
                     </div>
                     <div>
-                      <InsightsField />
+                      <InsightsField articleInsights={existingBlog?.insights || ['']} />
                     </div>
                   </div>
                 </AccordionContent>
@@ -139,10 +147,10 @@ export default function BlogForm({ slug }: { slug?: string }) {
           {/* 3. The Main Writing Canvas */}
           <article className="space-y-4">
             {/* The user is now only ~250px from the top when they start writing */}
-            <TitleField />
+            <TitleField articleTitle={existingBlog?.title || ''} />
 
             <div className="relative">
-              <EditorField />
+              <EditorField articleContent={existingBlog?.content} />
             </div>
           </article>
         </main>

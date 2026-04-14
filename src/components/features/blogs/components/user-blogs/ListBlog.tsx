@@ -28,8 +28,6 @@ import { Button } from "@/components/ui/button"
 const ListBlog = ({ filteredBlogs, deleteBlog }: { filteredBlogs: Blog[], deleteBlog: (id: string) => void }) => {
     const FALLBACK = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop';
 
-    console.log(filteredBlogs)
-
     return (
         <div className="space-y-10">
             {/* HEADER SECTION */}
@@ -79,7 +77,7 @@ const ListBlog = ({ filteredBlogs, deleteBlog }: { filteredBlogs: Blog[], delete
 
                                 {/* FLOATING ACTIONS - Better UX for grid layouts */}
                                 <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
-                                    <Link href={`/write-blog/${blog.slug}`}>
+                                    <Link href={`/write-blog/${blog._id}`}>
                                         <Button variant="secondary" size="icon" className="h-8 w-8 rounded-full bg-white/90 backdrop-blur shadow-sm hover:bg-primary hover:text-white">
                                             <Pencil className="w-4 h-4" />
                                         </Button>

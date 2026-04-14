@@ -18,7 +18,7 @@ type Series = {
     title: string;
 };
 
-export function SeriesSelector({ availableSeries }: { availableSeries: Series[] }) {
+export function SeriesSelector({ availableSeries, articleSeries }: { availableSeries: Series[], articleSeries?: Series[] }) {
     const { control } = useFormContext();
 
     const {

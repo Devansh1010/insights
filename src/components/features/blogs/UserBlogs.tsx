@@ -25,8 +25,6 @@ const UserBlogs = () => {
     // const router = useRouter();
     const queryClient = useQueryClient();
 
-
-
     const { data, isPending, isError, refetch } = useQuery({
         queryKey: ['user-blogs'],
         queryFn: () => getUserBlogs(),
@@ -50,8 +48,6 @@ const UserBlogs = () => {
 
     if (isPending) return <UserBlogsLoader />
     if (isError) return <UserBlogsError onRetry={refetch} />
-
-    console.log(data)
 
     return (
         <div className="min-h-screen bg-background/50 pt-24 pb-20">

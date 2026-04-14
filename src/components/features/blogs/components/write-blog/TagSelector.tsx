@@ -3,15 +3,23 @@ import { Badge } from "@/components/ui/badge";
 import { X, Plus, Hash } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
 
 
-export function TagSelector({ availableTags }: { availableTags: string[] }) {
-    const { control } = useFormContext();
+export function TagSelector({ availableTags, articleTags }: { availableTags: string[]; articleTags?: string[] }) {
+    const { control, setValue } = useFormContext();
     const { field: { value: selectedTags, onChange } } = useController({
         name: "tags",
         control,
         defaultValue: []
     });
+
+    useEffect(() => {
+        if (articleTags && articleTags.length > 0) {
+            // We use setValue to update the form state which useController observes
+            setValue("tags", articleTags);
+        }
+    }, [articleTags, setValue]);
 
     const addTag = (tag: string) => {
         if (!selectedTags.includes(tag)) {
@@ -54,9 +62,9 @@ export function TagSelector({ availableTags }: { availableTags: string[] }) {
                                     <Button
                                         type="button"
                                         onClick={() => removeTag(tag)}
-                                        className="ml-1 p-0.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-sm transition-all"
+                                        className="ml-1 p-0.5 text-muted-foreground hover:text-destructive hover:bg-transparent rounded-sm transition-all bg-transparent"
                                     >
-                                        <X className="w-3 h-3" />
+                                        <X size={12} />
                                     </Button>
                                 </Badge>
                             ))}
@@ -71,7 +79,7 @@ export function TagSelector({ availableTags }: { availableTags: string[] }) {
                     <Select onValueChange={addTag}>
                         <SelectTrigger className="h-7 w-auto border-none bg-primary/5 hover:bg-primary/10 px-2 rounded-md transition-all text-primary font-bold text-[11px] gap-1.5 focus:ring-0">
                             <SelectValue>
-                                
+
                             </SelectValue>
                         </SelectTrigger>
 

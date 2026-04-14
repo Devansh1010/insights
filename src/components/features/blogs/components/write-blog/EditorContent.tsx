@@ -1,9 +1,10 @@
 // import Editor from "@/components/editor";
 import TipTapEditor from "@/components/editor/tiptap-editor";
+import { TiptapContent } from "@/types/blog";
 import { useController, useFormContext } from "react-hook-form";
 
 
-export function EditorField() {
+export function EditorField({articleContent}: { articleContent?: TiptapContent }) {
   const { control } = useFormContext();
 
   const {

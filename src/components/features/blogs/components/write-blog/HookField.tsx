@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { AlertCircle, Sparkles } from "lucide-react";
 
-export function HookField() {
+export function HookField({articleHook}: { articleHook?: string }) {
     const { control } = useFormContext();
 
     const {

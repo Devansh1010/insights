@@ -20,7 +20,7 @@ export async function GET(req: NextRequest, { params }: { params: { blogId: stri
 
         await dbConnect()
 
-        const blog = await Blog.findById(blogId)
+        const blog = await Blog.findById(blogId).lean()
 
         if (!blog) {
             return createResponse(
@@ -28,6 +28,12 @@ export async function GET(req: NextRequest, { params }: { params: { blogId: stri
                 StatusCode.NOT_FOUND
             )
         }
+
+        const views = blog.views
+
+        await Blog.findByIdAndUpdate(blogId, {
+            views: (views + 1)
+        })
 
         return createResponse(
             {
@@ -38,7 +44,7 @@ export async function GET(req: NextRequest, { params }: { params: { blogId: stri
             StatusCode.OK
         )
     } catch (error: unknown) {
-        console.error("Error updating blog:", error)
+        console.error("Error getting blog:", error)
 
         return createResponse(
             {
@@ -168,7 +174,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { blogId: s
 
         const { blogId } = await params
 
-        const deletedBlog = await Blog.findOneAndDelete({ _id: blogId, author: userId })
+        const deletedBlog = await Blog.findOneAndDelete({ _id: blogId, author: userId }).lean()
 
 
         if (!deletedBlog) {

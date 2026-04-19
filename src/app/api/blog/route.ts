@@ -9,6 +9,7 @@ import { NextRequest } from "next/server";
 import Series from "@/models/series_models/series.model";
 // import { OutputBlockData } from "@editorjs/editorjs";
 import { JSONContent } from "@tiptap/react";
+import { TiptapContent, TiptapNode } from "@/types/blog";
 // import { TiptapContent, TiptapNode } from "@/types/blog";
 
 
@@ -30,33 +31,33 @@ const validateContent = (content: JSONContent): boolean => {
     return hasValidText(content.content);
 };
 
-// function extractTextFromTiptap(node: TiptapNode): string {
-//     // Text node
-//     if (node.type === "text") {
-//         return node.text ?? "";
-//     }
+function extractTextFromTiptap(node: TiptapNode): string {
+    // Text node
+    if (node.type === "paragraph" || node.type === "heading" ) {
+        return node.text ?? "";
+    }
 
-//     // Recursive children
-//     if (node.content && Array.isArray(node.content)) {
-//         return node.content
-//             .map((child) => extractTextFromTiptap(child))
-//             .join(" ");
-//     }
+    // Recursive children
+    if (node.content && Array.isArray(node.content)) {
+        return node.content
+            .map((child) => extractTextFromTiptap(child))
+            .join(" ");
+    }
 
-//     return "";
-// }
+    return "";
+}
 
-// function calculateReadTime(content: TiptapContent): number {
-//     const fullText = content.content
-//         .map((node) => extractTextFromTiptap(node))
-//         .join(" ");
+function calculateReadTime(content: TiptapContent): number {
+    const fullText = content.content
+        .map((node) => extractTextFromTiptap(node))
+        .join(" ");
 
-//     const words = fullText.trim().split(/\s+/).filter(Boolean).length;
+    const words = fullText.trim().split(/\s+/).filter(Boolean).length;
 
-//     const wordsPerMinute = 200;
+    const wordsPerMinute = 200;
 
-//     return Math.max(1, Math.ceil(words / wordsPerMinute));
-// }
+    return Math.max(1, Math.ceil(words / wordsPerMinute));
+}
 
 export async function POST(req: Request) {
     try {
@@ -140,7 +141,7 @@ export async function POST(req: Request) {
 
         const excerpt = rawText.replace(/<[^>]*>/g, "").slice(0, 150);
 
-        // const readTime = calculateReadTime(content);
+        const readTime = calculateReadTime(content);
 
         // ================= CREATE BLOG =================
         const newBlog = await Blog.create({
@@ -152,9 +153,9 @@ export async function POST(req: Request) {
             author: userId,
             username: user.username,
             tags: Array.isArray(tags) ? tags : [],
-            coverImage: coverImage?.url || "",
+            coverImage: coverImage || "",
             level,
-            // readTime,
+            readTime,
             isPublished,
             insights,
             publishedAt: isPublished ? new Date() : undefined,

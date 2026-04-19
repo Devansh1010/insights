@@ -4,7 +4,7 @@ import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
 import { ModeToggle } from "@/components/theme";
 
-export function EditorHeader({ isPending }: { isPending: boolean }) {
+export function EditorHeader({ isPending, isEditMode }: { isPending: boolean, isEditMode: boolean }) {
     const { formState: { isDirty, isValid } } = useFormContext();
 
     return (
@@ -55,7 +55,7 @@ export function EditorHeader({ isPending }: { isPending: boolean }) {
                         disabled={isPending || !isValid}
                         className="rounded-full px-5 h-9 bg-primary text-primary-foreground hover:opacity-90 shadow-sm transition-all active:scale-95 disabled:opacity-50"
                     >
-                        {isPending ? "Publishing..." : "Publish"}
+                        {isPending ? "Saving..." : isEditMode ? "Update Post" : "Publish Post"}
                     </Button>
 
                     <div className="ml-1 border-l pl-3 border-border/50">

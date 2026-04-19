@@ -43,12 +43,10 @@ export const createBlogSchema = z.object({
 
   seriesId: z.string().optional().or(z.literal("")),
 
+  // If the UI only sends the URL string to the API
   coverImage: z
-    .object({
-      url: z.string().url(),
-      name: z.string(),
-      id: z.string(),
-    })
+    .string()
+    .url("Invalid image URL")
     .nullable()
     .optional(),
 

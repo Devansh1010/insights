@@ -186,6 +186,9 @@ const RichTextBubbleMenu = () => {
 
 const TipTapEditor = ({ content, onChange }: AppProps) => {
 
+    // Inside TipTapEditor.tsx
+   
+    
     const debouncedUpdates = useMemo(
         () =>
             debounce((editor: Editor) => {
@@ -214,6 +217,12 @@ const TipTapEditor = ({ content, onChange }: AppProps) => {
             onChange(editor.getJSON());
         },
     });
+
+     useEffect(() => {
+        if (editor && content !== editor.getJSON()) {
+            editor.commands.setContent(content);
+        }
+    }, [content, editor]);
 
     if (!editor) return <TiptapLoader />
 

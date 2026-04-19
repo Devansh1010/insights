@@ -19,7 +19,7 @@ import { TitleField } from "@/components/features/blogs/components/write-blog/Ti
 import { WriteBlogError } from "@/components/features/blogs/error/WriteBlogError";
 import { WriteBlogLoader } from "@/components/features/blogs/loader/WriteBlogLoader";
 import { createBlogSchema } from "@/lib/schemas/blog/blog-create";
-import { createBlog, CreateBlogVariables, getBlog } from "@/services/blog.service";
+import { createBlog, CreateBlogVariables, getBlog, updateBlog } from "@/services/blog.service";
 import { getUserSeries } from "@/services/series.service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -69,13 +69,31 @@ export default function BlogForm({ blogId }: { blogId?: string }) {
     onError: () => toast.error("Failed to create blog"),
   });
 
-  const onSubmit = (formData: CreateBlogVariables) => {
+  // New Update Mutation
+  const updateMutation = useMutation({
+    mutationFn: (variables: CreateBlogVariables & { id: string }) =>
+      updateBlog(variables, blogId),
 
-    mutation.mutate({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+      queryClient.invalidateQueries({ queryKey: ["blog", blogId] });
+      toast.success("Blog updated successfully!");
+      router.push("/user/explore");
+    },
+    onError: () => toast.error("Failed to update blog"),
+  });
+
+  const onSubmit = (formData: CreateBlogVariables) => {
+    const payload = {
       ...formData,
       isPublished: true,
-      coverImage: formData.coverImage,
-    });
+    };
+
+    if (blogId) {
+      updateMutation.mutate({ ...payload, id: blogId });
+    } else {
+      mutation.mutate(payload);
+    }
   };
 
   useEffect(() => {
@@ -91,15 +109,13 @@ export default function BlogForm({ blogId }: { blogId?: string }) {
 
   const categories = ['All Series', 'Architecture', 'Frontend', 'Backend', 'System Design', 'Soft Skills']
 
-  if (isPending || isBlogLoading) return <WriteBlogLoader />
+  if (isPending || (blogId && isBlogLoading)) return <WriteBlogLoader />
   if (isError) return <WriteBlogError />
-
-  console.log(existingBlog)
 
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} className="min-h-screen bg-background selection:bg-primary/20">
-        <EditorHeader isPending={isPending} />
+        <EditorHeader isPending={isPending} isEditMode={!!blogId} />
 
         <main className="max-w-4xl mx-auto px-6 pt-6 pb-32">
           {/* 1. Cover Image - Reduced margin to pull content up */}
@@ -111,7 +127,7 @@ export default function BlogForm({ blogId }: { blogId?: string }) {
           <div className="space-y-4 mb-8">
             {/* Core Metadata: Series & Tags */}
             <div className="flex items-center gap-3 pb-4 border-b border-border/40">
-              <SeriesSelector availableSeries={data}  />
+              <SeriesSelector availableSeries={data} />
               <div className="h-4 w-px bg-border/60" />
               <TagSelector availableTags={categories} articleTags={existingBlog?.tags || []} />
             </div>
@@ -150,7 +166,7 @@ export default function BlogForm({ blogId }: { blogId?: string }) {
             <TitleField articleTitle={existingBlog?.title || ''} />
 
             <div className="relative">
-              <EditorField articleContent={existingBlog?.content} />
+              <EditorField articleContent={existingBlog?.content} articleId={blogId} />
             </div>
           </article>
         </main>

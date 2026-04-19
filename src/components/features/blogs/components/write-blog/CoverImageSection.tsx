@@ -2,52 +2,76 @@ import UploadImage, { ImageKitData } from "@/components/Imagekit/ImageUpload";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
 import Image from "next/image";
+import { useEffect } from "react";
 import { useController, useFormContext } from "react-hook-form";
 
-export function CoverImageSection({ url }: { url: string }) {
-    const { control } = useFormContext();
+export function CoverImageSection({ url }: { url?: string }) {
+
+    const { control, setValue } = useFormContext();
 
     const { field, fieldState } = useController({
         name: "coverImage",
         control,
     });
 
+    // 1. Sync the incoming URL to the form state ONCE
+    useEffect(() => {
+        if (url && !field.value) {
+            // Assuming your form expects a string URL or an object with a URL
+            setValue("coverImage", url);
+        }
+    }, [url, setValue, field.value]);
+
     return (
         <section className="relative group">
-            <div className="relative aspect-21/9 w-full rounded-[2rem] overflow-hidden bg-muted transition-all duration-500 ring-1 ring-border shadow-2xl">
-                {!field.value && !url ? (
-                    <div className="h-full w-full">
-                        <UploadImage onUploadSuccess={(data: ImageKitData) => field.onChange({ ...data })} />
+            <div className="group relative flex flex-col w-full aspect-16/6 rounded-xl border-2 border-dashed border-muted-foreground/20 bg-muted/5 transition-all hover:bg-muted/10">
 
-                        {fieldState.error && (
-                            <div className="flex items-center gap-2 mt-2 text-destructive animate-in fade-in slide-in-from-top-1 duration-300">
-                                <AlertCircle className="w-4 h-4" />
-                                <p className="text-xs font-medium tracking-wide">
-                                    {fieldState.error?.message}
-                                </p>
+                {/* 1. Main Interaction Area */}
+                <div className="relative flex-1 flex flex-col items-center justify-center overflow-hidden rounded-t-xl">
+                    {!field.value ? (
+                        /* UPLOAD STATE */
+                        <div className="flex flex-col items-center gap-4 p-10 text-center">
+                            <UploadImage onUploadSuccess={(data: ImageKitData) => field.onChange(data.url)} />
+                            <div className="space-y-1">
+                                <p className="text-sm font-medium text-foreground">Click to upload cover image</p>
+                                <p className="text-xs text-muted-foreground">High resolution recommended (1200x600)</p>
                             </div>
-                        )}
-                    </div>
-                ) : (
-                    <>
-                        <Image
-                            src={url || field.value?.url}
-                            alt="cover"
-                            fill
-                            sizes="(max-width: 1200px) 100vw, 1200px"
-                            className="object-cover transition duration-700 group-hover:scale-105"
-                        />
-                        {/* Elegant Overlay */}
-                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
-                            <Button
-                                onClick={() => field.onChange(null)}
-                                variant="secondary"
-                                className="rounded-full bg-white/90 text-black hover:bg-white shadow-xl"
-                            >
-                                Change Cover
-                            </Button>
                         </div>
-                    </>
+                    ) : (
+                        /* PREVIEW STATE */
+                        <div className="relative h-full w-full group">
+                            <Image
+                                src={field.value}
+                                alt="Cover preview"
+                                fill
+                                priority
+                                sizes="(max-width: 1200px) 100vw, 1200px"
+                                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+
+                            {/* Actions Overlay */}
+                            <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-[2px]">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => field.onChange(null)}
+                                    className="bg-white text-black hover:bg-zinc-200 border-none font-semibold px-6"
+                                >
+                                    Replace Image
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* 2. Persistent Error/Status Bar */}
+                {fieldState.error && (
+                    <div className="border-t border-destructive/20 bg-destructive/5 p-3 flex items-center justify-center gap-2 animate-in slide-in-from-bottom-2">
+                        <AlertCircle className="w-4 h-4 text-destructive" />
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-destructive">
+                            {fieldState.error?.message || "Cover image is required"}
+                        </span>
+                    </div>
                 )}
             </div>
         </section>

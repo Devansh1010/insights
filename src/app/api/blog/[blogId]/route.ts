@@ -29,11 +29,10 @@ export async function GET(req: NextRequest, { params }: { params: { blogId: stri
             )
         }
 
-        const views = blog.views
+        if (!blog.author.equals(auth.user?._id)) {
+            await Blog.findByIdAndUpdate(blogId, { $inc: { views: 1 } });
+        }
 
-        await Blog.findByIdAndUpdate(blogId, {
-            views: (views + 1)
-        })
 
         return createResponse(
             {

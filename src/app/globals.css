@@ -117,7 +117,8 @@
 }
 
 .tiptap ::selection {
-  background-color: #bfdbfe; /* blue-200 */
+  background-color: #bfdbfe;
+  /* blue-200 */
   color: inherit;
 }
 
@@ -125,9 +126,11 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
   }
@@ -141,25 +144,43 @@
     @apply leading-relaxed text-muted-foreground/90;
 
     /* 2. Headings (Serif for high-end feel) */
-    h1, h2, h3, h4, h5, h6 {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
       @apply font-serif text-foreground tracking-tight mt-10 mb-4;
     }
-    h1 { @apply text-4xl font-black; }
-    h2 { @apply text-3xl font-bold border-b border-border/40 pb-2; }
-    h3 { @apply text-2xl font-semibold; }
+
+    h1 {
+      @apply text-4xl font-black;
+    }
+
+    h2 {
+      @apply text-3xl font-bold border-b border-border/40 pb-2;
+    }
+
+    h3 {
+      @apply text-2xl font-semibold;
+    }
 
     /* 3. Lists (Fixing the "all same text" issue) */
     ul {
       @apply list-disc list-outside ml-6 space-y-2 mb-6;
     }
+
     ol {
       @apply list-decimal list-outside ml-6 space-y-2 mb-6;
     }
+
     li {
       @apply pl-2;
     }
+
     li p {
-      @apply m-0; /* Prevents double spacing inside lists */
+      @apply m-0;
+      /* Prevents double spacing inside lists */
     }
 
     /* 4. Blockquotes */
@@ -171,17 +192,27 @@
     code {
       @apply bg-muted text-primary px-1.5 py-0.5 rounded-md text-[0.9em] font-mono;
     }
+
     pre {
       @apply bg-neutral-950 text-neutral-100 p-6 rounded-2xl font-mono text-sm overflow-x-auto my-8 border border-white/5 shadow-2xl;
     }
+
     pre code {
       @apply bg-transparent p-0 text-inherit;
     }
 
     /* 6. Text Align Extension */
-    .has-text-align-center { text-align: center; }
-    .has-text-align-right { text-align: right; }
-    .has-text-align-justify { text-align: justify; }
+    .has-text-align-center {
+      text-align: center;
+    }
+
+    .has-text-align-right {
+      text-align: right;
+    }
+
+    .has-text-align-justify {
+      text-align: justify;
+    }
 
     /* 7. Links */
     a {
@@ -193,4 +224,28 @@
       @apply mb-6 last:mb-0;
     }
   }
+}
+
+
+/* Series */
+
+/* Custom Carousel Focus Logic */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+/* Embla specific class for the center active slide */
+.embla__slide {
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 0.4;
+  /* Dim inactive slides */
+  filter: blur(2px);
+}
+
+.embla__slide.is-selected {
+  opacity: 1;
+  filter: blur(0px);
+  z-index: 10;
+  transform: scale(1.1);
+  /* This creates the "middle one is bigger" effect */
 }

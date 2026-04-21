@@ -9,7 +9,7 @@ export interface IUser {
   isVerified: boolean,
   verifyCode?: string,
   verifyExpiry?: Date
-
+  followers: Schema.Types.ObjectId[]
 }
 
 const userSchema = new Schema<IUser>(
@@ -40,6 +40,13 @@ const userSchema = new Schema<IUser>(
       type: String,
       default: null,
     },
+
+    followers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
 
     isVerified: {
       type: Boolean,

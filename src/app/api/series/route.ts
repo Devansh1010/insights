@@ -75,7 +75,9 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
+
     try {
+
         const auth = await VerifyUser();
 
         if (!auth.success || !auth.user?._id) {
@@ -85,6 +87,10 @@ export async function GET(req: NextRequest) {
             );
         }
 
+
+        /* 
+        ? Pagination Logic (Optional, can be enhanced later with filters)
+
         const { searchParams } = new URL(req.url);
 
         const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
@@ -92,23 +98,57 @@ export async function GET(req: NextRequest) {
 
         const skip = (page - 1) * limit;
 
+        */
+
         await dbConnect()
 
-        const series = await Series.find({ isPublished: true })
-            .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(limit)
-            .select('title slug desc coverImage tags createdAt')
-            .populate({
-                path: 'author',
-                select: 'username -_id'
-            })
-            .lean()
+        const topSeries = await Series.aggregate([
+            { $match: { isPublished: true } },
+            // 1. Join with the Users collection
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "author",
+                    foreignField: "_id",
+                    as: "authorDetails"
+                }
+            },
+            { $unwind: "$authorDetails" },
+            // 2. Calculate the number of followers
+            {
+                $addFields: {
+                    followerCount: { $size: { $ifNull: ["$authorDetails.followers", []] } }
+                }
+            },
+            // 3. Sort by views first, then by follower count
+            {
+                $sort: {
+                    views: -1,
+                    followerCount: -1
+                }
+            },
+            // 4. Limit to top 3 and project only what you need
+            { $limit: 3 },
+            {
+                $project: {
+                    title: 1,
+                    slug: 1,
+                    desc: 1,
+                    coverImage: 1,
+                    tags: 1,
+                    views: 1,
+                    createdAt: 1,
+                    author: {
+                        username: "$authorDetails.username",
+                        avatar: "$authorDetails.avatar"
+                    }
+                }
+            }
+        ]);
 
-        const total = await Series.countDocuments({ isPublished: true });
 
-        if (!series) {
-            createResponse(
+        if (!topSeries) {
+            return createResponse(
                 {
                     success: false,
                     message: "No Series Found",
@@ -121,15 +161,7 @@ export async function GET(req: NextRequest) {
             {
                 success: true,
                 message: "Found Series",
-                data: {
-                    series,
-                    pagination: {
-                        total,
-                        page,
-                        limit,
-                        totalPages: Math.ceil(total / limit),
-                    },
-                }
+                data: topSeries
             },
             StatusCode.OK
         )

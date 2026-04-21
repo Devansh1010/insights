@@ -1,8 +1,8 @@
 'use client'
 
 import { getSeries } from "@/services/series.service"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query"
+import { useState } from "react";
 import { PaginationUI } from "./components/PaginationUi";
 import { SeriesSkeleton } from "./loader/SeriesListLoader";
 import { SeriesError } from "./error/SeriesError";
@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 
 export type Series = {
     _id: string,
-    author: { username: string },
+    author: { username: string, avatar: string },
     title: string,
     slug: string,
     desc: string,
@@ -28,24 +28,12 @@ export type Series = {
 
 const SeriesList = () => {
     const [page, setPage] = useState(1);
-    const limit = 10;
     const categories = ['All Series', 'Architecture', 'Frontend', 'Backend', 'System Design', 'Soft Skills'];
-
-    // Tanstack Query
-    const queryClient = useQueryClient();
 
     const { data, isPending, isError, refetch } = useQuery({
         queryKey: ['series', { page }],
-        queryFn: () => getSeries(page, limit),
+        queryFn: () => getSeries(),
     })
-
-    useEffect(() => {
-        if (!data || page >= data.data.pagination.totalPages) return;
-        queryClient.prefetchQuery({
-            queryKey: ["series", { page: page + 1 }],
-            queryFn: () => getSeries(page + 1, limit),
-        });
-    }, [page, data, queryClient]);
 
     const {
         featured, rest,

@@ -8,14 +8,15 @@ type FormData = {
     isPublished: boolean;
 };
 
-export const getSeries = async (page: number, limit: number) => {
+export const getSeries = async () => {
     try {
-        const res = await seriesApi.get("", {
-            params: { page, limit }
-        });
+
+        const res = await seriesApi.get("");
 
         return res.data;
-    } catch (error: unknown) {
+
+    } catch (error: unknown) 
+    {
         if (axios.isAxiosError(error)) {
             throw new Error(
                 error.response?.data?.message || "Failed to fetch series"

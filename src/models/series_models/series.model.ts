@@ -37,6 +37,12 @@ const seriesSchema = new Schema<ISeries>(
             type: [String],
             default: [],
         },
+
+        views: {
+            type: Number,
+            default: 0,
+        },
+
         isPublished: {
             type: Boolean,
             default: false,

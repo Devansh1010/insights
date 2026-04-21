@@ -12,6 +12,7 @@ export interface ISeries {
 
     coverImage?: string
     tags?: string[]
+    views?: number
 
     isPublished: boolean
     publishedAt?: Date | null

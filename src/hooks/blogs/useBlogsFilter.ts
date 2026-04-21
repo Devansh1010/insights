@@ -23,35 +23,30 @@ export interface Blog {
     createdAt: Date
 }
 
-export const useBlogsFilters = (blogs: Blog[]) => {
+export const useBlogsFilters = (blogs: Blog[], currentPage: number) => {
     const [searchQuery, setSearchQuery] = useState("");
-    // const [activeCategory, setActiveCategory] = useState("All Series");
 
     const filteredBlogs = useMemo(() => {
         return blogs.filter((item) => {
-            // const categoryMatch =
-            //     activeCategory === "All Series" ||
-            //     item.tags?.some((tag: string) => tag.toLowerCase() === activeCategory.toLowerCase());
-
             const searchMatch =
                 item.title?.toLowerCase()?.includes(searchQuery.toLowerCase()) ||
-                item.desc?.toLowerCase()?.includes(searchQuery.toLowerCase()) ||
-                false;
-
-            // return categoryMatch && searchMatch;
-          
-            return searchMatch
+                item.desc?.toLowerCase()?.includes(searchQuery.toLowerCase());
+            return searchMatch;
         });
     }, [blogs, searchQuery]);
 
+    // SENIOR LOGIC: Feature content only on Page 1 and only if not searching
+    const isInitialState = currentPage === 1 && searchQuery === "";
 
     return {
         searchQuery,
         setSearchQuery,
-        // activeCategory,
-        // setActiveCategory,
         filteredBlogs,
+        // If we are on Page 1, pick a "Featured" item (could be based on a 'isFeatured' flag)
+        // Otherwise, featured is null and everything goes to 'rest'
         featured: filteredBlogs[0],
-        rest: filteredBlogs.slice(1),
+        rest: isInitialState
+            ? filteredBlogs.slice(1) // Remove the featured one from the list
+            : filteredBlogs          // Show everything normally
     };
 };

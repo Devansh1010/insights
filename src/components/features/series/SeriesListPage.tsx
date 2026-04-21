@@ -1,126 +1,51 @@
-'use client'
-
-import { getSeries } from "@/services/series.service"
-import { useQuery } from "@tanstack/react-query"
-import { useState } from "react";
-import { PaginationUI } from "./components/PaginationUi";
-import { SeriesSkeleton } from "./loader/SeriesListLoader";
-import { SeriesError } from "./error/SeriesError";
-import { useSeriesFilters } from "@/hooks/series/useServiceFilter";
-import SeriesFeatured from "@/components/features/series/components/SeriesFeatured";
-import SeriesRest from "@/components/features/series/components/SeriesRest";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
-
-
-export type Series = {
-    _id: string,
-    author: { username: string, avatar: string },
-    title: string,
-    slug: string,
-    desc: string,
-    tags: string[],
-    coverImage: string,
-    createdAt: Date
-}
+'use client';
+import { Layers } from "lucide-react";
+import Link from "next/link";
+import { ExploreBlogsLoader } from "../blogs/loader/ExploreBlogsLoader";
+import { useQuery } from "@tanstack/react-query";
+import { getUserSeries } from "@/services/series.service";
+import { BlogListError } from "../blogs/error/BlogsListError";
+import { Series } from "@/types/frontend/series";
+import { SeriesCard } from "./components/series-list/SeriesCard";
+import SeriesForm from "./components/SeriesForm";
 
 const SeriesList = () => {
-    const [page, setPage] = useState(1);
-    const categories = ['All Series', 'Architecture', 'Frontend', 'Backend', 'System Design', 'Soft Skills'];
+    const { data: seriesData, isPending, isError, refetch } = useQuery({
+        queryKey: ['series'],
+        queryFn: () => getUserSeries(),
+    });
 
-    const { data, isPending, isError, refetch } = useQuery({
-        queryKey: ['series', { page }],
-        queryFn: () => getSeries(),
-    })
+    if (isPending) return <ExploreBlogsLoader />;
+    if (isError) return <BlogListError reset={refetch} />;
 
-    const {
-        featured, rest,
-        searchQuery, setSearchQuery,
-        activeCategory, setActiveCategory,
-    } = useSeriesFilters(data?.data?.series || []);
-
-
-    if (isPending) return <SeriesSkeleton />;
-    if (isError) return <SeriesError reset={refetch} />;
-
-    const { pagination } = data.data;
 
     return (
-        <div className="max-w-7xl mx-auto px-6 py-20">
-            <div className="container mx-auto">
-                {/* 1. Header & Search - Centered Layout */}
+        <div className="max-w-7xl min-h-screen mx-auto px-6 py-20 flex flex-col justify-center">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
                 <div>
-                    <header className="flex flex-col gap-8 w-full">
-
-                        <div className="flex flex-col md:flex-row md:items-end justify-between">
-
-                            <div className="space-y-4">
-                                <Badge variant="outline" className="px-3 py-1 uppercase tracking-tighter text-[10px] border-primary/30 text-primary">
-                                    Articles
-                                </Badge>
-                                <h1 className="text-5xl md:text-7xl font-serif font-bold tracking-tight">
-                                    Knowledge <span className="text-muted-foreground/40 italic">Vault</span>
-                                </h1>
-                            </div>
-
-                            <div className="relative group w-full max-w-xs">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-primary transition-colors" />
-                                <Input
-                                    placeholder="Search the vault (⌘K)..."
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="pl-11 h-10 border-slate-200 rounded-xl shadow-sm focus-visible:ring-primary/20 transition-all w-full"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col justify-center items-center py-5">
-
-                            <nav className="overflow-x-auto no-scrollbar max-w-full p-4">
-                                <div className="flex gap-2">
-                                    {categories.map((tab) => {
-                                        const isActive = activeCategory === tab;
-                                        return (
-                                            <Button
-                                                key={tab}
-                                                onClick={() => setActiveCategory(tab)}
-                                                className={`px-4 py-2 text-xs font-semibold rounded-full whitespace-nowrap transition-all
-                                            
-                            ${isActive
-                                                        ? "bg-slate-900 dark:text-white text-black shadow-md scale-105 hover:bg-slate-900 border dark:border-slate-200 border-black"
-                                                        : "bg-transparent text-slate-600  cursor-pointer "
-                                                    }`}
-                                            >
-                                                {tab}
-                                            </Button>
-                                        );
-                                    })}
-                                </div>
-                            </nav>
-
-                            {/* <Separator /> */}
-                        </div>
-                    </header>
+                    <h2 className="text-3xl font-bold tracking-tight">Your Collections</h2>
+                    <p className="text-muted-foreground mt-1">Manage and organize your curated learning paths.</p>
                 </div>
-
-                <div className="space-y-4">
-                    <SeriesFeatured series={featured} page={page} />
-
-                    <SeriesRest series={rest} />
-
-                    <footer className="flex justify-center pt-16 border-t border-slate-100">
-                        <PaginationUI
-                            page={page}
-                            totalPages={pagination.totalPages}
-                            onPageChange={setPage}
-                        />
-                    </footer>
+                <div>
+                    <SeriesForm />
                 </div>
             </div>
+
+            {seriesData?.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                    {seriesData?.map((series: Series) => (
+                        <SeriesCard key={series._id} series={series} />
+                    ))}
+                </div>
+            ) : (
+                <div className="text-center py-20 border-2 border-dashed rounded-[3rem]">
+                    <Layers className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-medium">No series yet</h3>
+                    <p className="text-muted-foreground">Start grouping your articles into a series.</p>
+                </div>
+            )}
         </div>
     );
-}
+};
 
-export default SeriesList
+export default SeriesList;

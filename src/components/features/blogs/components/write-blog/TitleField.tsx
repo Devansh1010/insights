@@ -14,13 +14,13 @@ export function TitleField({ articleTitle }: { articleTitle?: string }) {
     }, [articleTitle, setValue]);
 
     // Auto-resize logic
-    useEffect(() => {
-        if (titleRef.current) {
-            titleRef.current.style.height = "auto";
-            titleRef.current.style.height = `${titleRef.current.scrollHeight}px`;
-        }
+    // useEffect(() => {
+    //     if (titleRef.current) {
+    //         titleRef.current.style.height = "auto";
+    //         titleRef.current.style.height = `${titleRef.current.scrollHeight}px`;
+    //     }
 
-    }, [titleValue]);
+    // }, [titleValue]);
 
     const { ref, ...rest } = register("title");
 
@@ -32,7 +32,7 @@ export function TitleField({ articleTitle }: { articleTitle?: string }) {
                 titleRef.current = e;
             }}
             placeholder="Enter a title..."
-            className="w-full text-4xl md:text-5xl font-black bg-transparent outline-none border-none placeholder:text-muted-foreground/20 leading-[1.1] tracking-tight"
+            className="w-full text-2xl md:text-2xl font-black bg-transparent outline-none border-none placeholder:text-muted-foreground/20 leading-[1.1] tracking-tight"
             rows={1}
         />
     );

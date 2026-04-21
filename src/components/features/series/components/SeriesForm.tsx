@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Loader2, PlusCircle, Settings2 } from "lucide-react";
+import { ChevronRight, Loader2, PlusCircle, Settings2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -25,6 +25,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import CoverImageSeries from "./create-series/CoverImageSeries";
 
 const SeriesForm = () => {
   const router = useRouter();
@@ -34,6 +35,7 @@ const SeriesForm = () => {
   const form = useForm<z.infer<typeof seriesFormSchema>>({
     resolver: zodResolver(seriesFormSchema),
     defaultValues: {
+      coverImage: '',
       title: "",
       desc: "",
       tags: [],
@@ -59,64 +61,100 @@ const SeriesForm = () => {
     <Dialog>
       <DialogTrigger asChild>
         <Button
-          variant="ghost"
-          size="sm"
-          className="w-full justify-start text-primary hover:bg-primary/10 hover:text-primary-foreground font-semibold py-5"
+          variant="outline"
+          className="group w-full justify-between border-2 hover:border-primary/50 hover:bg-primary/5 transition-all py-6 px-6 rounded-2xl"
         >
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Create New Series
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-primary/10 text-primary transition-colors">
+              <PlusCircle className="h-5 w-5" />
+            </div>
+            <div className="flex flex-col items-start">
+              <span className="font-bold text-sm tracking-tight">Create New Series</span>
+            </div>
+          </div>
+          <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-125 p-0 overflow-hidden border-none shadow-2xl">
-        {/* Visual Accent Header */}
-        <div className="h-2 bg-linear-to-r from-primary via-purple-500 to-blue-500" />
+      {/* Increased width to max-w-140 for better spacing */}
+      <DialogContent className="sm:max-w-[560px] p-0 overflow-hidden border-none shadow-3xl bg-background/95 backdrop-blur-xl flex flex-col max-h-[90vh]">
+        {/* High-end Gradient Accent */}
+        <div className="h-1 w-full shrink-0 bg-linear-to-r from-violet-600 via-primary to-cyan-400" />
 
-        <div className="p-8">
-          <DialogHeader className="mb-6">
-            <DialogTitle className="text-2xl font-black tracking-tight">New Series</DialogTitle>
-            <DialogDescription className="text-muted-foreground">
-              Organize your technical deep-dives into a structured collection.
+        {/* Header - Fixed at top */}
+        <div className="px-8 pt-8 pb-4 shrink-0">
+          <DialogHeader className="space-y-1 text-left">
+            <DialogTitle className="text-3xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-foreground to-foreground/70">
+              New Series
+            </DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground/80">
+              Craft a curriculum. Group your articles into a single learning path.
             </DialogDescription>
           </DialogHeader>
+        </div>
 
+        {/* Scrollable Form Body */}
+        <div className="flex-1 overflow-y-auto px-8 py-2 custom-scrollbar">
           <FormProvider {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <div className="grid gap-6">
-                {/* Grouping Fields visually */}
-                <div className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pb-6">
+              <div className="space-y-6">
+                {/* Image Uploader - First Priority */}
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
+                    Series Identity
+                  </label>
+                  <CoverImageSeries />
+                </div>
+
+                {/* Core Metadata */}
+                <div className="grid gap-5">
                   <TitleField />
                   <DescriptionField />
                 </div>
 
-                <div className="p-4 rounded-xl bg-muted/30 border border-muted/50 space-y-4">
-                  <div className="flex items-center gap-2 text-xs font-bold uppercase text-muted-foreground/80">
+                {/* Configuration Section */}
+                <div className="p-6 rounded-3xl bg-muted/20 border border-muted/30 backdrop-blur-sm space-y-6">
+                  <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
                     <Settings2 className="w-3 h-3" />
-                    Discovery & Visibility
+                    Discovery & Access
                   </div>
-                  <TagsField />
-                  <SaveTypeButtons />
-                </div>
-              </div>
 
-              <div className="flex gap-3 pt-4">
-                <DialogClose asChild>
-                  <Button variant="outline" className="flex-1">Cancel</Button>
-                </DialogClose>
-                <Button
-                  type="submit"
-                  disabled={mutation.isPending}
-                  className="flex-2 shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all active:scale-[0.98]"
-                >
-                  {mutation.isPending ? (
-                    <Loader2 className="animate-spin mr-2 h-4 w-4" />
-                  ) : (
-                    "Launch Series"
-                  )}
-                </Button>
+                  <div className="space-y-5">
+                    <TagsField />
+                    <div className="pt-4 border-t border-muted/40">
+                      <SaveTypeButtons />
+                    </div>
+                  </div>
+                </div>
               </div>
             </form>
           </FormProvider>
+        </div>
+
+        {/* Action Footer - Fixed at bottom with top-border for separation */}
+        <div className="px-8 py-6 bg-background/50 backdrop-blur-md border-t shrink-0">
+          <div className="flex items-center gap-3">
+            <DialogClose asChild>
+              <Button
+                variant="ghost"
+                className="flex-1 text-muted-foreground hover:bg-muted font-bold rounded-xl h-12"
+              >
+                Dismiss
+              </Button>
+            </DialogClose>
+            <Button
+              type="submit"
+              onClick={form.handleSubmit(onSubmit)}
+              disabled={mutation.isPending}
+              className="flex-[2] h-12 bg-primary text-primary-foreground shadow-[0_10px_20px_rgba(var(--primary-rgb),0.2)] hover:shadow-[0_10px_30px_rgba(var(--primary-rgb),0.3)] transition-all duration-300 font-bold rounded-xl active:scale-[0.98]"
+            >
+              {mutation.isPending ? (
+                <Loader2 className="animate-spin h-5 w-5" />
+              ) : (
+                "Launch Series"
+              )}
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

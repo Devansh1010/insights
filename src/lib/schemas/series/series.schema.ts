@@ -28,6 +28,8 @@ export const seriesFormSchema = z.object({
         .string()
         .min(10, "Description must be at least 10 characters"),
 
+    coverImage: z.string().url().optional(),
+    
     tags: z
         .array(z
             .string())

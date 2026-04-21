@@ -1,6 +1,5 @@
 
 import { Separator } from '@/components/ui/separator';
-import { useBlogsFilters } from '@/hooks/blogs/useBlogsFilter';
 import BlogFeatured from './components/BlogFeatured';
 import BlogRest from './components/BlogRest';
 import { PaginationUI } from '../series/components/PaginationUi';
@@ -10,11 +9,7 @@ import { getBlogs } from '@/services/blog.service';
 import { ExploreBlogsLoader } from './loader/ExploreBlogsLoader';
 import { BlogListError } from './error/BlogsListError';
 import { Badge } from '@/components/ui/badge';
-import { Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
 import { getSeries } from '@/services/series.service';
-import Link from 'next/link';
-import Image from 'next/image';
 import TopSeries from '../series/components/series-list/TopSeries';
 
 
@@ -32,7 +27,7 @@ const ExploreBlogs = () => {
 
     // Series Query
     const { data: seriesData, isPending: isSeriesPending, isError: isSeriesError, refetch: refetchSeries } = useQuery({
-        queryKey: ['series', { page }],
+        queryKey: ['series'],
         queryFn: () => getSeries(),
     })
 

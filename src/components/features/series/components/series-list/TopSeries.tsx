@@ -1,10 +1,10 @@
-import React from 'react'
-import { Series } from '../../SeriesListPage'
+
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
+import { Series } from '@/types/frontend/series';
 
 const TopSeries = ({ isInitialPage, featuredSeries }: { isInitialPage: boolean; featuredSeries: Series[] }) => {
     if (!isInitialPage || !featuredSeries?.length) return null;
@@ -32,7 +32,7 @@ const TopSeries = ({ isInitialPage, featuredSeries }: { isInitialPage: boolean; 
                         {featuredSeries.map((series, index) => (
                             <CarouselItem key={series._id} className="basis-full">
                                 <div className="p-2 transition-all duration-500">
-                                    <Link href={`/series/${series._id}`}>
+                                    <Link href={`/user/series/${series._id}`}>
                                         <Card className="relative h-[450px] md:h-[520px] overflow-hidden border-none bg-background rounded-[2.5rem] shadow-xl hover:shadow-2xl transition-all duration-500">
                                             <CardContent className="p-0 h-full">
                                                 {/* Background Image */}

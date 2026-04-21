@@ -48,7 +48,7 @@ export const SeriesCard = ({ series }: { series: Series }) => {
                         </h3>
                     </Link>
 
-                    <p className="text-sm text-muted-foreground line-clamp-2 mb-6 min-h-[40px]">
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-6 min-h-10">
                         {series.desc}
                     </p>
 

@@ -1,16 +1,14 @@
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Blog } from '@/hooks/blogs/useBlogsFilter'
 import Image from 'next/image'
 import Link from 'next/link'
 
 import { useState } from 'react'
-import { Clock, Eye, ArrowRight, Layers } from "lucide-react";
+import { Clock, Eye, ArrowRight} from "lucide-react";
 
 
 const BlogRest = ({ rest }: { rest: Blog[] }) => {
-  const FALLBACK = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop';
 
   const formatDate = (date?: Date) => {
     if (!date || !new Date(date)) return "Recently";
@@ -34,7 +32,7 @@ const BlogRest = ({ rest }: { rest: Blog[] }) => {
 
               {/* IMAGE CONTAINER - Sophisticated Shadow & Scale */}
               {post?.coverImage && (
-                <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-muted border border-border/40 shadow-sm group-hover:shadow-2xl group-hover:shadow-primary/5 transition-all duration-500">
+                <div className="relative aspect-16/10 overflow-hidden rounded-2xl bg-muted border border-border/40 shadow-sm group-hover:shadow-2xl group-hover:shadow-primary/5 transition-all duration-500">
                   <Image
                     src={post.coverImage}
                     alt={post.title}

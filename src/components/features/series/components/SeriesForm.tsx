@@ -83,14 +83,14 @@ const SeriesForm = () => {
       </DialogTrigger>
 
       {/* Increased width to max-w-140 for better spacing */}
-      <DialogContent className="sm:max-w-[560px] p-0 overflow-hidden border-none shadow-3xl bg-background/95 backdrop-blur-xl flex flex-col max-h-[90vh]">
+      <DialogContent className="sm:max-w-140 p-0 overflow-hidden border-none shadow-3xl bg-background/95 backdrop-blur-xl flex flex-col max-h-[90vh]">
         {/* High-end Gradient Accent */}
         <div className="h-1 w-full shrink-0 bg-linear-to-r from-violet-600 via-primary to-cyan-400" />
 
         {/* Header - Fixed at top */}
         <div className="px-8 pt-8 pb-4 shrink-0">
           <DialogHeader className="space-y-1 text-left">
-            <DialogTitle className="text-3xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-foreground to-foreground/70">
+            <DialogTitle className="text-3xl font-black tracking-tighter bg-clip-text text-transparent bg-linear-to-br from-foreground to-foreground/70">
               New Series
             </DialogTitle>
             <DialogDescription className="text-sm text-muted-foreground/80">
@@ -152,7 +152,7 @@ const SeriesForm = () => {
               type="submit"
               onClick={form.handleSubmit(onSubmit)}
               disabled={mutation.isPending}
-              className="flex-[2] h-12 bg-primary text-primary-foreground shadow-[0_10px_20px_rgba(var(--primary-rgb),0.2)] hover:shadow-[0_10px_30px_rgba(var(--primary-rgb),0.3)] transition-all duration-300 font-bold rounded-xl active:scale-[0.98]"
+              className="flex-2 h-12 bg-primary text-primary-foreground shadow-[0_10px_20px_rgba(var(--primary-rgb),0.2)] hover:shadow-[0_10px_30px_rgba(var(--primary-rgb),0.3)] transition-all duration-300 font-bold rounded-xl active:scale-[0.98]"
             >
               {mutation.isPending ? (
                 <Loader2 className="animate-spin h-5 w-5" />

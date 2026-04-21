@@ -1,6 +1,5 @@
 'use client';
 import { Layers } from "lucide-react";
-import Link from "next/link";
 import { ExploreBlogsLoader } from "../blogs/loader/ExploreBlogsLoader";
 import { useQuery } from "@tanstack/react-query";
 import { getUserSeries } from "@/services/series.service";

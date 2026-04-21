@@ -26,8 +26,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import CoverImageSeries from "./create-series/CoverImageSeries";
+import { useState } from "react";
 
 const SeriesForm = () => {
+  const [open, setOpen] = useState(false);
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -48,6 +50,10 @@ const SeriesForm = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["series"] });
       toast.success("Series created");
+
+      setOpen(false); // 3. Close the dialog on success
+      form.reset();   // 4. Clean up the form for the next use
+
       router.push("/user/series");
     },
     onError: () => toast.error("Failed to create series"),
@@ -58,7 +64,7 @@ const SeriesForm = () => {
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           variant="outline"

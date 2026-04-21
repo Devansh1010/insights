@@ -28,8 +28,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
             _id: id,
             author: userId
         })
-            .select('title desc coverImage tags')
-            .populate('author', 'username -_id')
+            .select('title desc coverImage tags views createdAt updatedAt isPublished')
+            .populate('author', 'username _id avatar')
             .lean()
 
         if (!series) {
@@ -38,6 +38,14 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
                 StatusCode.NOT_FOUND
             );
         }
+
+        const author = series.author as unknown as { _id: string, username: string, avatar: string };
+
+
+        if (author._id.toString() !== userId.toString()) {
+            await Series.findByIdAndUpdate(id, { $inc: { views: 1 } });
+        }
+
 
         const { searchParams } = new URL(req.url)
 

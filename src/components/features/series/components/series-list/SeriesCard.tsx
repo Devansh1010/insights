@@ -1,12 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Layers, MoreVertical } from "lucide-react";
-import { format } from "date-fns"; 
+import { Calendar, Eye, Layers, MoreVertical } from "lucide-react";
+import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Series } from "@/types/frontend/series";
 
 export const SeriesCard = ({ series }: { series: Series }) => {
+
+    console.log("Rendering SeriesCard for:", series)
     return (
         <div className="group relative">
             {/* Visual "Stack" Effect - Decorative layers behind the card */}
@@ -53,16 +55,27 @@ export const SeriesCard = ({ series }: { series: Series }) => {
                     </p>
 
                     <div className="flex items-center justify-between pt-4 border-t border-border/50">
+                        {/* Left Side: Author */}
                         <div className="flex items-center gap-2">
                             <div className="h-6 w-6 rounded-full relative overflow-hidden border">
-                                <Image src={series.author?.avatar} fill alt="author" />
+                                <Image src={series.author?.avatar} fill alt="author" className="object-cover" />
                             </div>
                             <span className="text-xs font-medium">{series.author?.username}</span>
                         </div>
 
-                        <div className="flex items-center text-muted-foreground text-[11px] gap-1">
-                            <Calendar className="w-3 h-3" />
-                            {format(new Date(series.createdAt), "MMM dd, yyyy")}
+                        {/* Right Side: Metadata (Views & Date) */}
+                        <div className="flex items-center gap-3">
+                            {/* Views Count */}
+                            <div className="flex items-center text-muted-foreground text-[11px] gap-1 bg-muted/30 px-2 py-0.5 rounded-full">
+                                <Eye className="w-3 h-3" />
+                                <span>{series.views?.toLocaleString() || 0}</span>
+                            </div>
+
+                            {/* Date */}
+                            <div className="flex items-center text-muted-foreground text-[11px] gap-1">
+                                <Calendar className="w-3 h-3" />
+                                <span>{format(new Date(series.createdAt), "MMM dd, yyyy")}</span>
+                            </div>
                         </div>
                     </div>
                 </div>

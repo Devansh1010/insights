@@ -7,5 +7,6 @@ export type Series = {
     desc: string,
     tags: string[],
     coverImage: string,
+    views: number,
     createdAt: Date
 }

@@ -19,8 +19,8 @@ export async function GET() {
         await dbConnect()
 
         const userSeries = await Series.find({ author: userId })
-            .select('title _id slug coverImage desc createdAt tags')
-            .populate('author', 'username avatar')
+            .select('title desc coverImage tags views createdAt updatedAt isPublished')
+            .populate('author', 'username -_id')
             .lean()
 
         if (!userSeries) {

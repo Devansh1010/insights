@@ -1,5 +1,5 @@
 'use client';
-import { Layers } from "lucide-react";
+import { Layers, PlusCircle } from "lucide-react";
 import { ExploreBlogsLoader } from "../blogs/loader/ExploreBlogsLoader";
 import { useQuery } from "@tanstack/react-query";
 import { getUserSeries } from "@/services/series.service";
@@ -7,8 +7,12 @@ import { BlogListError } from "../blogs/error/BlogsListError";
 import { Series } from "@/types/frontend/series";
 import { SeriesCard } from "./components/series-list/SeriesCard";
 import SeriesForm from "./components/SeriesForm";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 const SeriesList = () => {
+    const [openCreate, setOpenCreate] = useState(false);
+
     const { data: seriesData, isPending, isError, refetch } = useQuery({
         queryKey: ['series'],
         queryFn: () => getUserSeries(),
@@ -26,7 +30,16 @@ const SeriesList = () => {
                     <p className="text-muted-foreground mt-1">Manage and organize your curated learning paths.</p>
                 </div>
                 <div>
-                    <SeriesForm />
+                    <SeriesForm
+                        open={openCreate}
+                        setOpen={setOpenCreate}
+                        trigger={
+                            <Button variant="outline">
+                                <PlusCircle className="mr-2 h-4 w-4" />
+                                New Series
+                            </Button>
+                        }
+                    />
                 </div>
             </div>
 

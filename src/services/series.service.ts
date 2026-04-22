@@ -15,8 +15,7 @@ export const getSeries = async () => {
 
         return res.data;
 
-    } catch (error: unknown) 
-    {
+    } catch (error: unknown) {
         if (axios.isAxiosError(error)) {
             throw new Error(
                 error.response?.data?.message || "Failed to fetch series"
@@ -27,6 +26,20 @@ export const getSeries = async () => {
     }
 }
 
+export const updateSeries = async (id: string, data: FormData) => {
+    try {
+        const res = await seriesApi.patch(`/${id}`, data)
+        return res.data;
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            throw new Error(
+                error.response?.data?.message || "Failed to create series"
+            );
+        }
+
+        throw new Error("Something went wrong");
+    }
+}
 export const createSeries = async (data: FormData) => {
     try {
         const res = await seriesApi.post('', data)
@@ -88,4 +101,21 @@ export const getUserSeries = async () => {
         throw new Error("Something went wrong");
     }
 }
+
+export const getSeriesFormData = async ({ id }: { id: string }) => {
+    try {
+        const res = await seriesApi.get(`/get-series-form-data?id=${id}`);
+
+        return res.data.data;
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            throw new Error(
+                error.response?.data?.message || "Failed to fetch series"
+            );
+        }
+
+        throw new Error("Something went wrong");
+    }
+}
+
 

@@ -157,6 +157,8 @@ export async function GET(req: NextRequest) {
             )
         }
 
+        console.log("Top Series:", topSeries)
+
         return createResponse(
             {
                 success: true,

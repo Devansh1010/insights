@@ -9,6 +9,7 @@ const seriesBlogSchema = new Schema<ISeriesBlog>(
             required: true,
             index: true,
         },
+        
         blog: {
             type: Schema.Types.ObjectId,
             ref: "Blog",
@@ -24,6 +25,7 @@ const seriesBlogSchema = new Schema<ISeriesBlog>(
             type: Boolean,
             default: false,
         },
+
         addedAt: {
             type: Date,
             default: Date.now,

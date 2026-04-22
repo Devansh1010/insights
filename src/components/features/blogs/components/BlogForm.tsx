@@ -28,11 +28,13 @@ export default function BlogForm({ blogId }: { blogId?: string }) {
   const router = useRouter();
   const queryClient = useQueryClient();
 
+  // Series data for dropdown
   const { data, isPending, isError } = useQuery({
     queryKey: ['user-series'],
     queryFn: getUserSeries,
   })
 
+  // Fetch existing blog data if in edit mode
   const { data: existingBlog, isPending: isBlogLoading } = useQuery({
     queryKey: ['blog', blogId],
     queryFn: () => getBlog(blogId!),
@@ -127,7 +129,7 @@ export default function BlogForm({ blogId }: { blogId?: string }) {
           <div className="space-y-4 mb-8">
             {/* Core Metadata: Series & Tags */}
             <div className="flex items-center gap-3 pb-4 border-b border-border/40">
-              <SeriesSelector availableSeries={data} />
+              <SeriesSelector availableSeries={data} articleSeries={existingBlog?.seriesPartOf} />
               <div className="h-4 w-px bg-border/60" />
               <TagSelector availableTags={categories} articleTags={existingBlog?.tags || []} />
             </div>

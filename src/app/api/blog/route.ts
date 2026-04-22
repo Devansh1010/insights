@@ -150,6 +150,7 @@ export async function POST(req: Request) {
             content,
             slug,
             excerpt,
+            seriesPartOf: seriesId,
             author: userId,
             username: user.username,
             tags: Array.isArray(tags) ? tags : [],

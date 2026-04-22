@@ -60,7 +60,11 @@ const blogSchema = new Schema<IBlog>({
 
   tags: [String],
 
-  // 👇 Engagement (simple version)
+  seriesPartOf: {
+    type: Schema.Types.ObjectId,
+    ref: 'Series'
+  },
+
   views: {
     type: Number,
     default: 0

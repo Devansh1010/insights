@@ -3,6 +3,7 @@ import { dbConnect } from "@/lib/db";
 import { generateSlug } from "@/lib/slug-generater";
 import { VerifyUser } from "@/lib/verifyUser/userVerification";
 import Blog from "@/models/blog_modles/blog.model";
+import SeriesBlog from "@/models/series_models/series-blog.model";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest, { params }: { params: { blogId: string } }) {
@@ -59,7 +60,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { blogId: st
     try {
         const { blogId } = await params
 
-        const { title, content, tags, isPublished, coverImage } =
+        const { title, content, tags, isPublished, coverImage, seriesId } =
             await req.json()
 
         const auth = await VerifyUser()
@@ -130,6 +131,25 @@ export async function PATCH(req: NextRequest, { params }: { params: { blogId: st
 
             if (!isPublished) {
                 blog.publishedAt = undefined
+            }
+        }
+
+        if (seriesId) {
+
+            if (blog.seriesPartOf?.toString() !== seriesId) {
+
+                const oldSeriesId = blog.seriesPartOf
+
+                // Remove from old series if exists
+                if (oldSeriesId) {
+                    await SeriesBlog.findOneAndUpdate(
+                        { series: oldSeriesId, blog: blog._id },
+                        { $set: { series: seriesId } }
+                    )
+                }
+
+                blog.seriesPartOf = seriesId
+
             }
         }
 

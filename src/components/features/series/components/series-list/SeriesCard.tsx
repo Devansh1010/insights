@@ -8,7 +8,6 @@ import { Series } from "@/types/frontend/series";
 
 export const SeriesCard = ({ series }: { series: Series }) => {
 
-    console.log("Rendering SeriesCard for:", series)
     return (
         <div className="group relative">
             {/* Visual "Stack" Effect - Decorative layers behind the card */}

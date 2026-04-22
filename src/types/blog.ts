@@ -46,6 +46,7 @@ export interface IBlog {
   excerpt?: string;
   coverImage?: string;
   tags?: string[];
+  seriesPartOf?: Schema.Types.ObjectId;
 
   views?: number;
   likes?: number;

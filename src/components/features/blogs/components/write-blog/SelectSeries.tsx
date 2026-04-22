@@ -9,14 +9,15 @@ import {
     ComboboxList,
 } from "@/components/ui/combobox";
 import SeriesForm from "@/components/features/series/components/SeriesForm";
+import { useEffect } from "react";
 
 type Series = {
     _id: string;
     title: string;
 };
 
-export function SeriesSelector({ availableSeries }: { availableSeries: Series[] }) {
-    const { control } = useFormContext();
+export function SeriesSelector({ availableSeries, articleSeries }: { availableSeries: Series[]; articleSeries?: string }) {
+    const { control, setValue } = useFormContext();
 
     const {
         field: { value, onChange },
@@ -25,6 +26,12 @@ export function SeriesSelector({ availableSeries }: { availableSeries: Series[] 
         control,
         name: 'seriesId'
     });
+
+    useEffect(() => {
+        if (articleSeries) {
+            setValue("seriesId", articleSeries);
+        }
+    }, [articleSeries, setValue]);
 
     const currentSeries = availableSeries.find(s => s._id === value);
 
@@ -38,7 +45,7 @@ export function SeriesSelector({ availableSeries }: { availableSeries: Series[] 
                     </label>
                     <div className={`h-px w-3 ${error ? 'bg-destructive/40' : 'bg-primary/20'}`} />
                 </div>
-                
+
                 {/* Micro-interaction: Error indicator */}
                 {error && (
                     <span className="text-[9px] font-bold text-destructive uppercase animate-pulse">
@@ -54,8 +61,8 @@ export function SeriesSelector({ availableSeries }: { availableSeries: Series[] 
                 {/* 2. Enhanced Trigger: Visualizes Error State */}
                 <div className={`
                     flex items-center gap-3 px-3 py-1.5 rounded-full border transition-all duration-300 cursor-pointer shadow-sm
-                    ${error 
-                        ? "border-destructive bg-destructive/5 ring-4 ring-destructive/10" 
+                    ${error
+                        ? "border-destructive bg-destructive/5 ring-4 ring-destructive/10"
                         : "border-input bg-background/50 hover:border-primary/30 hover:bg-primary/3 group-focus-within:ring-2 group-focus-within:ring-primary/10 group-focus-within:border-primary"}
                 `}>
 
@@ -63,13 +70,13 @@ export function SeriesSelector({ availableSeries }: { availableSeries: Series[] 
                     <div className="relative">
                         <div className={`
                             p-1.5 rounded-lg transition-all duration-300
-                            ${error 
-                                ? "bg-destructive text-white" 
+                            ${error
+                                ? "bg-destructive text-white"
                                 : "bg-primary/10 text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground"}
                         `}>
                             {error ? <AlertCircle className="w-3.5 h-3.5" /> : <Library className="w-3.5 h-3.5" />}
                         </div>
-                        
+
                         {/* Status Dot: Hidden on error */}
                         {!error && (
                             <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-emerald-500 border-2 border-background rounded-full" />

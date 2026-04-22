@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ModeToggle } from "@/components/theme";
 
 export function EditorHeader({ isPending, isEditMode }: { isPending: boolean, isEditMode: boolean }) {
-    const { formState: { isDirty, isValid } } = useFormContext();
+    const { formState: { isDirty, isValid }, setValue } = useFormContext();
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/70 backdrop-blur-xl supports-backdrop-filter:bg-background/60">
@@ -38,10 +38,16 @@ export function EditorHeader({ isPending, isEditMode }: { isPending: boolean, is
                 <div className="flex items-center gap-2 md:gap-4">
                     <div className="hidden md:flex items-center">
                         <Button
-                            type="button"
+                            type="button" // Important: Keep this as "button" so it doesn't auto-submit
                             variant="ghost"
                             size="sm"
                             disabled={!isDirty || isPending}
+                            onClick={() => {
+                                setValue("isPublished", false); // Set to draft
+                                // Manually trigger the form's submit handler
+                                const formElement = document.querySelector('form');
+                                formElement?.requestSubmit();
+                            }}
                             className="text-muted-foreground hover:text-foreground h-9 font-medium px-4"
                         >
                             <Save className="w-4 h-4 mr-2 opacity-70" />
@@ -50,10 +56,11 @@ export function EditorHeader({ isPending, isEditMode }: { isPending: boolean, is
                     </div>
 
                     <Button
-                        type="submit"
+                        type="submit" // Standard submit
                         size="sm"
                         disabled={isPending || !isValid}
-                        className="rounded-full px-5 h-9 bg-primary text-primary-foreground hover:opacity-90 shadow-sm transition-all active:scale-95 disabled:opacity-50"
+                        onClick={() => setValue("isPublished", true)} // Set to publish
+                        className="..."
                     >
                         {isPending ? "Saving..." : isEditMode ? "Update Post" : "Publish Post"}
                     </Button>

@@ -1,5 +1,5 @@
 import { useController, useFormContext } from "react-hook-form";
-import { AlertCircle, Library, ChevronDown } from "lucide-react";
+import { AlertCircle, Library, ChevronDown, PlusCircle } from "lucide-react";
 import {
     Combobox,
     ComboboxContent,
@@ -9,7 +9,8 @@ import {
     ComboboxList,
 } from "@/components/ui/combobox";
 import SeriesForm from "@/components/features/series/components/SeriesForm";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 type Series = {
     _id: string;
@@ -17,6 +18,9 @@ type Series = {
 };
 
 export function SeriesSelector({ availableSeries, articleSeries }: { availableSeries: Series[]; articleSeries?: string }) {
+
+    const [openCreate, setOpenCreate] = useState(false);
+    
     const { control, setValue } = useFormContext();
 
     const {
@@ -115,7 +119,16 @@ export function SeriesSelector({ availableSeries, articleSeries }: { availableSe
                     </ComboboxList>
 
                     <div className="mt-1.5 p-1 border-t border-muted/40 bg-muted/20 rounded-b-[14px]">
-                        <SeriesForm />
+                        <SeriesForm
+                            open={openCreate}
+                            setOpen={setOpenCreate}
+                            trigger={
+                                <Button variant="outline">
+                                    <PlusCircle className="mr-2 h-4 w-4" />
+                                    New Series
+                                </Button>
+                            }
+                        />
                     </div>
                 </ComboboxContent>
             </Combobox>

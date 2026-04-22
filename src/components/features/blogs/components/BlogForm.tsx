@@ -86,15 +86,11 @@ export default function BlogForm({ blogId }: { blogId?: string }) {
   });
 
   const onSubmit = (formData: CreateBlogVariables) => {
-    const payload = {
-      ...formData,
-      isPublished: true,
-    };
 
     if (blogId) {
-      updateMutation.mutate({ ...payload, id: blogId });
+      updateMutation.mutate({ ...formData, id: blogId });
     } else {
-      mutation.mutate(payload);
+      mutation.mutate(formData);
     }
   };
 

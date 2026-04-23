@@ -86,9 +86,9 @@ export const getBlogs = async ({ page, limit }: { page: number, limit: number })
     }
 }
 
-export const getUserBlogs = async () => {
+export const getUserBlogs = async ({ page, limit, search }: { page: number, limit: number, search: string }) => {
     try {
-        const response = await blogApi.get('/get-user-blogs');
+        const response = await blogApi.get(`/get-user-blogs?page=${page}&limit=${limit}&search=${search}`);
         if (response.status === 200) {
             return response.data.data;
         } else {

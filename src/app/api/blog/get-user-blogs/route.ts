@@ -3,48 +3,66 @@ import { dbConnect } from "@/lib/db";
 import { VerifyUser } from "@/lib/verifyUser/userVerification";
 import Blog from "@/models/blog_modles/blog.model";
 import User from "@/models/user_models/user.model";
+import { NextRequest } from "next/server";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
     try {
 
-        const auth = await VerifyUser()
+        const auth = await VerifyUser();
 
-        if (!auth.success) {
+        if (!auth.success || !auth.user?._id) {
             return createResponse(
                 { success: false, message: "Unauthorized" },
                 StatusCode.UNAUTHORIZED
-            )
+            );
         }
+        const userId = auth.user._id;
 
         await dbConnect()
 
-        let userId = null
-        //User can be either from session or from database based on email, this is to handle the case when user is not fully logged in but has email in session
-        if (auth.user?._id) {
-            userId = auth.user._id.toString()
-        } else {
-            const user = await User.findOne(
-                { email: auth.user?.email },
-            ).select("_id username")
+        const { searchParams } = new URL(req.url);
 
-            if (!user) {
-                return createResponse(
-                    { success: false, message: "User not found" },
-                    StatusCode.NOT_FOUND
-                )
-            }
+        const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
+        const limit = Math.min(20, parseInt(searchParams.get("limit") || "10"));
+        const search = searchParams.get("search");
+        const skip = (page - 1) * limit;
 
-            userId = user._id.toString()
-        }
+        const filter = {
+            // Only show blogs for the logged-in user
+            author: userId,
+            // Add search condition if search exists
+            ...(search && {
+                $or: [
+                    { title: { $regex: search, $options: "i" } },
+                    { desc: { $regex: search, $options: "i" } }
+                ]
+            })
+        };
 
-        const blogs = await Blog.find({ author: userId })
+        const blogs = await Blog.find(filter)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
             .select("title slug excerpt coverImage tags isPublished createdAt author")
             .populate("author", "username")
-            .sort({ createdAt: -1 })
             .lean()
 
+        const total = await Blog.countDocuments(filter);
+
+        console.log("Blogs retrieved:", blogs.length, "Total:", total)
+
         return createResponse(
-            { success: true, message: "Blogs retrieved successfully", data: blogs },
+            {
+                success: true, message: "Blogs retrieved successfully", data: {
+                    blogs,
+                    pagination: {
+                        total,
+                        page,
+                        limit,
+                        totalPages: Math.ceil(total / limit),
+                    },
+                }
+            },
             StatusCode.OK
         )
 

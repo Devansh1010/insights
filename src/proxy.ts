@@ -8,8 +8,6 @@ import { auth } from './auth'
 export default async function proxy(request: NextRequest) {
     const session = await auth();
 
-    console.log('Middleware: Session data:', session)
-
     const { pathname } = request.nextUrl;
 
     const isAuthRoute = pathname.startsWith("/auth");

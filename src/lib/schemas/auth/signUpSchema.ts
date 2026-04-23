@@ -19,10 +19,21 @@ export const signUpSchema = z.object({
   password: passwordValidation,
 })
 
+const emailSchema = z.string().email("Invalid email format");
+const usernameSchema = z.string().min(2, "Username must be at least 2 characters");
+
 export const signInSchema = z.object({
-  email: emailValidation,
+  identifier: z.string()
+    .min(1, "Email or Username is required")
+    .refine((value) => {
+      // Return true if it's a valid email OR a valid username
+      const isEmail = emailSchema.safeParse(value).success;
+      const isUsername = usernameSchema.safeParse(value).success;
+      return isEmail || isUsername;
+    }, "Please enter a valid email or username"),
+
   password: passwordValidation,
-})
+});
 
 export const emailOnlySchema = z.object({
   email: emailValidation,

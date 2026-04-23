@@ -14,7 +14,7 @@ export const { handlers, auth } = NextAuth({
 
     Credentials({
       credentials: {
-        email: {
+        identifier: {
           type: 'email',
           label: 'Email',
           placeholder: 'johndoe@gmail.com',
@@ -32,7 +32,7 @@ export const { handlers, auth } = NextAuth({
           throw new Error("No credentials provided")
         }
 
-        const email = credentials?.email as string
+        const email = credentials?.identifier as string
         const password = credentials?.password as string
 
         try {

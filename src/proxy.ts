@@ -4,10 +4,11 @@ import type { NextRequest } from 'next/server'
 import { auth } from './auth'
 
 
-
 // This function can be marked `async` if using `await` inside
 export default async function proxy(request: NextRequest) {
     const session = await auth();
+
+    console.log('Middleware: Session data:', session)
 
     const { pathname } = request.nextUrl;
 
@@ -38,6 +39,5 @@ export const config = {
         '/user/:path*',
         // Exclude API routes, static files, image optimizations, and .png files
         '/((?!api|_next/static|_next/image|.*\\.png$).*)',
-
     ],
 }

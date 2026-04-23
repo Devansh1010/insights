@@ -33,6 +33,8 @@ export async function GET(request: Request) {
 
         const { username } = result.data
 
+        console.log('Checking username availability for:', username)
+
         const existingUser = await User.findOne({ username: username })
 
         if (existingUser) {
@@ -50,7 +52,7 @@ export async function GET(request: Request) {
 
     } catch (error) {
         console.log('catch uername-abailable.ts: Error checking username ')
-        
+
         return createResponse(
             { success: false, message: 'Error checking username availability.' },
             StatusCode.INTERNAL_ERROR

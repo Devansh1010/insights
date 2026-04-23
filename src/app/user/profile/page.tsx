@@ -20,13 +20,15 @@ import Link from 'next/link'
 import { Separator } from '@/components/ui/separator'
 import EditProfile from '@/components/features/user/EditProfile'
 import { useQuery } from '@tanstack/react-query'
- 
+import { signOut } from "next-auth/react"
+
 const ProfilePage = () => {
 
   const { data, isPending, isError } = useQuery({
     queryKey: ['user-profile'],
     queryFn: getMe,
   })
+
 
   if (isPending) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>
@@ -36,7 +38,7 @@ const ProfilePage = () => {
     return <div className="min-h-screen flex items-center justify-center text-red-500">Failed to load profile</div>
   }
 
-  console.log(data)
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-50 to-white dark:from-zinc-950 dark:to-zinc-900 text-zinc-900 dark:text-zinc-100">
@@ -102,6 +104,7 @@ const ProfilePage = () => {
               variant="outline"
               size="icon"
               className="rounded-xl hover:text-destructive"
+              onClick={() => signOut()}
             >
               <LogOut className="w-4 h-4" />
             </Button>

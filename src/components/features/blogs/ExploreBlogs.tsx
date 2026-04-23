@@ -8,7 +8,6 @@ import { useQuery } from '@tanstack/react-query';
 import { getBlogs } from '@/services/blog.service';
 import { ExploreBlogsLoader } from './loader/ExploreBlogsLoader';
 import { BlogListError } from './error/BlogsListError';
-import { Badge } from '@/components/ui/badge';
 import { getSeries } from '@/services/series.service';
 import TopSeries from '../series/components/series-list/TopSeries';
 
@@ -42,7 +41,6 @@ const ExploreBlogs = () => {
 
     const isInitialPage = page === 1;
     const seriesList = seriesData?.data || [];
-    console.log(seriesData)
     const allBlogs = blogsData?.blogs || [];
 
     // Logic: If on page 1, featured is blog[0]. If page 2+, there is no featured.
@@ -53,17 +51,33 @@ const ExploreBlogs = () => {
         <div className="max-w-7xl mx-auto px-4 py-5">
             {/* --- HEADER SECTION --- */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="space-y-4">
-                    <Badge variant="outline" className="px-3 py-1 uppercase tracking-tighter text-[10px] border-primary/30 text-primary">
-                        The Vault
-                    </Badge>
-                    <h1 className="text-5xl md:text-7xl font-serif font-bold tracking-tight">
+                <div className="flex flex-col gap-1 py-4">
+                    {/* Minimalist Meta Info */}
+                    <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-primary italic">
+                            The Vault
+                        </span>
+                        <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+                        <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
+                            {isInitialPage ? "Curated Weekly" : `Volume ${page}`}
+                        </span>
+                    </div>
+
+                    {/* Clean, Bold Heading */}
+                    <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-zinc-950 dark:text-zinc-50">
                         {isInitialPage ? (
-                            <>Tranding <span className="text-muted-foreground/40 italic">Series.</span></>
+                            "Trending Series"
                         ) : (
-                            <>Archive <span className="text-muted-foreground/40 italic">Page {page}</span></>
+                            `Archive Collection`
                         )}
                     </h1>
+
+                    {/* Subtitle / Breadcrumb Style */}
+                    <p className="text-sm font-medium text-muted-foreground/60">
+                        {isInitialPage
+                            ? "Exploring the forefront of software architecture and design."
+                            : `Viewing page ${page} of the complete historical records.`}
+                    </p>
                 </div>
             </div>
 

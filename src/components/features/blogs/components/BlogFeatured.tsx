@@ -2,11 +2,11 @@ import { AspectRatio } from "@/components/ui/aspect-ratio"
 import { Blog } from "@/hooks/blogs/useBlogsFilter"
 import Image from "next/image"
 import Link from "next/link"
-import { Clock, Eye, Heart } from "lucide-react";
+import { Clock, Eye} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 
 const BlogFeatured = ({ featured }: { featured: Blog }) => {
-    const FALLBACK = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop';
 
     const formattedDate = featured?.publishedAt
         ? new Date(featured.publishedAt).toLocaleDateString("en-US", {
@@ -17,124 +17,90 @@ const BlogFeatured = ({ featured }: { featured: Blog }) => {
 
     return (
         <div>
-            <section className="group mb-24 px-4 lg:px-0">
+            <section className="group mb-24 px-4 lg:px-0 border-t border-zinc-200 dark:border-zinc-800 pt-12">
                 <Link href={`/user/explore/${featured?._id}`}>
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-20 items-center">
 
-                        {/* TEXT SIDE */}
-                        <div className="lg:col-span-5 space-y-7 order-2 lg:order-1">
-
-                            {/* META TOP */}
-                            <div className="flex items-center justify-between text-xs">
-
-                                <div className="flex items-center gap-3 font-medium">
-                                    <span className="uppercase tracking-[0.25em] text-primary font-bold">
+                        {/* TEXT SIDE: flex-col with justify-between keeps content and author at edges */}
+                        <div className="lg:col-span-5 flex flex-col justify-between py-1 order-2 lg:order-1">
+                            <div className="space-y-6">
+                                {/* META TOP */}
+                                <div className="flex items-center gap-3">
+                                    <span className="text-[10px] uppercase tracking-[0.3em] font-black text-primary">
                                         Featured
                                     </span>
-                                    <span className="w-1 h-1 rounded-full bg-slate-400" />
-                                    <span className="text-slate-500 italic">
+                                    <div className="h-1 w-1 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+                                    <span className="text-[10px] uppercase tracking-widest font-bold text-zinc-400">
                                         {formattedDate}
                                     </span>
                                 </div>
 
-                                {/* LEVEL */}
-                                <span className="text-[10px] uppercase tracking-widest bg-muted text-muted-foreground px-2 py-1 rounded-full">
-                                    {featured.level}
-                                </span>
-                            </div>
-
-                            {/* 🔥 HOOK (MAIN ATTENTION) */}
-                            <h3 className="text-lg sm:text-xl font-semibold text-primary leading-snug line-clamp-2">
-                                {featured?.hook}
-                            </h3>
-
-                            {/* TITLE */}
-                            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold leading-tight text-slate-900 dark:text-white line-clamp-3 group-hover:underline underline-offset-4 transition-all duration-300">
-                                {featured?.title || "Untitled Post"}
-                            </h2>
-
-                            {/* META INFO */}
-                            <div className="flex items-center gap-4 text-xs text-muted-foreground">
-
-                                <span className="flex items-center gap-1.5">
-                                    <Clock className="w-3.5 h-3.5" />
-                                    {featured.readTime || "N/A"} min read
-                                </span>
-
-                                <span className="flex items-center gap-1.5">
-                                    <Eye className="w-3.5 h-3.5" />
-                                    {featured.views || 0}
-                                </span>
-
-                                <span className="flex items-center gap-1.5">
-                                    <Heart className="w-3.5 h-3.5" />
-                                    {featured.likes || 0}
-                                </span>
-
-                            </div>
-
-                            {/* EXCERPT */}
-                            <p className="text-muted-foreground leading-relaxed text-base lg:text-lg font-serif opacity-80 line-clamp-3">
-                                {featured?.excerpt || featured?.desc}
-                            </p>
-
-                            {/* TAGS */}
-                            {featured?.tags && (
-                                <div className="flex flex-wrap gap-2">
-                                    {featured?.tags?.slice(0, 3).map((tag) => (
-                                        <span
-                                            key={tag}
-                                            className="text-[10px] uppercase tracking-widest bg-primary/10 text-primary px-3 py-1 rounded-full font-bold"
-                                        >
-                                            {tag}
-                                        </span>
-                                    ))}
+                                {/* TITLE AREA */}
+                                <div className="space-y-3">
+                                    <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-tight">
+                                        {featured?.hook}
+                                    </h3>
+                                    <h2 className="text-3xl lg:text-5xl font-black leading-[1.1] tracking-tighter text-zinc-950 dark:text-white group-hover:text-primary transition-colors duration-300">
+                                        {featured?.title || "Untitled Post"}
+                                    </h2>
                                 </div>
-                            )}
 
-                            {/* AUTHOR */}
-                            <div className="pt-5 border-t border-slate-200/50 flex items-center justify-between">
-
-                                <p className="text-sm text-slate-600">
-                                    By @{featured?.username || "unknown"}
+                                {/* EXCERPT */}
+                                <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed text-base font-medium line-clamp-3">
+                                    {featured?.excerpt || featured?.desc}
                                 </p>
 
-                                {/* CTA */}
-                                <span className="text-sm font-medium text-primary group-hover:translate-x-1 transition-transform">
-                                    Read →
-                                </span>
+                                {/* STATS & TAGS */}
+                                <div className="flex flex-wrap items-center gap-4 pt-2">
+                                    <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                                        <span className="flex items-center gap-1.5"><Clock className="w-3 h-3" /> {featured.readTime}m</span>
+                                        <span className="flex items-center gap-1.5"><Eye className="w-3 h-3" /> {featured.views}</span>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        {featured?.tags?.slice(0, 2).map((tag) => (
+                                            <Badge key={tag} variant="secondary" className="rounded-none text-[9px] uppercase font-black px-2 py-0">
+                                                {tag}
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
 
+                            {/* BOTTOM ALIGNED AUTHOR - creates the bottom "border" feel */}
+                            <div className="pt-8 flex items-center justify-between mt-auto">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-6 h-6 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 overflow-hidden relative">
+                                        {/* Optional: Add Author Image here */}
+                                        <div className="absolute inset-0 flex items-center justify-center text-[10px] font-bold">@</div>
+                                    </div>
+                                    <p className="text-xs font-bold uppercase tracking-tight text-zinc-500">
+                                        {featured?.username || "unknown"}
+                                    </p>
+                                </div>
+                                <span className="text-xs font-black uppercase tracking-[0.2em] group-hover:mr-2 transition-all">
+                                    Read Story →
+                                </span>
                             </div>
                         </div>
 
                         {/* IMAGE SIDE */}
                         <div className="lg:col-span-7 order-1 lg:order-2">
-                            <div className="relative w-full overflow-hidden rounded-[1rem] shadow-2xl transition-all duration-700 group-hover:shadow-primary/5">
-
-                                <AspectRatio ratio={16 / 9} className="bg-slate-100">
+                            <div className="relative overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-900 shadow-xl">
+                                <AspectRatio ratio={16 / 9} className="h-full">
                                     <Image
-                                        src={featured.coverImage || FALLBACK}
+                                        src={featured.coverImage || ''}
                                         alt={featured.title}
                                         fill
                                         priority
-                                        className="object-cover group-hover:scale-105 transition-transform duration-1000 ease-in-out"
+                                        className="object-cover group-hover:scale-105 transition-transform duration-1000"
                                     />
-
-                                    {/* Gradient Overlay */}
-                                    <div className="absolute inset-0 bg-linear-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-
-                                    {/* OPTIONAL FLOATING META */}
-                                    <div className="absolute bottom-4 left-4 flex gap-2 text-[10px]">
-                                        <span className="bg-black/60 text-white px-2 py-1 rounded">
-                                            {featured.readTime} min
-                                        </span>
-                                        <span className="bg-black/60 text-white px-2 py-1 rounded">
+                                    {/* Level Badge Overlay */}
+                                    <div className="absolute top-4 right-4">
+                                        <span className="bg-white/90 dark:bg-black/90 backdrop-blur-sm text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1 shadow-sm">
                                             {featured.level}
                                         </span>
                                     </div>
-
                                 </AspectRatio>
-
                             </div>
                         </div>
 

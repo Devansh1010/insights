@@ -11,15 +11,7 @@ const TopSeries = ({ isInitialPage, featuredSeries }: { isInitialPage: boolean; 
 
     return (
         <section className="py-12 px-4 md:px-16 overflow-hidden">
-            {/* Editorial Header */}
-            <div className="flex items-center gap-6 mb-12">
-                <div className="h-px flex-1 bg-linear-to-r from-transparent to-border" />
-                <span className="text-[11px] font-black uppercase tracking-[0.4em] text-muted-foreground whitespace-nowrap">
-                    Series of the week
-                </span>
-                <div className="h-px flex-1 bg-linear-to-l from-transparent to-border" />
-            </div>
-
+            
             <div className="relative max-w-6xl mx-auto group">
                 <Carousel
                     opts={{

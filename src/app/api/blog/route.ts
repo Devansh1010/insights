@@ -54,7 +54,7 @@ function calculateReadTime(content: TiptapContent): number {
 
     const words = fullText.trim().split(/\s+/).filter(Boolean).length;
 
-    const wordsPerMinute = 200;
+    const wordsPerMinute = 70;
 
     return Math.max(1, Math.ceil(words / wordsPerMinute));
 }

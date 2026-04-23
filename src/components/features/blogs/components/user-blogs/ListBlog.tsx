@@ -41,7 +41,7 @@ const ListBlog = ({ filteredBlogs, deleteBlog }: { filteredBlogs: Blog[], delete
                         <span>Showing {filteredBlogs.length} Stories</span>
                     </div>
                 </div>
-                <Link href="/user/write">
+                <Link href="/write-blog">
                     <Button size="sm" className="rounded-full px-6 font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/10 transition-all hover:-translate-y-px hover:shadow-primary/20">
                         <Plus className="w-3.5 h-3.5 mr-2" /> New Post
                     </Button>
@@ -134,7 +134,7 @@ const ListBlog = ({ filteredBlogs, deleteBlog }: { filteredBlogs: Blog[], delete
                                         </Badge>
                                         {/* Optional: Read Time indicator */}
                                         <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-tight">
-                                            {blog.readTime} min read
+                                            {blog.readTime } : min read
                                         </span>
                                     </div>
                                     <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">

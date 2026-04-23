@@ -76,12 +76,6 @@ const UserBlogs = () => {
                                 className="pl-9 h-9"
                             />
                         </div>
-                        <Link href="/user/write">
-                            <Button className="h-9 px-4 gap-2">
-                                <Plus className="w-4 h-4" />
-                                <span className="hidden sm:inline">New</span>
-                            </Button>
-                        </Link>
                     </div>
                 </header>
 

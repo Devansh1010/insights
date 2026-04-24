@@ -17,7 +17,6 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Separator } from '@/components/ui/separator'
 import EditProfile from '@/components/features/user/EditProfile'
 import { useQuery } from '@tanstack/react-query'
 import { signOut } from "next-auth/react"
@@ -37,10 +36,10 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-zinc-900">
+    <div className="min-h-screen bg-linear-to-b from-zinc-50 to-zinc-100 dark:from-zinc-950 dark:to-zinc-900">
 
       {/* TOP BANNER */}
-      <div className="h-48 w-full bg-gradient-to-r from-primary/20 via-purple-500/20 to-blue-500/20" />
+      <div className="h-48 w-full bg-linear-to-r from-primary/20 via-purple-500/20 to-blue-500/20" />
 
       <main className="max-w-4xl mx-auto px-6 -mt-24 pb-24 space-y-10">
 

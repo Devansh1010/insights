@@ -70,9 +70,9 @@ export const deleteSeries = async (id: string) => {
     }
 }
 
-export const getSeriesById = async ({ id, page, limit }: { id: string, page: number, limit: number }) => {
+export const getSeriesById = async ({ id, page, limit, search }: { id: string, page: number, limit: number, search?: string }) => {
     try {
-        const res = await seriesApi.get(`/${id}?${page}&${limit}`);
+        const res = await seriesApi.get(`/${id}?page=${page}&limit=${limit}&search=${search}`);
 
         return res.data.data;
     } catch (error: unknown) {

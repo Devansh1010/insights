@@ -43,13 +43,11 @@ export async function GET(req: NextRequest) {
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
-            .select("title slug excerpt coverImage tags isPublished createdAt author readTime")
+            .select("title desc slug excerpt coverImage tags isPublished createdAt author readTime")
             .populate("author", "username")
             .lean()
 
         const total = await Blog.countDocuments(filter);
-
-        console.log("Blogs retrieved:", blogs.length, "Total:", total)
 
         return createResponse(
             {

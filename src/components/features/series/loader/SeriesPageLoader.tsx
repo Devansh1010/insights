@@ -45,45 +45,6 @@ export const SeriesPageLoader = () => {
           </div>
         </div>
       </div>
-
-      {/* Main Content Skeleton */}
-      <main className="max-w-7xl mx-auto px-6 mt-20">
-        <div className="flex items-center justify-between mb-8">
-          <Skeleton className="h-8 w-64" />
-          <div className="h-1 w-20 bg-muted rounded-full" />
-        </div>
-
-        {/* Grid Layout Skeleton */}
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <Card key={i} className="border-none bg-card/50 shadow-md overflow-hidden">
-              {/* Image Area */}
-              <Skeleton className="h-52 w-full rounded-none" />
-
-              <CardContent className="p-6 space-y-4">
-                {/* Title */}
-                <div className="space-y-2">
-                  <Skeleton className="h-5 w-full" />
-                  <Skeleton className="h-5 w-2/3" />
-                </div>
-
-                {/* Excerpt */}
-                <div className="space-y-2">
-                  <Skeleton className="h-3 w-full" />
-                  <Skeleton className="h-3 w-full" />
-                  <Skeleton className="h-3 w-4/5" />
-                </div>
-
-                {/* Tags */}
-                <div className="flex gap-2 pt-2">
-                  <Skeleton className="h-3 w-10" />
-                  <Skeleton className="h-3 w-10" />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </main>
     </div>
   )
 }

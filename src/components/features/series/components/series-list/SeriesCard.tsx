@@ -22,6 +22,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { TagBadge } from "@/components/features/badges/MetaBedge";
 
 export const SeriesCard = ({ series }: { series: Series }) => {
   const [openEdit, setOpenEdit] = useState(false);
@@ -51,8 +52,8 @@ export const SeriesCard = ({ series }: { series: Series }) => {
         {/* Aspect Ratio Container */}
         <div className="aspect-video relative overflow-hidden">
           <Image
-            src={series.coverImage || "/placeholder-series.jpg"}
-            alt={series.title}
+            src={series?.coverImage || '/fallback.jpg'}
+            alt={series?.title}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
@@ -66,10 +67,10 @@ export const SeriesCard = ({ series }: { series: Series }) => {
         <div className="p-6">
           <div className="flex justify-between items-start mb-3">
             <div className="flex gap-2">
-              {series.tags?.slice(0, 2).map((tag: string) => (
-                <span key={tag} className="text-[10px] font-bold uppercase tracking-wider text-primary">
-                  #{tag}
-                </span>
+              {series?.tags?.slice(0, 2).map((tag: string) => (
+                <TagBadge key={tag} >
+                  {tag}
+                </TagBadge>
               ))}
             </div>
 
@@ -132,12 +133,12 @@ export const SeriesCard = ({ series }: { series: Series }) => {
 
           <Link href={`/user/series/${series._id}`}>
             <h3 className="text-xl font-bold leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-1">
-              {series.title}
+              {series?.title}
             </h3>
           </Link>
 
           <p className="text-sm text-muted-foreground line-clamp-2 mb-6 min-h-10">
-            {series.desc}
+            {series?.desc}
           </p>
 
           <div className="flex items-center justify-between pt-4 border-t border-border/50">

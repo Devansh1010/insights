@@ -37,7 +37,7 @@ const ListBlog = ({ filteredBlogs, deleteBlog }: { filteredBlogs: Blog[], delete
                     </h3>
                     <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">
                         <FileText className="w-3 h-3 text-primary/60" />
-                        {/* We use the array length for the current view count */}
+                       
                         <span>Showing {filteredBlogs.length} Stories</span>
                     </div>
                 </div>
@@ -84,7 +84,7 @@ const ListBlog = ({ filteredBlogs, deleteBlog }: { filteredBlogs: Blog[], delete
                                 {/* OVERLAY ACTIONS */}
                                 <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-y-2.5 group-hover:translate-y-0">
                                     <Link href={`/write-blog/${blog._id}`}>
-                                        <Button variant="secondary" size="icon" className="h-9 w-9 rounded-full bg-white/95 backdrop-blur shadow-md hover:bg-primary hover:text-white">
+                                        <Button variant="secondary" size="icon" className="h-9 w-9 rounded-full  backdrop-blur shadow-md ">
                                             <Pencil className="w-4 h-4" />
                                         </Button>
                                     </Link>
@@ -138,8 +138,8 @@ const ListBlog = ({ filteredBlogs, deleteBlog }: { filteredBlogs: Blog[], delete
                                         </span>
                                     </div>
                                     <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                                        {blog.publishedAt
-                                            ? new Date(blog.publishedAt).toLocaleDateString("en-US", {
+                                        {blog.createdAt
+                                            ? new Date(blog.createdAt).toLocaleDateString("en-US", {
                                                 month: "short",
                                                 day: "numeric",
                                                 year: "numeric"

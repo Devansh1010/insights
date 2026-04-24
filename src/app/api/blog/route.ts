@@ -240,10 +240,16 @@ export async function GET(req: NextRequest) {
 
         const total = await Blog.countDocuments({ isPublished: true });
 
+        //logic to get one featured blog by its maximum views
+
+        const featuredBlog = blogs.length > 0 ? blogs.reduce(
+            (prev, current) => (prev.views > current.views) ? prev : current) : null;
+
         return createResponse(
             {
                 success: true, message: "Blogs retrieved successfully", data: {
                     blogs,
+                    featuredBlog,
                     pagination: {
                         total,
                         page,

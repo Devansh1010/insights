@@ -1,7 +1,7 @@
 import { createResponse, StatusCode } from "@/lib/createResponse";
 import { dbConnect } from "@/lib/db";
 import { VerifyUser } from "@/lib/verifyUser/userVerification";
-import Blog from "@/models/blog_modles/blog.model";
+import mongoose from "mongoose";
 import SeriesBlog from "@/models/series_models/series-blog.model";
 import Series from "@/models/series_models/series.model";
 import { NextRequest } from "next/server";
@@ -41,35 +41,76 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
         const author = series.author as unknown as { _id: string, username: string, avatar: string };
 
-
         if (author._id.toString() !== userId.toString()) {
             await Series.findByIdAndUpdate(id, { $inc: { views: 1 } });
         }
-
 
         const { searchParams } = new URL(req.url)
 
         const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
         const limit = Math.min(20, parseInt(searchParams.get("limit") || "10"));
+        const search = searchParams.get("search")?.trim();
 
         const skip = (page - 1) * limit;
 
-        const mappings = await SeriesBlog.find({ series: id })
-            .sort({ order: 1 })
-            .limit(10)
-            .skip(skip)
-            .lean()
+        const blogs = await SeriesBlog.aggregate([
+            // Match the mappings for the specific series first
+            { $match: { series: new mongoose.Types.ObjectId(id) } },
 
-        const blogIds = mappings.map(m => m.blog);
+            // Join with the Blogs collection (SQL-like Join)
+            {
+                $lookup: {
+                    from: "blogs",
+                    localField: "blog",
+                    foreignField: "_id",
+                    as: "blogData"
+                }
+            },
 
-        const blogs = await Blog.find({ _id: { $in: blogIds } })
-            .select("title excerpt coverImage tags slug");
+            // Unwind the array from lookup
+            { $unwind: "$blogData" },
+
+            // Apply the search filter on the joined data
+            ...(search ? [{
+                $match: {
+                    $or: [
+                        { "blogData.title": { $regex: search, $options: "i" } },
+                        { "blogData.desc": { $regex: search, $options: "i" } }
+                    ]
+                }
+            }] : []),
+
+            // Sort by the 'order' defined in the SeriesBlog mapping
+            { $sort: { order: 1 } },
+
+            // Pagination
+            { $skip: skip },
+            { $limit: limit },
+
+            // Project only what you need (Clean output)
+            {
+                $project: {
+                    _id: "$blogData._id",
+                    title: "$blogData.title",
+                    slug: "$blogData.slug",
+                    excerpt: "$blogData.excerpt",
+                    coverImage: "$blogData.coverImage",
+                    tags: "$blogData.tags"
+                }
+            }
+        ]);
+
+        console.log("Blogs in Series:", blogs)
 
         return createResponse(
             {
                 success: true,
                 message: "Found Series",
-                data: { series, blogs, totalPages: Math.ceil(blogIds.length / limit) }
+                data: {
+                    series,
+                    blogs,
+                    totalPages: Math.ceil(blogs.length / limit)
+                }
             },
             StatusCode.OK
         );

@@ -1,20 +1,13 @@
 'use client'
-import {
-    Plus,
-    Search
-} from "lucide-react"
+import { Search } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 
-import Link from "next/link"
 import { getUserBlogs } from "@/services/blog.service"
 import { deleteBlog } from "@/services/blog.service"
 
-
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useBlogsFilters } from "@/hooks/blogs/useBlogsFilter"
 
 import { UserBlogsLoader } from "./loader/UserBlogsLoader"
 import { UserBlogsError } from "./error/UserBlogsError"
@@ -55,37 +48,41 @@ const UserBlogs = () => {
     if (isError) return <UserBlogsError onRetry={refetch} />
 
     return (
-        <div className="min-h-screen bg-background/50 pt-24 pb-20">
-            <div className="max-w-7xl mx-auto px-6 space-y-8">
+        <div className="max-w-7xl mx-auto px-6 py-5">
 
-                <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-                    <div className="space-y-1">
-                        <h1 className="text-3xl font-semibold tracking-tight">Dashboard</h1>
-                        <p className="text-sm text-muted-foreground">
-                            {data?.pagination?.total || 0} published stories
-                        </p>
+            <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pb-8">
+                <h1 className="text-3xl md:text-5xl font-serif font-bold leading-tight text-foreground">
+                    <span className="flex items-center gap-3">
+                        My Blogs
+                    </span>
+                </h1>
+
+                <div className="flex items-center gap-3 w-full md:w-auto">
+                    <div className="relative group w-full md:w-72">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/50 group-focus-within:text-primary transition-colors" />
+                        <Input
+                            placeholder="Search system records..."
+                            defaultValue={search}
+                            onChange={(e) => debouncedSearch(e.target.value)}
+                            className="pl-9 h-9 bg-muted/30 border-border/50 focus-visible:ring-1 focus-visible:ring-primary/20 transition-all font-sans text-sm"
+                        />
                     </div>
+                </div>
+            </header>
 
-                    <div className="flex items-center gap-3 w-full sm:w-auto">
-                        <div className="relative w-full sm:w-64">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                placeholder="Search stories..."
-                                defaultValue={search}
-                                onChange={(e) => debouncedSearch(e.target.value)}
-                                className="pl-9 h-9"
-                            />
-                        </div>
-                    </div>
-                </header>
-
-                {/* 3. Pass the array directly */}
+            {/* --- BLOG LIST --- */}
+            <main className="min-h-125">
                 <ListBlog
                     filteredBlogs={data?.blogs || []}
                     deleteBlog={(id) => mutation.mutate(id)}
                 />
+            </main>
 
-                {/* 4. Use the pagination data from the API response */}
+            {/* --- FOOTER / PAGINATION --- */}
+            <footer className="flex flex-col items-center gap-6 pt-12 border-t border-border/40">
+                <div className="text-[10px] font-mono text-muted-foreground/30 uppercase tracking-widest">
+                    End of Transmission
+                </div>
                 <PaginationUI
                     page={page}
                     totalPages={data?.pagination?.totalPages || 1}
@@ -94,7 +91,7 @@ const UserBlogs = () => {
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
                 />
-            </div>
+            </footer>
         </div>
     );
 };

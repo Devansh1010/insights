@@ -21,7 +21,7 @@ const ExploreBlogs = () => {
     // Article Query
     const { data: blogsData, isPending: isBlogsPending, isError: isBlogsError, refetch: refetchBlogs } = useQuery({
         queryKey: ['blogs', { page }],
-        queryFn: () => getBlogs({ page, limit }),
+        queryFn: () => getBlogs({ page, limit: page === 1 ? 11 : limit }), 
     })
 
     // Series Query
@@ -29,11 +29,6 @@ const ExploreBlogs = () => {
         queryKey: ['series'],
         queryFn: () => getSeries(),
     })
-
-
-    // const {
-    //     featured, rest, searchQuery, setSearchQuery
-    // } = useBlogsFilters(data?.blogs || [], page);
 
 
     if (isBlogsPending || isSeriesPending) return <ExploreBlogsLoader />;
@@ -44,68 +39,68 @@ const ExploreBlogs = () => {
     const allBlogs = blogsData?.blogs || [];
 
     // Logic: If on page 1, featured is blog[0]. If page 2+, there is no featured.
-    const featuredBlog = isInitialPage ? allBlogs[0] : null;
+    const featuredBlog = isInitialPage ? blogsData?.featuredBlog : null;
     const restBlogs = isInitialPage ? allBlogs.slice(1) : allBlogs;
 
     return (
-        <div className="max-w-7xl mx-auto px-4 py-5">
+        <div className="max-w-7xl mx-auto px-6 py-5">
             {/* --- HEADER SECTION --- */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="flex flex-col gap-1 py-4">
-                    {/* Minimalist Meta Info */}
-                    <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-primary italic">
-                            The Vault
-                        </span>
-                        <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
-                        <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
-                            {isInitialPage ? "Curated Weekly" : `Volume ${page}`}
-                        </span>
+            <header className="flex flex-col gap-5">
+                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+                    <div className="max-w-3xl space-y-2">
+                        {/* 2. The Main Title */}
+                        <h1 className="text-3xl md:text-5xl font-serif font-bold leading-tight text-foreground">
+                            {isInitialPage ? (
+                                <span className="flex items-center gap-3">
+                                    Series of the Week
+                                </span>
+                            ) : (
+                                "Index Collection"
+                            )}
+                        </h1>
+
+                        {/* 3. The Contextual Subtitle */}
+                        <p className="text-sm font-serif md:text-base text-muted-foreground/80 leading-relaxed max-w-xl">
+                            {isInitialPage
+                                ? "A curated selection of architectural deep-dives and engineering principles worth mastering this week."
+                                : `Systematic overview of all published works. Currently viewing page ${page}.`}
+                        </p>
                     </div>
 
-                    {/* Clean, Bold Heading */}
-                    <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-zinc-950 dark:text-zinc-50">
-                        {isInitialPage ? (
-                            "Trending Series"
-                        ) : (
-                            `Archive Collection`
-                        )}
-                    </h1>
-
-                    {/* Subtitle / Breadcrumb Style */}
-                    <p className="text-sm font-medium text-muted-foreground/60">
-                        {isInitialPage
-                            ? "Exploring the forefront of software architecture and design."
-                            : `Viewing page ${page} of the complete historical records.`}
-                    </p>
                 </div>
+            </header>
+
+            {/* --- 1. FEATURED SERIES HERO --- */}
+            <div className="mb-20 transition-all duration-500 ease-in-out hover:opacity-95">
+                <TopSeries isInitialPage={isInitialPage} featuredSeries={seriesList} />
             </div>
 
-            {/* --- 1. FEATURED SERIES HERO (Only on Page 1) --- */}
-            <TopSeries isInitialPage={isInitialPage} featuredSeries={seriesList} />
-
-            {/* --- 2. FEATURED BLOG (Only on Page 1) --- */}
+            {/* --- 2. FEATURED BLOG --- */}
             {isInitialPage && featuredBlog && (
-                <>
+                <div className="group">
                     <BlogFeatured featured={featuredBlog} />
-                    <Separator className="mb-16 opacity-50" />
-                </>
+                    <Separator className="my-20 opacity-30" />
+                </div>
             )}
 
-            {/* --- 3. THE GRID (Rest of Blogs) --- */}
-            <section>
-                <div className="flex items-center justify-between mb-10">
-                    <h3 className="text-2xl font-serif font-bold">
+            {/* --- 3. THE GRID SECTION --- */}
+            <section className="space-y-10">
+                <div className="flex items-baseline justify-between border-b pb-4">
+                    <h3 className="text-xl font-bold tracking-tight uppercase">
                         {isInitialPage ? "Recent Publications" : "All Articles"}
                     </h3>
-                    <span className="text-xs text-muted-foreground">{blogsData?.pagination?.totalItems} total stories</span>
+                    <span className="text-[11px] font-mono font-medium text-muted-foreground uppercase tracking-wider">
+                        [{blogsData?.pagination?.totalItems}] total stories
+                    </span>
                 </div>
 
-                <BlogRest rest={restBlogs} />
+                <div className="min-h-100">
+                    <BlogRest rest={restBlogs} />
+                </div>
             </section>
 
             {/* --- 4. PAGINATION --- */}
-            <footer className="flex justify-center pt-16 border-t border-slate-100 mt-20">
+            <footer className="flex justify-center pt-12 border-t mt-24">
                 <PaginationUI
                     page={page}
                     totalPages={blogsData?.pagination?.totalPages || 1}

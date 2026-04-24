@@ -26,7 +26,7 @@ const SeriesList = () => {
         <div className="max-w-7xl min-h-screen mx-auto px-6 py-20 flex flex-col justify-center">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Your Collections</h2>
+                    <h2 className="text-3xl font-serif font-bold tracking-tight">Your Collections</h2>
                     <p className="text-muted-foreground mt-1">Manage and organize your curated learning paths.</p>
                 </div>
                 <div>

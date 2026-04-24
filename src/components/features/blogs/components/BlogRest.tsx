@@ -1,11 +1,13 @@
 
 import { Button } from '@/components/ui/button'
-import { Blog } from '@/hooks/blogs/useBlogsFilter'
+
 import Image from 'next/image'
 import Link from 'next/link'
 
 import { useState } from 'react'
-import { Clock, Eye, ArrowRight} from "lucide-react";
+import { Clock, Eye, ArrowRight, ArrowUpRight } from "lucide-react";
+import { Blog } from '@/types/frontend/blog';
+import { LevelBadge } from '../../badges/MetaBedge';
 
 
 const BlogRest = ({ rest }: { rest: Blog[] }) => {
@@ -41,9 +43,7 @@ const BlogRest = ({ rest }: { rest: Blog[] }) => {
                   />
                   {/* Floating Level Badge */}
                   <div className="absolute top-4 left-4">
-                    <span className="bg-background/80 backdrop-blur-md text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-border/50">
-                      {post.level}
-                    </span>
+                    <LevelBadge title={post.level} />
                   </div>
                 </div>
               )}
@@ -95,21 +95,32 @@ const BlogRest = ({ rest }: { rest: Blog[] }) => {
                 )}
 
                 {/* FOOTER - Spaced and light */}
-                <div className="flex items-center justify-between pt-6 mt-auto">
-                  <div className="flex items-center gap-4 text-[11px] font-bold text-muted-foreground/60">
-                    <span className="flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5" />
-                      {post?.readTime ? `${post.readTime}m` : "—"}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <Eye className="w-3.5 h-3.5" />
-                      {post?.views || 0}
-                    </span>
+                <div className="flex items-center justify-between pt-6 mt-auto border-t border-border/40">
+                  <div className="flex items-center gap-5">
+                    {/* Read Time Group */}
+                    <div className="flex items-center gap-1.5 group/item">
+                      <Clock className="w-3.5 h-3.5 text-muted-foreground/40 group-hover/item:text-primary transition-colors" />
+                      <span className="text-[11px] font-mono font-medium text-muted-foreground/70 uppercase tracking-tighter">
+                        {post?.readTime ? `${post.readTime} MIN` : "—"}
+                      </span>
+                    </div>
+
+                    {/* Divider Dot */}
+                    <div className="h-1 w-1 rounded-full bg-border" />
+
+                    {/* Views Group */}
+                    <div className="flex items-center gap-1.5 group/item">
+                      <Eye className="w-3.5 h-3.5 text-muted-foreground/40 group-hover/item:text-primary transition-colors" />
+                      <span className="text-[11px] font-mono font-medium text-muted-foreground/70 tabular-nums">
+                        {post?.views?.toLocaleString() || 0}
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-1 text-xs font-bold uppercase tracking-widest group-hover:text-primary transition-colors">
-                    Read Article
-                    <ArrowRight className="w-4 h-4 -translate-x-1 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                  {/* Optional: Add a "Read More" Arrow that appears on hover */}
+                  <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-primary opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                    Entry
+                    <ArrowUpRight className="w-3 h-3" />
                   </div>
                 </div>
               </div>

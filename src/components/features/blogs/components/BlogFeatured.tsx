@@ -1,9 +1,10 @@
 import { AspectRatio } from "@/components/ui/aspect-ratio"
-import { Blog } from "@/hooks/blogs/useBlogsFilter"
+
 import Image from "next/image"
 import Link from "next/link"
-import { Clock, Eye} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Clock, Eye } from "lucide-react";
+import { Blog } from "@/types/frontend/blog";
+import { LevelBadge, TagBadge } from "../../badges/MetaBedge";
 
 
 const BlogFeatured = ({ featured }: { featured: Blog }) => {
@@ -21,32 +22,31 @@ const BlogFeatured = ({ featured }: { featured: Blog }) => {
                 <Link href={`/user/explore/${featured?._id}`}>
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-20 items-center">
 
-                        {/* TEXT SIDE: flex-col with justify-between keeps content and author at edges */}
                         <div className="lg:col-span-5 flex flex-col justify-between py-1 order-2 lg:order-1">
                             <div className="space-y-6">
                                 {/* META TOP */}
                                 <div className="flex items-center gap-3">
-                                    <span className="text-[10px] uppercase tracking-[0.3em] font-black text-primary">
+                                    <span className="text-[10px] uppercase tracking-[0.3em] font-serif font-black text-primary">
                                         Featured
                                     </span>
                                     <div className="h-1 w-1 rounded-full bg-zinc-300 dark:bg-zinc-700" />
-                                    <span className="text-[10px] uppercase tracking-widest font-bold text-zinc-400">
+                                    <span className="text-[10px] font-serif uppercase tracking-widest font-bold text-zinc-400">
                                         {formattedDate}
                                     </span>
                                 </div>
 
                                 {/* TITLE AREA */}
                                 <div className="space-y-3">
-                                    <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-tight">
+                                    <h3 className="text-xs font-serif font-bold text-zinc-400 uppercase">
                                         {featured?.hook}
                                     </h3>
-                                    <h2 className="text-3xl lg:text-5xl font-black leading-[1.1] tracking-tighter text-zinc-950 dark:text-white group-hover:text-primary transition-colors duration-300">
+                                    <h2 className="text-3xl lg:text-5xl font-serif font-black leading-[1.1] tracking-tighter text-zinc-950 dark:text-white group-hover:text-primary transition-colors duration-300">
                                         {featured?.title || "Untitled Post"}
                                     </h2>
                                 </div>
 
                                 {/* EXCERPT */}
-                                <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed text-base font-medium line-clamp-3">
+                                <p className="text-zinc-600 font-serif dark:text-zinc-400 leading-relaxed text-base font-medium line-clamp-3">
                                     {featured?.excerpt || featured?.desc}
                                 </p>
 
@@ -58,9 +58,9 @@ const BlogFeatured = ({ featured }: { featured: Blog }) => {
                                     </div>
                                     <div className="flex gap-2">
                                         {featured?.tags?.slice(0, 2).map((tag) => (
-                                            <Badge key={tag} variant="secondary" className="rounded-none text-[9px] uppercase font-black px-2 py-0">
+                                            <TagBadge key={tag}>
                                                 {tag}
-                                            </Badge>
+                                            </TagBadge>
                                         ))}
                                     </div>
                                 </div>
@@ -96,9 +96,7 @@ const BlogFeatured = ({ featured }: { featured: Blog }) => {
                                     />
                                     {/* Level Badge Overlay */}
                                     <div className="absolute top-4 right-4">
-                                        <span className="bg-white/90 dark:bg-black/90 backdrop-blur-sm text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1 shadow-sm">
-                                            {featured.level}
-                                        </span>
+                                        <LevelBadge title={featured.level} />
                                     </div>
                                 </AspectRatio>
                             </div>

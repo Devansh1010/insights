@@ -8,6 +8,8 @@ export interface Blog {
     content: JSONContent;
     title: string;
     hook: string;
+    excerpt: string;
+    insights: string[];
     desc: string;
     username: string;
     views: number;

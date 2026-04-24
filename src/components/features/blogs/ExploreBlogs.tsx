@@ -89,9 +89,6 @@ const ExploreBlogs = () => {
                     <h3 className="text-xl font-bold tracking-tight uppercase">
                         {isInitialPage ? "Recent Publications" : "All Articles"}
                     </h3>
-                    <span className="text-[11px] font-mono font-medium text-muted-foreground uppercase tracking-wider">
-                        [{blogsData?.pagination?.totalItems}] total stories
-                    </span>
                 </div>
 
                 <div className="min-h-100">

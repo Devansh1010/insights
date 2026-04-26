@@ -1,6 +1,7 @@
 import blogApi from "@/lib/blogAxios";
 // import { OutputData } from "@editorjs/editorjs";
 import { JSONContent } from "@tiptap/react";
+import { toast } from "sonner";
 
 export interface CreateBlogVariables {
     blogId?: string
@@ -25,7 +26,8 @@ export const createBlog = async (data: CreateBlogVariables) => {
         }
         console.log(res.data)
     } catch (error) {
-        console.error("Failed to create blog", error);
+        const errorMessage = error instanceof Error ? error.message : "Failed to fetch blog";
+        toast.error(errorMessage);
         throw new Error("Failed to create blog");
     }
 };
@@ -39,6 +41,8 @@ export const deleteBlog = async (blogId: string) => {
         }
 
     } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Failed to fetch blog";
+        toast.error(errorMessage);
         throw new Error("Failed to create blog")
     }
 }
@@ -62,9 +66,12 @@ export const getBlog = async (blogId: string) => {
         if (response.status === 200) {
             return response.data.data;
         } else {
+            toast.error(response.data.message || "Failed to fetch blog")
             return {};
         }
     } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Failed to fetch blog";
+        toast.error(errorMessage);
         console.error("Error fetching blogs:", error);
         return {};
     }
@@ -81,7 +88,8 @@ export const getBlogs = async ({ page, limit }: { page: number, limit: number })
             return [];
         }
     } catch (error) {
-        console.error("Error fetching blogs:", error);
+        const errorMessage = error instanceof Error ? error.message : "Failed to fetch blog";
+        toast.error(errorMessage);
         return [];
     }
 }
@@ -95,7 +103,8 @@ export const getUserBlogs = async ({ page, limit, search }: { page: number, limi
             return [];
         }
     } catch (error) {
-        console.error("Error fetching blogs:", error);
+        const errorMessage = error instanceof Error ? error.message : "Failed to fetch blog";
+        toast.error(errorMessage);
         return [];
     }
 }

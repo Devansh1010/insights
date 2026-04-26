@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 export const BlogListError = ({ reset }: { reset: () => void }) => {
     return (
         <div className="max-w-4xl mx-auto min-h-screen flex flex-col items-center justify-center text-center px-6">
@@ -10,22 +12,22 @@ export const BlogListError = ({ reset }: { reset: () => void }) => {
 
             <h2 className="text-2xl font-semibold tracking-tight">Sync interrupted</h2>
             <p className="mt-2 mb-8 text-muted-foreground max-w-100">
-                We encountered a technical hurdle while fetching the series. This might be a temporary connection issue.
+                We encountered a technical hurdle while fetching the blog. This might be a temporary connection issue.
             </p>
 
             <div className="flex gap-4">
-                <button
+                <Button
                     onClick={() => reset()}
                     className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
                 >
                     Try Again
-                </button>
-                <button
-                    onClick={() => window.location.href = '/'}
+                </Button>
+                <Button
+                    onClick={() => window.location.href = '/user/explore'}
                     className="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-8 text-sm font-medium shadow-sm hover:bg-accent hover:text-accent-foreground"
                 >
                     Return Home
-                </button>
+                </Button>
             </div>
         </div>
     );

@@ -48,14 +48,15 @@ const ProfilePage = () => {
 
           {/* Avatar */}
           <div className="relative group">
-            <div className="h-32 w-32 rounded-full overflow-hidden border-4 border-white dark:border-zinc-900 shadow-lg">
+            <div className="h-40 w-40 rounded-full overflow-hidden border-4 border-white dark:border-zinc-900 shadow-lg">
 
               {data?.avatar ? (
                 <Image
                   src={data.avatar}
                   alt={data.username}
-                  fill
-                  className="object-cover"
+                  height={200}
+                  width={200}
+                  className="h-50 w-50 rounded-full object-cover"
                 />
               ) : (
                 <div className="h-full w-full flex items-center justify-center text-3xl font-bold bg-zinc-200 dark:bg-zinc-800 text-zinc-500">

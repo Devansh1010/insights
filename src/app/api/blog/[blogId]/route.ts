@@ -118,7 +118,6 @@ export async function GET(req: NextRequest, { params }: { params: { blogId: stri
             )
         }
 
-        console.log("Blog Data:", blogData)
 
         if (!blogData.author._id.equals(auth.user?._id) || !auth.user) {
             await Blog.findByIdAndUpdate(blogId, { $inc: { views: 1 } });

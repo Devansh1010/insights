@@ -11,10 +11,14 @@ export default async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     const isAuthRoute = pathname.startsWith("/auth");
-    const isProtectedRoute = pathname.startsWith("/user");
+
+    const protectedRoutes = ['/write-blog', '/write-blogs', '/user/profile', '/user/my-blogs', '/user/series']
+
+    const isProtectedRoute = protectedRoutes.includes(pathname);
+
     const isRootRoute = pathname === "/";
 
-   if (isRootRoute) {
+    if (isRootRoute) {
         if (session) {
             return NextResponse.redirect(new URL("/user/explore", request.url));
         }
@@ -23,6 +27,7 @@ export default async function proxy(request: NextRequest) {
 
     // If they are trying to access a protected route but HAVE NO session
     if (isProtectedRoute && !session) {
+        
         return NextResponse.redirect(new URL("/auth/signin", request.url));
     }
 

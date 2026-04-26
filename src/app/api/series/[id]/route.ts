@@ -10,14 +10,14 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     try {
         const auth = await VerifyUser();
 
-        if (!auth.success || !auth.user?._id) {
-            return createResponse(
-                { success: false, message: "Unauthorized" },
-                StatusCode.UNAUTHORIZED
-            );
-        }
+        // if (!auth.success || !auth.user?._id) {
+        //     return createResponse(
+        //         { success: false, message: "Unauthorized" },
+        //         StatusCode.UNAUTHORIZED
+        //     );
+        // }
 
-        const userId = auth.user._id;
+        const userId = auth?.user?._id;
         const { id } = await params
 
         //validate the Id
@@ -25,8 +25,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         await dbConnect()
 
         const series = await Series.findOne({
-            _id: id,
-            author: userId
+            _id: id
         })
             .select('title desc coverImage tags views createdAt updatedAt isPublished')
             .populate('author', 'username _id avatar')
@@ -41,7 +40,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
         const author = series.author as unknown as { _id: string, username: string, avatar: string };
 
-        if (author._id.toString() !== userId.toString()) {
+        if (author._id.toString() !== userId?.toString() || !auth.user) {
             await Series.findByIdAndUpdate(id, { $inc: { views: 1 } });
         }
 

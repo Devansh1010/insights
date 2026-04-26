@@ -80,12 +80,12 @@ export async function GET(req: NextRequest) {
 
         const auth = await VerifyUser();
 
-        if (!auth.success || !auth.user?._id) {
-            return createResponse(
-                { success: false, message: "Unauthorized" },
-                StatusCode.UNAUTHORIZED
-            );
-        }
+        // if (!auth.success || !auth.user?._id) {
+        //     return createResponse(
+        //         { success: false, message: "Unauthorized" },
+        //         StatusCode.UNAUTHORIZED
+        //     );
+        // }
 
 
         /* 

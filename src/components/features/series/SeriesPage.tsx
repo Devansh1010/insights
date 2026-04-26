@@ -15,15 +15,8 @@ import { Input } from "@/components/ui/input";
 import { useDebounceCallback } from "usehooks-ts";
 import { BlogListSkeleton } from "./loader/BlogListSkeleton";
 import { SeriesPageLoader } from "./loader/SeriesPageLoader";
-
-
-type Blog = {
-    title: string,
-    excerpt: string,
-    coverImage: string,
-    tags: string[],
-    slug: string
-}
+import Link from "next/link";
+import { Blog } from "@/types/frontend/blog";
 
 const SeriesPage = ({ id }: { id: string }) => {
 
@@ -135,56 +128,57 @@ const SeriesPage = ({ id }: { id: string }) => {
                         ) : (
                             (data?.blogs?.length > 0 &&
                                 data?.blogs?.map((blog: Blog, index: number) => (
-                                    <article
-                                        key={blog.slug}
-                                        className="group grid grid-cols-1 md:grid-cols-12 gap-12 items-start"
-                                    >
-                                        {/* Index Number */}
-                                        <div className="hidden md:block md:col-span-1">
-                                            <span className="text-6xl font-black tabular-nums text-muted/30 group-hover:text-primary transition-all duration-500">
-                                                {String(index + 1).padStart(2, '0')}
-                                            </span>
-                                        </div>
-
-                                        {/* Image Section */}
-                                        <div className="md:col-span-5">
-                                            <div className="rounded-xl overflow-hidden shadow-xl group-hover:shadow-2xl transition-all duration-500">
-                                                <AspectRatio ratio={16 / 9}>
-                                                    <Image
-                                                        src={blog?.coverImage || '/fallback.jpg'}
-                                                        alt={blog?.title}
-                                                        fill
-                                                        className="object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
-                                                    />
-                                                </AspectRatio>
-                                            </div>
-                                        </div>
-
-                                        {/* Text Content */}
-                                        <div className="md:col-span-6 flex flex-col justify-center space-y-6">
-                                            <div className="space-y-4">
-                                                <h3 className="text-4xl md:text-5xl font-serif font-extrabold leading-[1.1] tracking-tighter transition-all group-hover:tracking-normal">
-                                                    {blog.title}
-                                                </h3>
-                                                <p className="text-muted-foreground text-lg leading-relaxed line-clamp-3 font-medium italic decoration-primary/30">
-                                                    {blog?.excerpt}
-                                                </p>
+                                    <Link href={`/user/explore/${blog._id}`} key={index} className="group">
+                                        <article
+                                            className="group grid grid-cols-1 md:grid-cols-12 gap-12 items-start"
+                                        >
+                                            {/* Index Number */}
+                                            <div className="hidden md:block md:col-span-1">
+                                                <span className="text-6xl font-black tabular-nums text-muted/30 group-hover:text-primary transition-all duration-500">
+                                                    {String(index + 1).padStart(2, '0')}
+                                                </span>
                                             </div>
 
-                                            <div className="flex items-center gap-4 pt-4">
-                                                <div className="flex gap-2">
-                                                    {blog?.tags?.slice(0, 2).map((tag: string) => (
-                                                        <TagBadge key={tag}>{tag}</TagBadge>
-                                                    ))}
+                                            {/* Image Section */}
+                                            <div className="md:col-span-5">
+                                                <div className="rounded-xl overflow-hidden shadow-xl group-hover:shadow-2xl transition-all duration-500">
+                                                    <AspectRatio ratio={16 / 9}>
+                                                        <Image
+                                                            src={blog?.coverImage || '/fallback.jpg'}
+                                                            alt={blog?.title}
+                                                            fill
+                                                            className="object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
+                                                        />
+                                                    </AspectRatio>
                                                 </div>
-                                                <Separator className="flex-1 opacity-50" />
-                                                <Button variant="ghost" className="group/btn text-[11px] font-black uppercase tracking-[0.2em] hover:bg-transparent px-0">
-                                                    <span className="group-hover/btn:mr-2 transition-all underline underline-offset-8 decoration-2">Read More</span>
-                                                    <ArrowRight className="h-4 w-4 opacity-0 group-hover/btn:opacity-100 transition-all" />
-                                                </Button>
                                             </div>
-                                        </div>
-                                    </article>
+
+                                            {/* Text Content */}
+                                            <div className="md:col-span-6 flex flex-col justify-center space-y-6">
+                                                <div className="space-y-4">
+                                                    <h3 className="text-4xl md:text-5xl font-serif font-extrabold leading-[1.1] tracking-tighter transition-all group-hover:tracking-normal">
+                                                        {blog.title}
+                                                    </h3>
+                                                    <p className="text-muted-foreground text-lg leading-relaxed line-clamp-3 font-medium italic decoration-primary/30">
+                                                        {blog?.excerpt}
+                                                    </p>
+                                                </div>
+
+                                                <div className="flex items-center gap-4 pt-4">
+                                                    <div className="flex gap-2">
+                                                        {blog?.tags?.slice(0, 2).map((tag: string) => (
+                                                            <TagBadge key={tag}>{tag}</TagBadge>
+                                                        ))}
+                                                    </div>
+                                                    <Separator className="flex-1 opacity-50" />
+                                                    <Button variant="ghost" className="group/btn text-[11px] font-black uppercase tracking-[0.2em] hover:bg-transparent px-0">
+                                                        <span className="group-hover/btn:mr-2 transition-all underline underline-offset-8 decoration-2">Read More</span>
+                                                        <ArrowRight className="h-4 w-4 opacity-0 group-hover/btn:opacity-100 transition-all" />
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </article>
+                                    </Link>
                                 ))
                             )
                         )

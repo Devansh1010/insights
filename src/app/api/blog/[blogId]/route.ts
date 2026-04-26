@@ -12,12 +12,12 @@ export async function GET(req: NextRequest, { params }: { params: { blogId: stri
 
         const auth = await VerifyUser()
 
-        if (!auth.success) {
-            return createResponse(
-                { success: false, message: "Unauthorized" },
-                StatusCode.UNAUTHORIZED
-            )
-        }
+        // if (!auth.success) {
+        //     return createResponse(
+        //         { success: false, message: "Unauthorized" },
+        //         StatusCode.UNAUTHORIZED
+        //     )
+        // }
 
         await dbConnect()
 
@@ -30,7 +30,7 @@ export async function GET(req: NextRequest, { params }: { params: { blogId: stri
             )
         }
 
-        if (!blog.author.equals(auth.user?._id)) {
+        if (!blog.author.equals(auth.user?._id) || !auth.user) {
             await Blog.findByIdAndUpdate(blogId, { $inc: { views: 1 } });
         }
 

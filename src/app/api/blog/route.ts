@@ -205,22 +205,15 @@ export async function POST(req: Request) {
 export async function GET(req: NextRequest) {
     try {
 
-        const auth = await VerifyUser();
+        // const auth = await VerifyUser();
 
-        if (!auth.success || !auth.user?._id) {
-            return createResponse(
-                { success: false, message: "Unauthorized" },
-                StatusCode.UNAUTHORIZED
-            );
-        }
-        const userId = auth.user._id;
+        // if (!auth.success || !auth.user?._id) {
+        //     return createResponse(
+        //         { success: false, message: "Unauthorized" },
+        //         StatusCode.UNAUTHORIZED
+        //     );
+        // }
 
-        if (!userId) {
-            return createResponse(
-                { success: false, message: "User ID not found" },
-                StatusCode.NOT_FOUND
-            )
-        }
 
         const { searchParams } = new URL(req.url);
 

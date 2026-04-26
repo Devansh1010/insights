@@ -6,6 +6,16 @@ export interface Blog {
     tags?: string[];
     coverImage?: string;
     content: JSONContent;
+    author: {
+        _id: string;
+        avatar?: string;
+    };
+    nextBlog: {
+        _id: string,
+        title: string,
+        coverImage: string,
+        desc: string
+    }
     title: string;
     hook: string;
     excerpt: string;

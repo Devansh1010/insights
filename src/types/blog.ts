@@ -30,6 +30,8 @@ export interface IBlog {
   id?: Schema.Types.ObjectId;
 
   author: Schema.Types.ObjectId;
+  seriesPartOf?: Schema.Types.ObjectId;
+
   username: string;
 
   title: string;
@@ -46,7 +48,6 @@ export interface IBlog {
   excerpt?: string;
   coverImage?: string;
   tags?: string[];
-  seriesPartOf?: Schema.Types.ObjectId;
 
   views?: number;
   likes?: number;

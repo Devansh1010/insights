@@ -9,6 +9,11 @@ const blogSchema = new Schema<IBlog>({
     required: true
   },
 
+  seriesPartOf: {
+    type: Schema.Types.ObjectId,
+    ref: 'Series',
+  },
+
   username: {
     type: String,
     required: true
@@ -59,11 +64,6 @@ const blogSchema = new Schema<IBlog>({
   coverImage: String,
 
   tags: [String],
-
-  seriesPartOf: {
-    type: Schema.Types.ObjectId,
-    ref: 'Series'
-  },
 
   views: {
     type: Number,

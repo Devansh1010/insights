@@ -5,6 +5,7 @@ import { VerifyUser } from "@/lib/verifyUser/userVerification";
 import Blog from "@/models/blog_modles/blog.model";
 import SeriesBlog from "@/models/series_models/series-blog.model";
 import { NextRequest } from "next/server";
+import mongoose from "mongoose";
 
 export async function GET(req: NextRequest, { params }: { params: { blogId: string } }) {
     try {
@@ -21,16 +22,102 @@ export async function GET(req: NextRequest, { params }: { params: { blogId: stri
 
         await dbConnect()
 
-        const blog = await Blog.findById(blogId).lean()
+        const result = await Blog.aggregate([
+            // 1. Get the current blog
+            { $match: { _id: new mongoose.Types.ObjectId(blogId) } },
 
-        if (!blog) {
+            // 2. Join with the Users collection to get author details
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "author",
+                    foreignField: "_id",
+                    as: "author"
+                }
+            },
+            { $unwind: "$author" },
+
+            // 2. Look up the "Current" entry in seriesblogs to find the order
+            {
+                $lookup: {
+                    from: "seriesblogs",
+                    localField: "_id",
+                    foreignField: "blog",
+                    as: "currentSeriesEntry"
+                }
+            },
+            { $unwind: { path: "$currentSeriesEntry", preserveNullAndEmptyArrays: true } },
+
+            // 3. Look up the "Next" entry using the order we just found
+            {
+                $lookup: {
+                    from: "seriesblogs",
+                    let: {
+                        seriesId: "$currentSeriesEntry.series",
+                        currentOrder: "$currentSeriesEntry.order"
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$series", "$$seriesId"] },
+                                        { $eq: ["$order", { $add: ["$$currentOrder", 1] }] }
+                                    ]
+                                }
+                            }
+                        },
+                        // Join with the Blogs collection to get the Title/Image of the next blog
+                        {
+                            $lookup: {
+                                from: "blogs",
+                                localField: "blog",
+                                foreignField: "_id",
+                                as: "blogDetails"
+                            }
+                        },
+                        { $unwind: "$blogDetails" },
+                        {
+                            $project: {
+                                _id: "$blogDetails._id",
+                                title: "$blogDetails.title",
+                                coverImage: "$blogDetails.coverImage",
+                                desc: "$blogDetails.excerpt"
+                            }
+                        }
+                    ],
+                    as: "nextBlog"
+                }
+            },
+
+            // 4. Final Cleanup
+            {
+                $project: {
+                    title: 1,
+                    content: 1,
+                    coverImage: 1,
+                    author: {
+                        _id: 1,
+                        avatar: 1
+                    },
+                    nextBlog: { $arrayElemAt: ["$nextBlog", 0] }
+                }
+            }
+        ]);
+
+        // Since aggregate returns an array, take the first element
+        const blogData = result[0] || null;
+
+        // 
+
+        if (!blogData) {
             return createResponse(
                 { success: false, message: "Blog not found" },
                 StatusCode.NOT_FOUND
             )
         }
 
-        if (!blog.author.equals(auth.user?._id) || !auth.user) {
+        if (!blogData.author._id.equals(auth.user?._id) || !auth.user) {
             await Blog.findByIdAndUpdate(blogId, { $inc: { views: 1 } });
         }
 
@@ -39,7 +126,7 @@ export async function GET(req: NextRequest, { params }: { params: { blogId: stri
             {
                 success: true,
                 message: "Blog found",
-                data: blog
+                data: blogData
             },
             StatusCode.OK
         )

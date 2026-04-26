@@ -1,10 +1,11 @@
-import { Badge } from '@/components/ui/badge'
-import { Blog } from '@/hooks/blogs/useBlogsFilter'
+import { TagBadge } from '@/components/features/badges/MetaBedge'
+import { Blog } from '@/types/frontend/blog'
 import { Calendar, Clock } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
 const Header = ({ blog }: { blog: Blog }) => {
+
     return (
         <header className="relative w-full h-[60vh] md:h-[70vh] flex items-end">
             {/* Overlay Gradient for Text Legibility */}
@@ -24,23 +25,28 @@ const Header = ({ blog }: { blog: Blog }) => {
 
             {/* Hero Content */}
             <div className="container max-w-7xl mx-auto px-6 pb-12 relative z-20">
-                {blog.tags?.map(
-                    (tag: string, index: number) =>
-                    (
-                        <Badge
-                            key={index}
-                            className="mb-6 bg-primary/20 text-primary border-none backdrop-blur-md px-4 py-1">
-                            {tag}
-                        </Badge>
-                    )
-                )}
+                <div className="flex gap-2 mb-4">
+                    {blog.tags?.map(
+                        (tag: string, index: number) =>
+                        (
+                            <TagBadge key={index}>
+                                {tag}
+                            </TagBadge>
+                        )
+                    )}
+                </div>
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold tracking-tight leading-[1.1] mb-8">
                     {blog.title || "Blog Title"}
                 </h1>
 
                 <div className="flex flex-wrap items-center gap-6 text-sm md:text-base font-medium text-muted-foreground">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-linear-to-br from-indigo-500 to-purple-500 border-2 border-background" />
+                        <Image
+                            src={blog.author.avatar || "https://avatars.githubusercontent.com/u/9919?s=200&v=4"}
+                            alt="Author Avatar"
+                            width={40}
+                            height={40}
+                        />
                         <span className="text-foreground">{blog.username || "Author Name"}</span>
                     </div>
                     <div className="flex items-center gap-2">

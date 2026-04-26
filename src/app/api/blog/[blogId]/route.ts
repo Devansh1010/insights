@@ -46,6 +46,7 @@ export async function GET(req: NextRequest, { params }: { params: { blogId: stri
                     as: "currentSeriesEntry"
                 }
             },
+
             { $unwind: { path: "$currentSeriesEntry", preserveNullAndEmptyArrays: true } },
 
             // 3. Look up the "Next" entry using the order we just found
@@ -116,6 +117,8 @@ export async function GET(req: NextRequest, { params }: { params: { blogId: stri
                 StatusCode.NOT_FOUND
             )
         }
+
+        console.log("Blog Data:", blogData)
 
         if (!blogData.author._id.equals(auth.user?._id) || !auth.user) {
             await Blog.findByIdAndUpdate(blogId, { $inc: { views: 1 } });

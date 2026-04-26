@@ -59,7 +59,6 @@ const Article = ({ blog }: { blog: Blog }) => {
         ])
     }, [blog.content]);
 
-    console.log(blog)
     return (
         /* Changed grid-cols-1 lg:grid-cols-[1fr_300px] to a single centered column */
         <div className="container max-w-4xl mx-auto px-6 flex flex-col gap-20 py-20">
@@ -126,9 +125,9 @@ const Article = ({ blog }: { blog: Blog }) => {
 
                     <div className="flex flex-col md:flex-row gap-10 items-start md:items-center">
                         {/* Image: Fixed CLS with Aspect Ratio and Fill */}
-                        <div className="relative w-full md:w-80 aspect-[16/10] rounded-2xl overflow-hidden bg-muted shadow-sm ring-1 ring-border/50 group-hover:ring-primary/20 group-hover:shadow-2xl group-hover:shadow-primary/5 transition-all duration-700">
+                        <div className="relative w-full md:w-80 aspect-16/10 rounded-2xl overflow-hidden bg-muted shadow-sm ring-1 ring-border/50 group-hover:ring-primary/20 group-hover:shadow-2xl group-hover:shadow-primary/5 transition-all duration-700">
                             <Image
-                                src={blog.nextBlog.coverImage || '/placeholder.png'}
+                                src={blog.nextBlog.coverImage || '/fallback.jpg'}
                                 alt={blog.nextBlog.title}
                                 fill
                                 className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"

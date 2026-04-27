@@ -1,9 +1,9 @@
 
-import { Series } from "@/components/features/series/SeriesListPage"
 import Image from "next/image"
 import Link from "next/link"
 import { AspectRatio } from "@/components/ui/aspect-ratio"
 import { ArrowRight } from "lucide-react"
+import { Series } from "@/types/frontend/series"
 
 
 const SeriesRest = ({ series }: { series: Series[] }) => {

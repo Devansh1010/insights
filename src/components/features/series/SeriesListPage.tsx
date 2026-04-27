@@ -4,11 +4,11 @@ import { ExploreBlogsLoader } from "../blogs/loader/ExploreBlogsLoader";
 import { useQuery } from "@tanstack/react-query";
 import { getUserSeries } from "@/services/series.service";
 import { BlogListError } from "../blogs/error/BlogsListError";
-import { Series } from "@/types/frontend/series";
 import { SeriesCard } from "./components/series-list/SeriesCard";
 import SeriesForm from "./components/SeriesForm";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Series } from "@/types/frontend/series";
 
 const SeriesList = () => {
     const [openCreate, setOpenCreate] = useState(false);

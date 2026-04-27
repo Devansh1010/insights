@@ -7,7 +7,7 @@ import SeriesBlog from "@/models/series_models/series-blog.model";
 import { NextRequest } from "next/server";
 import mongoose from "mongoose";
 
-export async function GET(req: NextRequest, { params }: { params: { blogId: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ blogId: string }> }) {
     try {
         const { blogId } = await params
 
@@ -145,7 +145,7 @@ export async function GET(req: NextRequest, { params }: { params: { blogId: stri
     }
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { blogId: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ blogId: string }> }) {
     try {
         const { blogId } = await params
 
@@ -265,7 +265,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { blogId: st
     }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { blogId: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ blogId: string }> }) {
     try {
         //Add verify  User
         const auth = await VerifyUser();

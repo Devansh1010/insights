@@ -10,7 +10,7 @@ import { HardBreak } from '@tiptap/extension-hard-break'
 import { TextStyle } from '@tiptap/extension-text-style';
 import { ListItem } from '@tiptap/extension-list';
 import { SlashCommandList } from 'reactjs-tiptap-editor/slashcommand';
-import debounce from 'lodash.debounce';
+
 
 
 // Import CSS
@@ -65,6 +65,7 @@ import {
 } from 'reactjs-tiptap-editor/bubble';
 import TiptapLoader from './TiptapLoader';
 import { useEffect, useMemo } from 'react';
+import { debounce } from 'lodash';
 // import { Count } from './Count';
 
 interface AppProps {
@@ -185,9 +186,6 @@ const RichTextBubbleMenu = () => {
 }
 
 const TipTapEditor = ({ content, onChange }: AppProps) => {
-
-    // Inside TipTapEditor.tsx
-   
     
     const debouncedUpdates = useMemo(
         () =>

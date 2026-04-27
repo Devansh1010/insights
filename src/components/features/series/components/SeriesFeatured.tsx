@@ -1,10 +1,11 @@
 import Link from "next/link"
-import { Series } from "@/components/features/series/SeriesListPage"
+
 import Image from "next/image"
 import { User } from "lucide-react"
 
 // Shadcn
 import { AspectRatio } from "@/components/ui/aspect-ratio"
+import { Series } from "@/types/frontend/series"
 
 
 const SeriesFeatured = ({ series, page }: { series: Series, page: number }) => {

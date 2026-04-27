@@ -2,6 +2,7 @@ import { createResponse, StatusCode } from '@/lib/createResponse'
 import { dbConnect } from '@/lib/db';
 import { VerifyUser } from '@/lib/verifyUser/userVerification'
 import Series from '@/models/series_models/series.model';
+import mongoose from 'mongoose';
 
 export async function GET() {
     try {
@@ -18,10 +19,39 @@ export async function GET() {
 
         await dbConnect()
 
-        const userSeries = await Series.find({ author: userId })
-            .select('title desc coverImage tags views createdAt updatedAt isPublished')
-            .populate('author', 'username -_id')
-            .lean()
+
+        const userSeries = await Series.aggregate([
+            { $match: { author: new mongoose.Types.ObjectId(userId) } },
+
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'author',
+                    foreignField: '_id',
+                    as: 'author'
+                }
+            },
+
+            { $unwind: { path: '$author' } },
+
+            {
+                $project: {
+                    title: 1,
+                    desc: 1,
+                    coverImage: 1,
+                    tags: 1,
+                    views: 1,
+                    createdAt: 1,
+                    isPublished: 1,
+                    author: {
+                        _id: 1,
+                        username: 1,
+                        avatar: 1
+                    }
+                }
+            }
+
+        ])
 
         if (!userSeries) {
             return createResponse(

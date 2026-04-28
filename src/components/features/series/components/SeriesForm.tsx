@@ -89,10 +89,6 @@ const SeriesForm = ({ id, open, setOpen, trigger }: SeriesFormProps) => {
 
     setOpen(false);
     form.reset();
-<<<<<<< HEAD
-
-=======
->>>>>>> 5f622d104efdc2671239fa5b83468d209589e7ae
   },
   onError: (error) => {
     console.error(error);

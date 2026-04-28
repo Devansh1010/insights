@@ -1,17 +1,14 @@
 import { createResponse, StatusCode } from "@/lib/createResponse";
 import { dbConnect } from "@/lib/db";
-// import valkey from '@/lib/valkey';
 import User from "@/models/user_models/user.model";
 import { NextRequest } from "next/server";
-import bcrypt from "bcryptjs"; // Recommendation: Hash the password!
+import bcrypt from "bcryptjs"; 
 
 export async function POST(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.url);
         const token = searchParams.get('token');
         const { password } = await req.json();
-
-        console.log(password, token)
 
         // 1. Validation: Check for missing fields
         if (!token || !password) {
@@ -29,8 +26,8 @@ export async function POST(req: NextRequest) {
         }
 
         // 2. Token Verification: Check Valkey
-        // const userEmailFromToken = await valkey.get(`reset_token:${token}`);
-            const userEmailFromToken = ""
+
+        const userEmailFromToken = await User.findOne({ resetToken: token, resetTokenExpiry: { $gt: new Date() } });
 
         if (!userEmailFromToken) {
             return createResponse(
@@ -47,7 +44,13 @@ export async function POST(req: NextRequest) {
         // 4. Update Admin by Email (found in Valkey)
         const updatedUserPassword = await User.findOneAndUpdate(
             { email: userEmailFromToken },
-            { password: hashedPassword },
+
+            {
+                password: hashedPassword,
+                resetToken: null,
+                resetTokenExpiry: null,
+            },
+
             { new: true }
         );
 
@@ -57,10 +60,6 @@ export async function POST(req: NextRequest) {
                 StatusCode.NOT_FOUND
             );
         }
-
-        // 5. Cleanup: Delete the token so it can't be used again
-        // await valkey.del(`reset_token:${token}`);
-
         return createResponse(
             { success: true, message: "Password updated successfully" },
             StatusCode.OK

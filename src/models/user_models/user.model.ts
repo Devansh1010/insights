@@ -1,3 +1,4 @@
+
 import { Schema, model, models } from 'mongoose'
 
 export interface IUser {
@@ -6,6 +7,8 @@ export interface IUser {
   email: string,
   password: string,
   avatar?: string | null,
+  resetToken?: string,
+  resetTokenExpiry?: Date,
   isVerified: boolean,
   verifyCode?: string,
   verifyExpiry?: Date
@@ -48,6 +51,16 @@ const userSchema = new Schema<IUser>(
       },
     ],
 
+    resetToken: {
+      type: String,
+      select: false,
+    },
+    
+    resetTokenExpiry: {
+      type: Date,
+      select: false,
+    },
+
     isVerified: {
       type: Boolean,
       required: true,
@@ -63,7 +76,6 @@ const userSchema = new Schema<IUser>(
       type: Date,
       select: false,
     },
-
   },
   { timestamps: true }
 )

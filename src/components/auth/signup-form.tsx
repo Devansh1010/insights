@@ -71,7 +71,7 @@ export function SignupForm() {
       const res = await signup(data)
       if (res.success) {
         form.reset()
-        router.push("/user/auth/verifyCode")
+        router.push("/auth/verifyCode")
       }
     } catch (error) {
       console.error("Signup error:", error)

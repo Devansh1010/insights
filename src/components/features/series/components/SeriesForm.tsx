@@ -39,8 +39,6 @@ interface SeriesFormProps {
 
 const SeriesForm = ({ id, open, setOpen, trigger }: SeriesFormProps) => {
   const isEdit = !!id;
-
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   const { data: seriesData, isPending: isSeriesDataPending, isError } = useQuery({
@@ -91,7 +89,10 @@ const SeriesForm = ({ id, open, setOpen, trigger }: SeriesFormProps) => {
 
     setOpen(false);
     form.reset();
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5f622d104efdc2671239fa5b83468d209589e7ae
   },
   onError: (error) => {
     console.error(error);

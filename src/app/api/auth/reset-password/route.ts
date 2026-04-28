@@ -1,6 +1,6 @@
 import { createResponse, StatusCode } from "@/lib/createResponse";
 import { dbConnect } from "@/lib/db";
-import valkey from '@/lib/valkey';
+// import valkey from '@/lib/valkey';
 import User from "@/models/user_models/user.model";
 import { NextRequest } from "next/server";
 import bcrypt from "bcryptjs"; // Recommendation: Hash the password!
@@ -29,7 +29,8 @@ export async function POST(req: NextRequest) {
         }
 
         // 2. Token Verification: Check Valkey
-        const userEmailFromToken = await valkey.get(`reset_token:${token}`);
+        // const userEmailFromToken = await valkey.get(`reset_token:${token}`);
+            const userEmailFromToken = ""
 
         if (!userEmailFromToken) {
             return createResponse(
@@ -58,7 +59,7 @@ export async function POST(req: NextRequest) {
         }
 
         // 5. Cleanup: Delete the token so it can't be used again
-        await valkey.del(`reset_token:${token}`);
+        // await valkey.del(`reset_token:${token}`);
 
         return createResponse(
             { success: true, message: "Password updated successfully" },

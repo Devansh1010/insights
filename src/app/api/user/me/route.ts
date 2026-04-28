@@ -1,6 +1,6 @@
 import { createResponse, StatusCode } from '@/lib/createResponse'
 import { dbConnect } from '@/lib/db'
-import valkey from '@/lib/valkey'
+// import valkey from '@/lib/valkey'
 import { VerifyUser } from '@/lib/verifyUser/userVerification'
 import User from '@/models/user_models/user.model'
 import { NextRequest } from 'next/server'
@@ -22,18 +22,18 @@ export async function GET() {
     await dbConnect()
 
     //try to fetch from catchMemory
-    const cachedUser = await valkey.get(`user_profile_${userId}`)
+    // const cachedUser = await valkey.get(`user_profile_${userId}`)
 
-    if (cachedUser) {
-      return createResponse(
-        {
-          success: true,
-          message: 'User found (cached)',
-          data: JSON.parse(cachedUser),
-        },
-        StatusCode.OK
-      )
-    }
+    // if (cachedUser) {
+    //   return createResponse(
+    //     {
+    //       success: true,
+    //       message: 'User found (cached)',
+    //       data: JSON.parse(cachedUser),
+    //     },
+    //     StatusCode.OK
+    //   )
+    // }
 
     const userInfo = await User.findOne({ _id: userId })
       .select('-password')
@@ -49,7 +49,7 @@ export async function GET() {
         StatusCode.NOT_FOUND
       )
 
-    await valkey.setEx(`user_profile_${userId}`, 600, JSON.stringify(userInfo))
+    // await valkey.setEx(`user_profile_${userId}`, 600, JSON.stringify(userInfo))
 
     return createResponse(
       {
@@ -110,7 +110,7 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
-    await valkey.del(`user_profile_${userId}`)
+    // await valkey.del(`user_profile_${userId}`)
 
     return createResponse(
       { success: true, message: "Updated Successfully" },

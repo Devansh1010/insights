@@ -92,10 +92,6 @@ const SeriesForm = ({ id, open, setOpen, trigger }: SeriesFormProps) => {
     setOpen(false);
     form.reset();
 
-    // Only redirect on creation, or stay on page for edits
-    if (!id) {
-      router.push("/user/series");
-    }
   },
   onError: (error) => {
     console.error(error);

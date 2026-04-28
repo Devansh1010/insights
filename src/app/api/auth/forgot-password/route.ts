@@ -4,7 +4,7 @@ import { createResponse, StatusCode } from '@/lib/createResponse'
 import { NextRequest } from 'next/server'
 import { sendForgotPassword } from '@/helpers/forgotPasswordEmail'
 import crypto from 'crypto';
-import valkey from '@/lib/valkey'
+// import valkey from '@/lib/valkey'
 
 export async function POST(req: NextRequest) {
     try {
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
         const token = crypto.randomBytes(32).toString('hex');
 
         // 5. Store in Valkey (TTL: 10 min)
-        await valkey.setEx(`reset_token:${token}`, 600, isUserExist.email);
+        // await valkey.setEx(`reset_token:${token}`, 600, isUserExist.email);
 
 
         // 6. Send Email with Token and Username

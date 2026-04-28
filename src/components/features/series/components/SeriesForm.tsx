@@ -39,8 +39,6 @@ interface SeriesFormProps {
 
 const SeriesForm = ({ id, open, setOpen, trigger }: SeriesFormProps) => {
   const isEdit = !!id;
-
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   const { data: seriesData, isPending: isSeriesDataPending, isError } = useQuery({
@@ -91,11 +89,6 @@ const SeriesForm = ({ id, open, setOpen, trigger }: SeriesFormProps) => {
 
     setOpen(false);
     form.reset();
-
-    // Only redirect on creation, or stay on page for edits
-    if (!id) {
-      router.push("/user/series");
-    }
   },
   onError: (error) => {
     console.error(error);

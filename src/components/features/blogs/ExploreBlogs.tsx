@@ -21,7 +21,7 @@ const ExploreBlogs = () => {
     // Article Query
     const { data: blogsData, isPending: isBlogsPending, isError: isBlogsError, refetch: refetchBlogs } = useQuery({
         queryKey: ['blogs', { page }],
-        queryFn: () => getBlogs({ page, limit: page === 1 ? 11 : limit }), 
+        queryFn: () => getBlogs({ page, limit: page === 1 ? 11 : limit }),
     })
 
     // Series Query

@@ -28,7 +28,7 @@ export function Navbar() {
     const navLinks = [
         { name: "Explore", href: "/user/explore" },
         { name: "My Blogs", href: "/user/my-blogs" },
-        { name: "Series", href: "/user/series" },
+        { name: "My Series", href: "/user/series" },
         { name: "Profile", href: "/user/profile" },
     ]
 

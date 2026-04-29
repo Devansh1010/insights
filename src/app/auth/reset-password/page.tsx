@@ -38,8 +38,8 @@ function NewPasswordForm() {
             }
         } catch (error) {
             toast.error(error instanceof Error ? error.message : "An error occurred.")
-        } finally { 
-            setIsSubmitting(false) 
+        } finally {
+            setIsSubmitting(false)
         }
     }
 
@@ -61,7 +61,7 @@ function NewPasswordForm() {
                                     {...field}
                                     type="password"
                                     placeholder="••••••••"
-                                    className={`h-12 pl-11 rounded-2xl bg-zinc-50 border-zinc-100 ${fieldState.invalid ? "border-destructive" : ""}`}
+                                    className={`h-12 pl-11 rounded-2xl  border-zinc-100 ${fieldState.invalid ? "border-destructive" : ""}`}
                                 />
                             </div>
                             {fieldState.error && <p className="text-[11px] text-destructive">{fieldState.error.message}</p>}
@@ -82,7 +82,8 @@ function NewPasswordForm() {
                                 {...field}
                                 type="password"
                                 placeholder="••••••••"
-                                className={`h-12 rounded-2xl bg-zinc-50 border-zinc-100 ${fieldState.invalid ? "border-destructive" : ""}`}
+                                className={`h-12 rounded-2x border-zinc-100 ${fieldState.invalid ? "border-destructive" : ""}`}
+
                             />
                             {fieldState.error && <p className="text-[11px] text-destructive">{fieldState.error.message}</p>}
                         </div>

@@ -10,6 +10,7 @@ import { ExploreBlogsLoader } from './loader/ExploreBlogsLoader';
 import { BlogListError } from './error/BlogsListError';
 import { getSeries } from '@/services/series.service';
 import TopSeries from '../series/components/series-list/TopSeries';
+import { Blog } from '@/types/frontend/blog';
 
 
 
@@ -40,7 +41,7 @@ const ExploreBlogs = () => {
 
     // Logic: If on page 1, featured is blog[0]. If page 2+, there is no featured.
     const featuredBlog = isInitialPage ? blogsData?.featuredBlog : null;
-    const restBlogs = isInitialPage ? allBlogs.slice(1) : allBlogs;
+    const restBlogs = isInitialPage ? allBlogs.filter((blog: Blog) => blog._id !== featuredBlog?._id) : allBlogs;
 
     return (
         <div className="max-w-7xl mx-auto px-6 py-5">

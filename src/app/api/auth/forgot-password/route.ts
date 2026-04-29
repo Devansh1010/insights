@@ -44,6 +44,11 @@ export async function POST(req: NextRequest) {
             resetTokenExpiry: restePasswordExpiry,
         });
 
+        await User.findByIdAndUpdate(isUserExist._id, {
+            resetToken: token,
+            resetTokenExpiry: restePasswordExpiry,
+        });
+
         // 6. Send Email with Token and Username
         const emailResponse = await sendForgotPassword(
             "devanshprajapati36@gmail.com",

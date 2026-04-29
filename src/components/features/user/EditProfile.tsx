@@ -1,32 +1,79 @@
 import UploadImage, { ImageKitData } from '@/components/Imagekit/ImageUpload';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { updateUserSchema } from '@/lib/schemas/auth/signUpSchema';
 import { updateProfile } from '@/services/user.service';
+import { getMe } from '@/utils/me';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { AlertCircle, Loader2, PlusCircle, Save } from 'lucide-react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import { Loader2, Pencil, PlusCircle, Save } from 'lucide-react';
 import Image from 'next/image';
-import { useState } from 'react';
-import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner';
+import { useDebounceCallback } from 'usehooks-ts';
 import { z } from 'zod';
 
 const EditProfile = () => {
+    const [username, setUsername] = useState<string>('')
+    const [usernameMessage, setUsernameMessage] = useState<string>('')
+    const [isCheckUsername, setIsCheckUsername] = useState<boolean>(false)
+    const [emailDisabled, setEmailDisabled] = useState<boolean>(true)
+    const debounced = useDebounceCallback(setUsername, 300)
 
     const queryClient = useQueryClient();
+
+    const { data } = useQuery({
+        queryKey: ['user-profile'],
+        queryFn: getMe
+    })
 
     const form = useForm<z.infer<typeof updateUserSchema>>({
         resolver: zodResolver(updateUserSchema),
         defaultValues: {
             email: "",
             username: "",
-            profileImage: null,
+            profileImage: '',
 
         },
     });
+
+    useEffect(
+        () => {
+            if (data) {
+                console.log(data)
+                form.reset({
+                    username: data.username || '',
+                    profileImage: data.avatar || '',
+                    email: data.email || ''
+                })
+            }
+        }
+        , [data, form])
+
+    useEffect(() => {
+        const checkUsernameUnique = async () => {
+            if (username) {
+                setIsCheckUsername(true)
+                try {
+                    const responce = await axios.get(`/api/auth/check-username-unique?username=${username}`);
+                    console.log(responce)
+                    setUsernameMessage(responce.data.message)
+                } catch (error: unknown) {
+                    // we are not using any in ts for error handling so we need to cast error to any to access response data
+                    const axiosError = error ? error as { response?: { data?: { message?: string } } } : null;
+                    setUsernameMessage(
+                        axiosError?.response?.data?.message || "Error Checking username"
+                    )
+                } finally {
+                    setIsCheckUsername(false);
+                }
+            }
+        }
+        checkUsernameUnique();
+    }, [username])
 
     const mutation = useMutation({
         mutationFn: updateProfile,
@@ -54,11 +101,11 @@ const EditProfile = () => {
                 </Button>
             </DialogTrigger>
 
-            <DialogContent className="sm:max-w-[450px] p-0 overflow-hidden border-none shadow-2xl bg-background/95 backdrop-blur-md">
+            <DialogContent className="sm:max-w-112.5 p-0 overflow-hidden border-none shadow-2xl bg-background/95 backdrop-blur-md">
                 {/* Visual Progress/Accent Bar */}
                 <div className="h-1.5 w-full bg-muted overflow-hidden">
                     <div
-                        className={`h-full bg-gradient-to-r from-primary via-purple-500 to-blue-500 transition-all duration-500 ${mutation.isPending ? "w-full animate-pulse" : "w-0"
+                        className={`h-full bg-linear-to-r from-primary via-purple-500 to-blue-500 transition-all duration-500 ${mutation.isPending ? "w-full animate-pulse" : "w-0"
                             }`}
                     />
                 </div>
@@ -102,7 +149,7 @@ const EditProfile = () => {
                                             ) : (
                                                 <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-primary/20 shadow-inner">
                                                     <Image
-                                                        src={field.value?.url || "/placeholder-aspect.png"}
+                                                        src={field.value || "/placeholder-aspect.png"}
                                                         alt="profile"
                                                         fill
                                                         className="object-cover transition duration-500 group-hover:scale-110"
@@ -155,12 +202,20 @@ const EditProfile = () => {
                                         disabled={mutation.isPending}
                                         className="bg-secondary/30 border-border/50 focus:ring-primary/20 h-12 rounded-xl"
                                         placeholder="e.g. janesmith_dev"
+                                        onChange={(e) => {
+                                            field.onChange(e)
+                                            debounced(e.target.value)
+                                        }}
                                     />
                                     {fieldState.error && (
                                         <p className="text-xs text-destructive font-medium">
                                             {fieldState.error.message}
                                         </p>
                                     )}
+                                    {isCheckUsername && <Loader2 className="animate-spin" />}
+                                    <p className={`text-sm ${usernameMessage === "Username Available" ? 'text-green-600' : 'text-red-600'}`}>
+                                        {usernameMessage}
+                                    </p>
                                 </div>
                             )}
                         />
@@ -174,12 +229,30 @@ const EditProfile = () => {
                                     <label className="text-sm font-bold uppercase tracking-wider text-muted-foreground/70">
                                         Email Address
                                     </label>
-                                    <Input
-                                        {...field}
-                                        disabled={mutation.isPending}
-                                        className="bg-secondary/30 border-border/50 focus:ring-primary/20 h-12 rounded-xl"
-                                        placeholder="name@company.com"
-                                    />
+
+                                    {/* 1. Added 'group' and 'relative' to the container */}
+                                    <div className="relative group">
+                                        <Input
+                                            {...field}
+                                            disabled={emailDisabled || mutation.isPending}
+                                            className="bg-secondary/30 border-border/50 focus:ring-primary/20 h-12 rounded-xl pr-12 transition-all duration-300"
+                                            placeholder="name@company.com"
+                                        />
+
+                                        {/* 2. The Pencil Button */}
+                                        <Button
+                                            type="button"
+                                            className="absolute right-3 top-1 p-2 rounded-lg
+                                hover:text-foreground hover:bg-background/50
+                               opacity-0 group-hover:opacity-100 cursor-pointer"
+                                            onClick={() => setEmailDisabled((prev) => !prev)}
+                                        >
+
+
+                                            <Pencil size={16} strokeWidth={2} />
+                                        </Button>
+                                    </div>
+
                                     {fieldState.error && (
                                         <p className="text-xs text-destructive font-medium">
                                             {fieldState.error.message}

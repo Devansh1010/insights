@@ -2,7 +2,8 @@ import { createResponse, StatusCode } from "@/lib/createResponse";
 import { dbConnect } from "@/lib/db";
 import User from "@/models/user_models/user.model";
 import { NextRequest } from "next/server";
-import bcrypt from "bcryptjs"; 
+import bcrypt from "bcryptjs";
+
 
 export async function POST(req: NextRequest) {
     try {
@@ -27,7 +28,9 @@ export async function POST(req: NextRequest) {
 
         // 2. Token Verification: Check Valkey
 
-        const userEmailFromToken = await User.findOne({ resetToken: token, resetTokenExpiry: { $gt: new Date() } });
+        const userEmailFromToken = await User.findOne({ resetToken: token, resetTokenExpiry: { $gt: new Date() } })
+            .select("email")
+            .lean();
 
         if (!userEmailFromToken) {
             return createResponse(
@@ -43,7 +46,8 @@ export async function POST(req: NextRequest) {
 
         // 4. Update Admin by Email (found in Valkey)
         const updatedUserPassword = await User.findOneAndUpdate(
-            { email: userEmailFromToken },
+
+            { email: userEmailFromToken.email },
 
             {
                 password: hashedPassword,

@@ -22,7 +22,7 @@ export default function ForgotPasswordEmail({ username, resetLink }: ForgotPassw
         <p>We received a request to reset the password for your TeamUp account. Click the button below to choose a new one:</p>
         
         <div style={{ textAlign: 'center', margin: '30px 0' }}>
-          <a href={resetLink} style={{
+          <a href={`localhost:3000/auth/reset-password?token=${resetLink}`} style={{
             backgroundColor: primaryColor,
             color: 'white',
             padding: '14px 28px',

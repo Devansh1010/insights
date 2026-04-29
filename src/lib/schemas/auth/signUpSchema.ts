@@ -51,7 +51,5 @@ export const updateUserSchema = z.object({
     // .email({ message: 'Enter valid Email Address' })
     .optional(),
 
-  profileImage: z.object({
-    url: z.string(),
-  }).nullable().optional()
+  profileImage: z.string().nullable().optional()
 })

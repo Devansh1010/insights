@@ -10,10 +10,13 @@ import { toast } from 'sonner'
 import {  Loader2, Mail, ShieldCheck } from 'lucide-react'
 import { emailOnlySchema } from '@/lib/schemas/auth/signUpSchema'
 import { forgotPassword } from '@/utils/forgot-password'
+import { useRouter } from 'next/navigation'
 
 export default function ForgotPassword() {
 
     const [isSubmitting, setIsSubmitting] = useState(false)
+
+    const router = useRouter()
 
     const form = useForm<z.infer<typeof emailOnlySchema>>({
         resolver: zodResolver(emailOnlySchema),
@@ -30,6 +33,7 @@ export default function ForgotPassword() {
 
             if (result) {
                 toast.success("Password reset Link Sent! Please check your email.")
+                router.push("/auth/reset-password")
             }
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : "An unknown error occurred."

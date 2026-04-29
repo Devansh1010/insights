@@ -2,7 +2,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { auth } from './auth'
-import path from 'path';
 
 
 const PROTECTED_ROUTES = ['/user/profile', '/user/my-blogs', '/user/series'];

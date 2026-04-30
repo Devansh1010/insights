@@ -48,7 +48,7 @@ const Header = ({ blog }: { blog: Blog }) => {
                             height={40}
                             className="w-10 h-10 rounded-full object-cover"
                         />
-                        <span className="text-foreground">{blog.username || "Author Name"}</span>
+                        <span className="text-foreground">{blog.author?.username || "Author Name"}</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <Calendar className="w-4 h-4" />

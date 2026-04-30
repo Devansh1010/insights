@@ -8,7 +8,8 @@ export interface Blog {
     content: JSONContent;
     author: {
         _id: string;
-        avatar?: string;
+        avatar?: string,
+        username: string;
     };
     nextBlog: {
         _id: string,

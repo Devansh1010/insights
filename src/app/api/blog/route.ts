@@ -32,22 +32,15 @@ const validateContent = (content: JSONContent): boolean => {
 };
 
 function extractTextFromTiptap(node: TiptapNode): string {
-    // Text node
-    if (node.type === "paragraph" || node.type === "heading" ) {
-        return node.text ?? "";
-    }
 
-    // Recursive children
-    if (node.content && Array.isArray(node.content)) {
-        return node.content
-            .map((child) => extractTextFromTiptap(child))
-            .join(" ");
-    }
+    const words = node.content?.reduce((acc, node) => (acc += node.text || ''), '')
 
-    return "";
+    return words || ''
+
 }
 
 function calculateReadTime(content: TiptapContent): number {
+
     const fullText = content.content
         .map((node) => extractTextFromTiptap(node))
         .join(" ");
@@ -128,6 +121,7 @@ export async function POST(req: Request) {
         const slug = generateSlug(title);
 
         // ================= EXCERPT =================
+
         const firstTextBlock = content.content?.find(
             (block: JSONContent) =>
                 (block.type === "paragraph" || block.type === "heading") &&
@@ -139,9 +133,13 @@ export async function POST(req: Request) {
                 ?.map((node: JSONContent) => node.text || "")
                 .join("") || "";
 
+
         const excerpt = rawText.replace(/<[^>]*>/g, "").slice(0, 150);
 
+
         const readTime = calculateReadTime(content);
+
+        console.log(readTime)
 
         // ================= CREATE BLOG =================
         const newBlog = await Blog.create({

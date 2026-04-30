@@ -97,9 +97,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ blog
                     title: 1,
                     content: 1,
                     coverImage: 1,
+                    readTime: 1,
                     author: {
                         _id: 1,
-                        avatar: 1
+                        avatar: 1,
+                        username: 1
                     },
                     nextBlog: { $arrayElemAt: ["$nextBlog", 0] }
                 }
@@ -108,8 +110,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ blog
 
         // Since aggregate returns an array, take the first element
         const blogData = result[0] || null;
-
-        // 
 
         if (!blogData) {
             return createResponse(

@@ -21,6 +21,8 @@ const BlogRest = ({ rest }: { rest: Blog[] }) => {
     })
   };
 
+  console.log("Rest Blogs:", rest);
+
   const [expandedId, setExpandedId] = useState<string | null>(null);
   return (
 

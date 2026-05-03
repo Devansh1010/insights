@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { useState } from 'react'
-import { Clock, Eye, ArrowRight, ArrowUpRight } from "lucide-react";
+import { Clock, Eye, ArrowUpRight } from "lucide-react";
 import { Blog } from '@/types/frontend/blog';
 import { LevelBadge } from '../../badges/MetaBedge';
 

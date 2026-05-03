@@ -45,9 +45,10 @@ export default async function proxy(request: NextRequest) {
 }
 
 export const config = {
-    matcher: [
-        '/user/:path*',
-        // Exclude API routes, static files, image optimizations, and .png files
-        '/((?!api|_next/static|_next/image|.*\\.png$).*)',
-    ],
-}
+  matcher: [
+    '/',
+    '/auth/:path*',
+    '/user/:path*',
+    '/write-blog/:path*',
+  ],
+};

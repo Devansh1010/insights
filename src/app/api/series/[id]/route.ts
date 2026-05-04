@@ -99,8 +99,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             }
         ]);
 
-        console.log("Blogs in Series:", blogs)
-
         return createResponse(
             {
                 success: true,

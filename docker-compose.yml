@@ -6,3 +6,9 @@ services:
     restart: always
     environment:
       - NODE_ENV=production
+    # This maps a managed volume to the Next.js cache directory
+    volumes:
+      - next_image_cache:/app/.next/cache
+
+volumes:
+  next_image_cache:

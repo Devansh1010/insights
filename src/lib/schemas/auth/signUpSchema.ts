@@ -39,6 +39,12 @@ export const emailOnlySchema = z.object({
   email: emailValidation,
 })
 
+const ImageSchema = z.object({
+  url: z.string().url(),
+  id: z.string(),
+  name: z.string()
+});
+
 export const updateUserSchema = z.object({
   username: z.string()
     .min(2, { message: 'Minimum 2 characters required in Username' })
@@ -51,5 +57,5 @@ export const updateUserSchema = z.object({
     // .email({ message: 'Enter valid Email Address' })
     .optional(),
 
-  profileImage: z.string().nullable().optional()
+  profileImage: ImageSchema.nullable().optional(),
 })

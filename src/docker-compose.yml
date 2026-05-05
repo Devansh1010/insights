@@ -1,17 +1,34 @@
-
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # This pulls MONGODB_URI from your local .env file 
+        # and passes it to the Dockerfile ARGs
+        - MONGODB_URI=${MONGODB_URI}
+    container_name: blogger_app
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - mongodb
+      - valkey
+    restart: always
+    
+    volumes:
+      - next_image_cache:/app/.next/cache
+
   mongodb:
     image: mongo:7
     container_name: blogger_mongodb
     restart: always
-
     ports:
       - "27017:27017"
-
     environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: password
-
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-password}
     volumes:
       - mongodb_data:/data/db
 
@@ -19,13 +36,12 @@ services:
     image: valkey/valkey:7
     container_name: blogger_valkey
     restart: always
-
     ports:
       - "6379:6379"
-
     volumes:
       - valkey_data:/data
 
 volumes:
   mongodb_data:
   valkey_data:
+  next_image_cache:

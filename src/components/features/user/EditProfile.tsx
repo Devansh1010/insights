@@ -35,7 +35,7 @@ const EditProfile = () => {
         defaultValues: {
             email: "",
             username: "",
-            profileImage: '',
+            profileImage: null,
 
         },
     });
@@ -142,14 +142,15 @@ const EditProfile = () => {
                                                 <div className="w-full h-full rounded-full bg-secondary/40 flex items-center justify-center overflow-hidden border-2 border-border/50">
                                                     <UploadImage
                                                         onUploadSuccess={(data: ImageKitData) => {
-                                                            field.onChange({ url: data.url });
+                                                            field.onChange({ 
+                                                                url: data.url });
                                                         }}
                                                     />
                                                 </div>
                                             ) : (
                                                 <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-primary/20 shadow-inner">
                                                     <Image
-                                                        src={field.value || "/placeholder-aspect.png"}
+                                                        src={field.value?.url || "/placeholder-aspect.png"}
                                                         alt="profile"
                                                         fill
                                                         className="object-cover transition duration-500 group-hover:scale-110"

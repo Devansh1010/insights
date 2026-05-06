@@ -15,8 +15,12 @@ import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { signInSchema } from "@/lib/schemas/auth/signUpSchema"
 import { z } from "zod"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 export function LoginForm() {
+
+  const router = useRouter()
 
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -27,13 +31,18 @@ export function LoginForm() {
   })
 
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
-    try {
-      await signIn("credentials", {
-        identifier: data.identifier,
-        password: data.password,
-      })
-    } catch (error) {
-      console.error("Login error:", error)
+    const result = await signIn("credentials", {
+      identifier: data.identifier,
+      password: data.password,
+      redirect: false,
+    });
+
+    if (result?.error) {
+     
+      toast.error("The email or password you entered is incorrect.");
+    } else {
+      // Manually route them on success
+      router.push("/user/explore");
     }
   }
 
@@ -61,7 +70,6 @@ export function LoginForm() {
                     id="form-rhf-demo-title"
                     aria-invalid={fieldState.invalid}
                     placeholder="Enter Your Username Or Email"
-                    autoComplete="off"
                   />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />

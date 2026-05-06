@@ -2,53 +2,44 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { auth } from './auth'
+import path from 'path'
 
 
-const PROTECTED_ROUTES = ['/user/profile', '/user/my-blogs', '/user/series'];
-const AUTH_ROUTES = ['/auth/signin', '/auth/signup'];
+const AUTH_ROUTES = ['/auth/signin', '/auth/signup']
+const PROTECTED_ROUTES = ['/user/my-blogs', '/user/series', '/user/profile']
 
-export default async function proxy(request: NextRequest) {
-    const { pathname } = request.nextUrl;
+const RESTRICTED_ROUTES = '/write-blog'
+// This function can be marked `async` if using `await` inside
+export async function proxy(request: NextRequest) {
 
-    const session = await auth();
+  const session = await auth()
 
-    // Root route
-    if (pathname === "/") {
-        return NextResponse.redirect(
-            new URL(session ? "/user/explore" : "/auth/signin", request.url)
-        );
-    }
+  const { pathname } = request.nextUrl
 
-    const isProtectedRoute = PROTECTED_ROUTES.some(route =>
-        pathname.startsWith(route)
-    );
+  console.log(pathname)
 
-    const isWriteRoute = pathname.startsWith("/write-blog");
+  if (pathname === '/' && session) {
+    return NextResponse.redirect(new URL('/user/explore', request.url))
+  }
 
-    const isAuthRoute = AUTH_ROUTES.some(route =>
-        pathname.startsWith(route)
-    );
+  if (AUTH_ROUTES.includes(pathname) && session) {
+    return NextResponse.redirect(new URL('/user/explore', request.url))
+  }
 
-    // Protect private routes
-    if ((isProtectedRoute || isWriteRoute) && !session) {
-        const signInUrl = new URL("/auth/signin", request.url);
-        signInUrl.searchParams.set("callbackUrl", pathname);
-        return NextResponse.redirect(signInUrl);
-    }
+  if (PROTECTED_ROUTES.includes(pathname) && !session) {
+    return NextResponse.redirect(new URL('/auth/signin', request.url))
+  }
 
-    // Prevent logged-in users from auth pages
-    if (isAuthRoute && session) {
-        return NextResponse.redirect(new URL("/user/explore", request.url));
-    }
-
-    return NextResponse.next();
+  if (pathname.startsWith(RESTRICTED_ROUTES) && !session) {
+    return NextResponse.redirect(new URL('/auth/signin', request.url))
+  }
 }
 
+// See "Matching Paths" below to learn more
 export const config = {
   matcher: [
-    '/',
-    '/auth/:path*',
     '/user/:path*',
+    '/auth/:path*',
     '/write-blog/:path*',
   ],
-};
+}

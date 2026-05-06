@@ -29,7 +29,7 @@ export const { handlers, auth } = NextAuth({
       authorize: async (credentials) => {
 
         if (!credentials) {
-          throw new Error("No credentials provided")
+          return null
         }
 
         const email = credentials?.identifier as string
@@ -43,13 +43,13 @@ export const { handlers, auth } = NextAuth({
           }).select("+password")
 
           if (!user) {
-            throw new Error('No user found')
+            return null
           }
 
           const isValid = await bcrypt.compare(password, user.password)
 
           if (!isValid) {
-            throw new Error('Not authorized')
+            return null
           }
 
           const updatedUser = {
@@ -92,6 +92,7 @@ export const { handlers, auth } = NextAuth({
           token.username = dbUser.username;
         }
       }
+
       return token;
     },
 
@@ -113,15 +114,17 @@ export const { handlers, auth } = NextAuth({
         const existingUser = await User.findOne({ email: user.email })
 
         if (!existingUser) {
-
           await User.create({
             email: user.email,
             username: user.name,
-            image: user.image,
-            provider: "github",
+            avatar: user.image,
+            // provider: "github",
             isVerified: true
           })
-
+        } else if (!existingUser.avatar) {
+          // If user exists but has no avatar, update it with GitHub image
+          existingUser.avatar = user.image;
+          await existingUser.save();
         }
 
       }

@@ -46,7 +46,9 @@ const EditProfile = () => {
                 console.log(data)
                 form.reset({
                     username: data.username || '',
-                    profileImage: data.avatar || '',
+                    profileImage: {
+                        url: data.avatar
+                    },
                     email: data.email || ''
                 })
             }
@@ -150,13 +152,13 @@ const EditProfile = () => {
                                             ) : (
                                                 <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-primary/20 shadow-inner">
                                                     <Image
-                                                        src={field.value?.url || "/placeholder-aspect.png"}
+                                                        src={field.value.url}
                                                         alt="profile"
                                                         fill
                                                         className="object-cover transition duration-500 group-hover:scale-110"
                                                     />
                                                     {/* Interactive Circular Overlay */}
-                                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center backdrop-blur-[1px]">
+                                                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center backdrop-blur-[1px]">
                                                         <button
                                                             type="button"
                                                             onClick={(e) => {
@@ -164,7 +166,7 @@ const EditProfile = () => {
                                                                 e.stopPropagation();
                                                                 field.onChange(null);
                                                             }}
-                                                            className="text-[10px] font-bold text-white bg-primary px-2 py-1 rounded-full hover:bg-primary/80 transition-transform active:scale-90"
+                                                            className="text-[10px] font-bold text-black px-2 py-1 rounded-full hover:bg-primary/80 transition-transform active:scale-90"
                                                         >
                                                             Remove
                                                         </button>

@@ -41,8 +41,8 @@ export const emailOnlySchema = z.object({
 
 const ImageSchema = z.object({
   url: z.string().url(),
-  id: z.string(),
-  name: z.string()
+  id: z.string().optional(),
+  name: z.string().optional()
 });
 
 export const updateUserSchema = z.object({
@@ -54,7 +54,6 @@ export const updateUserSchema = z.object({
 
   email: z
     .string()
-    // .email({ message: 'Enter valid Email Address' })
     .optional(),
 
   profileImage: ImageSchema.nullable().optional(),

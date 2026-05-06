@@ -43,7 +43,6 @@ const EditProfile = () => {
     useEffect(
         () => {
             if (data) {
-                console.log(data)
                 form.reset({
                     username: data.username || '',
                     profileImage: {

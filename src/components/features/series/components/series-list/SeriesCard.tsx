@@ -77,14 +77,20 @@ export const SeriesCard = ({ series }: { series: Series }) => {
             {/* --- EDIT/Delete BUTTON START --- */}
             <div className="flex items-center gap-1">
               {/* Edit Button */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setOpenEdit(true)}
-                className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full transition-colors"
-              >
-                <Pencil className="w-4 h-4" />
-              </Button>
+
+              <SeriesForm
+                slug={series.slug}
+                open={openEdit}
+                setOpen={setOpenEdit}
+                trigger={
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full transition-colors">
+                    <Pencil className="w-4 h-4" />
+                  </Button>
+                }
+              />
 
               {/* Delete Alert Dialog */}
               <AlertDialog>
@@ -112,7 +118,7 @@ export const SeriesCard = ({ series }: { series: Series }) => {
                       Keep it
                     </AlertDialogCancel>
                     <AlertDialogAction
-                      onClick={() => mutation.mutate(series._id)}
+                      onClick={() => mutation.mutate(series.slug)}
                       className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 font-bold shadow-lg shadow-destructive/20 transition-all active:scale-95"
                     >
                       Confirm Delete
@@ -123,7 +129,7 @@ export const SeriesCard = ({ series }: { series: Series }) => {
 
               {/* Series Edit Form */}
               <SeriesForm
-                id={series._id}
+                slug={series.slug}
                 open={openEdit}
                 setOpen={setOpenEdit}
               />
@@ -131,7 +137,7 @@ export const SeriesCard = ({ series }: { series: Series }) => {
 
           </div>
 
-          <Link href={`/user/series/${series._id}`}>
+          <Link href={`/user/series/${series.slug}`}>
             <h3 className="text-xl font-bold leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-1">
               {series?.title}
             </h3>
@@ -144,10 +150,10 @@ export const SeriesCard = ({ series }: { series: Series }) => {
           <div className="flex items-center justify-between pt-4 border-t border-border/50">
             <div className="flex items-center gap-2">
               <div className="h-6 w-6 rounded-full relative overflow-hidden border">
-                <Image 
-                src={series.author?.avatar || '/fallback.jpg'} 
-                fill alt="author" 
-                className="object-cover" />
+                <Image
+                  src={series.author?.avatar || '/fallback.jpg'}
+                  fill alt="author"
+                  className="object-cover" />
               </div>
               <span className="text-xs font-medium">{series.author?.username}</span>
             </div>

@@ -78,7 +78,7 @@ export async function GET(req: NextRequest) {
 
     try {
 
-        const auth = await VerifyUser();
+        // const auth = await VerifyUser();
 
         // if (!auth.success || !auth.user?._id) {
         //     return createResponse(

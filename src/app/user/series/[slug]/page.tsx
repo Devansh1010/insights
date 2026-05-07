@@ -2,15 +2,15 @@ import SeriesPage from "@/components/features/series/SeriesPage";
 
 
 interface PageProps {
-    params: Promise<{ id: string }>;
+    params: Promise<{ slug: string }>;
 }
 
 const Page = async ({ params }: PageProps) => {
 
-    const { id } = await params;
+    const { slug } = await params;
 
     return (
-        <div><SeriesPage id={id} /></div>
+        <div><SeriesPage slug={slug} /></div>
     )
 }
 

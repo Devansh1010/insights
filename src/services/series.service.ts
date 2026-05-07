@@ -55,9 +55,9 @@ export const createSeries = async (data: FormData) => {
     }
 }
 
-export const deleteSeries = async (id: string) => {
+export const deleteSeries = async (slug: string) => {
     try {
-        const res = await seriesApi.delete(`/${id}`)
+        const res = await seriesApi.delete(`/${slug}`)
         return res.data;
     } catch (error: unknown) {
         if (axios.isAxiosError(error)) {
@@ -70,9 +70,9 @@ export const deleteSeries = async (id: string) => {
     }
 }
 
-export const getSeriesById = async ({ id, page, limit, search }: { id: string, page: number, limit: number, search?: string }) => {
+export const getSeriesBySlug = async ({ slug, page, limit, search }: { slug: string, page: number, limit: number, search?: string }) => {
     try {
-        const res = await seriesApi.get(`/${id}?page=${page}&limit=${limit}&search=${search}`);
+        const res = await seriesApi.get(`/${slug}?page=${page}&limit=${limit}&search=${search}`);
 
         return res.data.data;
     } catch (error: unknown) {
@@ -102,9 +102,9 @@ export const getUserSeries = async () => {
     }
 }
 
-export const getSeriesFormData = async ({ id }: { id: string }) => {
+export const getSeriesFormData = async ({ slug }: { slug: string }) => {
     try {
-        const res = await seriesApi.get(`/get-series-form-data?id=${id}`);
+        const res = await seriesApi.get(`/get-series-form-data?slug=${slug}`);
 
         return res.data.data;
     } catch (error: unknown) {

@@ -18,11 +18,11 @@ export async function GET(req: NextRequest) {
         const userId = auth.user._id;
 
         const { searchParams } = new URL(req.url);
-        const id = searchParams.get('id');
+        const slug = searchParams.get('slug');
 
 
         //validate the Id
-        if (!id || typeof id !== 'string') {
+        if (!slug || typeof slug !== 'string') {
             return createResponse(
                 { success: false, message: "Invalid Series ID" },
                 StatusCode.BAD_REQUEST
@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
         await dbConnect()
 
         const series = await Series.findOne({
-            _id: id,
+            slug: slug,
             author: userId
         })
             .select('title desc coverImage tags isPublished')

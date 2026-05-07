@@ -36,6 +36,7 @@ export async function GET() {
 
             {
                 $project: {
+                    slug: 1,
                     title: 1,
                     desc: 1,
                     coverImage: 1,

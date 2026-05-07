@@ -25,7 +25,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Blog } from "@/types/frontend/blog"
 
-const ListBlog = ({ filteredBlogs, deleteBlog }: { filteredBlogs: Blog[], deleteBlog: (id: string) => void }) => {
+const ListBlog = ({ filteredBlogs, deleteBlog }: { filteredBlogs: Blog[], deleteBlog: (slug: string) => void }) => {
 
     return (
         <div className="space-y-10">
@@ -83,7 +83,7 @@ const ListBlog = ({ filteredBlogs, deleteBlog }: { filteredBlogs: Blog[], delete
 
                                 {/* OVERLAY ACTIONS */}
                                 <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-y-2.5 group-hover:translate-y-0">
-                                    <Link href={`/write-blog/${blog._id}`}>
+                                    <Link href={`/write-blog/${blog.slug}`}>
                                         <Button variant="secondary" size="icon" className="h-9 w-9 rounded-full  backdrop-blur shadow-md ">
                                             <Pencil className="w-4 h-4" />
                                         </Button>
@@ -109,7 +109,7 @@ const ListBlog = ({ filteredBlogs, deleteBlog }: { filteredBlogs: Blog[], delete
                                             <AlertDialogFooter className="mt-4">
                                                 <AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
                                                 <AlertDialogAction
-                                                    onClick={() => deleteBlog(blog._id)}
+                                                    onClick={() => deleteBlog(blog.slug)}
                                                     className="rounded-full bg-destructive hover:bg-destructive/90"
                                                 >
                                                     Delete Permanently

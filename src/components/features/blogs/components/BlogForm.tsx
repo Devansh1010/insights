@@ -1,7 +1,7 @@
 'use client'
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Library, Settings2 } from "lucide-react";
+import { Settings2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -24,7 +24,7 @@ import { getUserSeries } from "@/services/series.service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
-export default function BlogForm({ blogId }: { blogId?: string }) {
+export default function BlogForm({ slug }: { slug?: string }) {
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -36,9 +36,9 @@ export default function BlogForm({ blogId }: { blogId?: string }) {
 
   // Fetch existing blog data if in edit mode
   const { data: existingBlog, isPending: isBlogLoading } = useQuery({
-    queryKey: ['blog', blogId],
-    queryFn: () => getBlog(blogId!),
-    enabled: !!blogId, // Only run this query if slug is truthy
+    queryKey: ['blog', slug],
+    queryFn: () => getBlog(slug!),
+    enabled: !!slug, // Only run this query if slug is truthy
   });
 
   const methods = useForm<CreateBlogVariables>({
@@ -73,12 +73,12 @@ export default function BlogForm({ blogId }: { blogId?: string }) {
 
   // New Update Mutation
   const updateMutation = useMutation({
-    mutationFn: (variables: CreateBlogVariables & { id: string }) =>
-      updateBlog(variables, blogId),
+    mutationFn: (variables: CreateBlogVariables & { slug: string }) =>
+      updateBlog(variables, slug),
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["blogs"] });
-      queryClient.invalidateQueries({ queryKey: ["blog", blogId] });
+      queryClient.invalidateQueries({ queryKey: ["blog", slug] });
       toast.success("Blog updated successfully!");
       router.push("/user/explore");
     },
@@ -87,8 +87,8 @@ export default function BlogForm({ blogId }: { blogId?: string }) {
 
   const onSubmit = (formData: CreateBlogVariables) => {
 
-    if (blogId) {
-      updateMutation.mutate({ ...formData, id: blogId });
+    if (slug) {
+      updateMutation.mutate({ ...formData, slug: slug });
     } else {
       mutation.mutate(formData);
     }
@@ -107,13 +107,13 @@ export default function BlogForm({ blogId }: { blogId?: string }) {
 
   const categories = ['All Series', 'Architecture', 'Frontend', 'Backend', 'System Design', 'Soft Skills']
 
-  if (isPending || (blogId && isBlogLoading)) return <WriteBlogLoader />
+  if (isPending || (slug && isBlogLoading)) return <WriteBlogLoader />
   if (isError) return <WriteBlogError />
 
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} className="min-h-screen bg-background selection:bg-primary/20">
-        <EditorHeader isPending={isPending} isEditMode={!!blogId} />
+        <EditorHeader isPending={isPending} isEditMode={!!slug} />
 
         <main className="max-w-4xl mx-auto px-6 pt-6 pb-32">
           {/* 1. Cover Image - Reduced margin to pull content up */}
@@ -164,7 +164,7 @@ export default function BlogForm({ blogId }: { blogId?: string }) {
             <TitleField articleTitle={existingBlog?.title || ''} />
 
             <div className="relative">
-              <EditorField articleContent={existingBlog?.content} articleId={blogId} />
+              <EditorField articleContent={existingBlog?.content} articleSlug={slug} />
             </div>
           </article>
         </main>

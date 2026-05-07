@@ -5,11 +5,10 @@ import { VerifyUser } from "@/lib/verifyUser/userVerification";
 import Blog from "@/models/blog_modles/blog.model";
 import SeriesBlog from "@/models/series_models/series-blog.model";
 import { NextRequest } from "next/server";
-import mongoose from "mongoose";
 
-export async function GET(req: NextRequest, { params }: { params: { blogId: string } }) {
+export async function GET(req: NextRequest, { params }: { params: { slug: string } }) {
     try {
-        const { blogId } = await params
+        const { slug } = await params
 
         const auth = await VerifyUser()
 
@@ -24,7 +23,7 @@ export async function GET(req: NextRequest, { params }: { params: { blogId: stri
 
         const result = await Blog.aggregate([
             // 1. Get the current blog
-            { $match: { _id: new mongoose.Types.ObjectId(blogId) } },
+            { $match: { slug: slug } },
 
             // 2. Join with the Users collection to get author details
             {
@@ -83,7 +82,8 @@ export async function GET(req: NextRequest, { params }: { params: { blogId: stri
                                 _id: "$blogDetails._id",
                                 title: "$blogDetails.title",
                                 coverImage: "$blogDetails.coverImage",
-                                desc: "$blogDetails.excerpt"
+                                desc: "$blogDetails.excerpt",
+                                slug: "$blogDetails.slug"
                             }
                         }
                     ],
@@ -101,6 +101,13 @@ export async function GET(req: NextRequest, { params }: { params: { blogId: stri
                         _id: 1,
                         avatar: 1
                     },
+                    hook: 1,
+                    insights: 1,
+                    level: 1,
+                    slug: 1,
+                    excerpt: 1,
+                    tags: 1,
+                    seriesPartOf: 1,
                     nextBlog: { $arrayElemAt: ["$nextBlog", 0] }
                 }
             }
@@ -120,7 +127,7 @@ export async function GET(req: NextRequest, { params }: { params: { blogId: stri
 
 
         if (!blogData.author._id.equals(auth.user?._id) || !auth.user) {
-            await Blog.findByIdAndUpdate(blogId, { $inc: { views: 1 } });
+            await Blog.findByIdAndUpdate(slug, { $inc: { views: 1 } });
         }
 
 
@@ -145,11 +152,11 @@ export async function GET(req: NextRequest, { params }: { params: { blogId: stri
     }
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { blogId: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: { slug: string } }) {
     try {
-        const { blogId } = await params
+        const { slug } = await params
 
-        const { title, content, tags, isPublished, coverImage, seriesId } =
+        const { title, content, tags, isPublished, coverImage, seriesId, hook, insights, level } =
             await req.json()
 
         const auth = await VerifyUser()
@@ -166,7 +173,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { blogId: st
 
         await dbConnect()
 
-        const blog = await Blog.findById(blogId)
+        const blog = await Blog.findOne({ slug: slug, author: userId })
 
         if (!blog) {
             return createResponse(
@@ -242,6 +249,23 @@ export async function PATCH(req: NextRequest, { params }: { params: { blogId: st
             }
         }
 
+        if (typeof hook === "string") {
+            blog.hook = hook.trim();
+        }
+
+        const validLevels = ['Beginner', 'Intermediate', 'Advanced'];
+        if (level && validLevels.includes(level)) {
+            blog.level = level;
+        }
+
+
+        if (insights) {
+            // Ensure it's an array and clean up empty strings or non-string values
+            blog.insights = Array.isArray(insights)
+                ? insights.filter((i: string) => typeof i === "string" && i.trim() !== "")
+                : [];
+        }
+
         await blog.save()
 
         return createResponse(
@@ -265,7 +289,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { blogId: st
     }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { blogId: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: { slug: string } }) {
     try {
         //Add verify  User
         const auth = await VerifyUser();
@@ -280,9 +304,9 @@ export async function DELETE(req: NextRequest, { params }: { params: { blogId: s
 
         await dbConnect()
 
-        const { blogId } = await params
+        const { slug } = await params
 
-        const deletedBlog = await Blog.findOneAndDelete({ _id: blogId, author: userId }).lean()
+        const deletedBlog = await Blog.findOneAndDelete({ slug: slug, author: userId }).lean()
 
 
         if (!deletedBlog) {

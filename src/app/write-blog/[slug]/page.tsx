@@ -4,14 +4,14 @@ import BlogForm from "@/components/features/blogs/components/BlogForm"
 import { use } from "react"
 
 interface PageProps {
-    params: Promise<{ blogId: string }>
+    params: Promise<{ slug: string }>
 }
 
 const Page = ({ params }: PageProps) => {
 
-    const { blogId } = use(params)
+    const { slug } = use(params)
 
-    return <BlogForm blogId={blogId} />
+    return <BlogForm slug={slug} />
 }
 
 export default Page

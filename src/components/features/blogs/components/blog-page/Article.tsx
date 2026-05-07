@@ -111,13 +111,13 @@ const Article = ({ blog }: { blog: Blog }) => {
         {/* Next Blog Section */}
         {blog.nextBlog ? (
             <Link 
-                href={`/user/explore/${blog.nextBlog._id}`} 
+                href={`/user/explore/${blog.nextBlog.slug}`} 
                 className="group block no-underline"
             >
                 <div className="space-y-10">
                     {/* Section Label: More refined tracking and alignment */}
                     <div className="flex items-center gap-3">
-                        <div className="h-[1px] w-12 bg-primary/30 group-hover:w-20 group-hover:bg-primary transition-all duration-700 ease-in-out"></div>
+                        <div className="h-px w-12 bg-primary/30 group-hover:w-20 group-hover:bg-primary transition-all duration-700 ease-in-out"></div>
                         <h4 className="text-[11px] font-bold uppercase tracking-[0.4em] text-muted-foreground/60 group-hover:text-primary transition-colors duration-500">
                             Up Next
                         </h4>

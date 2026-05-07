@@ -6,11 +6,11 @@ import { useQuery } from '@tanstack/react-query'
 import BlogPageLoader from './loader/BlogPageLoader'
 import { BlogListError } from './error/BlogsListError'
 
-const BlogPage = ({ id }: { id: string }) => {
+const BlogPage = ({ slug }: { slug: string }) => {
 
     const { data, isPending, isError, refetch } = useQuery({
-        queryKey: ['blog', { id }],
-        queryFn: () => getBlog(id),
+        queryKey: ['blog', { slug }],
+        queryFn: () => getBlog(slug),
     })
 
     if (isPending) return <BlogPageLoader />

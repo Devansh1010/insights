@@ -4,7 +4,7 @@ import { JSONContent } from "@tiptap/react";
 import { toast } from "sonner";
 
 export interface CreateBlogVariables {
-    blogId?: string
+    slug?: string;
     title?: string;
     hook?: string
     content?: JSONContent;
@@ -32,9 +32,9 @@ export const createBlog = async (data: CreateBlogVariables) => {
     }
 };
 
-export const deleteBlog = async (blogId: string) => {
+export const deleteBlog = async (slug: string) => {
     try {
-        const res = await blogApi.delete(`/${blogId}`)
+        const res = await blogApi.delete(`/${slug}`)
 
         if (res.data.success) {
             return res.data
@@ -47,9 +47,9 @@ export const deleteBlog = async (blogId: string) => {
     }
 }
 
-export const updateBlog = async (data: CreateBlogVariables, blogId?: string) => {
+export const updateBlog = async (data: CreateBlogVariables, slug?: string) => {
     try {
-        const res = await blogApi.patch(`/${blogId}`, data)
+        const res = await blogApi.patch(`/${slug}`, data)
 
         if (res.data.success) {
             return res.data
@@ -60,9 +60,9 @@ export const updateBlog = async (data: CreateBlogVariables, blogId?: string) => 
     }
 }
 
-export const getBlog = async (blogId: string) => {
+export const getBlog = async (slug: string) => {
     try {
-        const response = await blogApi.get(`/${blogId}`)
+        const response = await blogApi.get(`/${slug}`)
         if (response.status === 200) {
             return response.data.data;
         } else {

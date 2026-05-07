@@ -10,7 +10,7 @@ import { HardBreak } from '@tiptap/extension-hard-break'
 import { TextStyle } from '@tiptap/extension-text-style';
 import { ListItem } from '@tiptap/extension-list';
 import { SlashCommandList } from 'reactjs-tiptap-editor/slashcommand';
-import debounce from 'lodash.debounce';
+import { debounce } from 'lodash';
 
 
 // Import CSS

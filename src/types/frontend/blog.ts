@@ -14,7 +14,8 @@ export interface Blog {
         _id: string,
         title: string,
         coverImage: string,
-        desc: string
+        desc: string,
+        slug: string
     }
     title: string;
     hook: string;

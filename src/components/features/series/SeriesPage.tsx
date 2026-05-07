@@ -18,7 +18,7 @@ import { SeriesPageLoader } from "./loader/SeriesPageLoader";
 import Link from "next/link";
 import { Blog } from "@/types/frontend/blog";
 
-const SeriesPage = ({ id }: { id: string }) => {
+const SeriesPage = ({ slug }: { slug: string }) => {
 
     const [page, setPage] = useState(1)
     const [search, setSearch] = useState('')
@@ -26,8 +26,8 @@ const SeriesPage = ({ id }: { id: string }) => {
 
 
     const { data, isPending, isError, refetch, isRefetching } = useQuery({
-        queryKey: ['series', { id, search, page }],
-        queryFn: () => getSeriesById({ id, page, limit, search }),
+        queryKey: ['series', { slug, search, page }],
+        queryFn: () => getSeriesById({ slug, page, limit, search }),
         placeholderData: (previousData) => previousData,
     })
 
@@ -128,7 +128,7 @@ const SeriesPage = ({ id }: { id: string }) => {
                         ) : (
                             (data?.blogs?.length > 0 &&
                                 data?.blogs?.map((blog: Blog, index: number) => (
-                                    <Link href={`/user/explore/${blog._id}`} key={index} className="group">
+                                    <Link href={`/user/explore/${blog.slug}`} key={index} className="group">
                                         <article
                                             className="group grid grid-cols-1 md:grid-cols-12 gap-12 items-start"
                                         >

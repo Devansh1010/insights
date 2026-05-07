@@ -108,10 +108,19 @@
     "typescript": "^5"
   },
   "pnpm": {
-    "overrides": {
-      "@tiptap/core": "3.22.4",
-      "@tiptap/pm": "3.22.4",
-      "@tiptap/react": "3.22.4"
+  "overrides": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@tiptap/core": "3.22.4",
+    "@tiptap/pm": "3.22.4",
+    "@tiptap/react": "3.22.4"
+  },
+  "peerDependencyRules": {
+    "ignoreMissing": ["react", "react-dom"],
+    "allowedVersions": {
+      "react": "19",
+      "react-dom": "19"
     }
   }
+}
 }

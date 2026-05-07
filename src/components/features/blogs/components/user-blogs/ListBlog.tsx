@@ -25,7 +25,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Blog } from "@/types/frontend/blog"
 
-const ListBlog = ({ filteredBlogs, deleteBlog }: { filteredBlogs: Blog[], deleteBlog: (id: string) => void }) => {
+const ListBlog = ({ filteredBlogs, deleteBlog }: { filteredBlogs: Blog[], deleteBlog: (slug: string) => void }) => {
 
     return (
         <div className="space-y-10">
@@ -37,7 +37,7 @@ const ListBlog = ({ filteredBlogs, deleteBlog }: { filteredBlogs: Blog[], delete
                     </h3>
                     <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">
                         <FileText className="w-3 h-3 text-primary/60" />
-                       
+
                         <span>Showing {filteredBlogs.length} Stories</span>
                     </div>
                 </div>
@@ -83,7 +83,7 @@ const ListBlog = ({ filteredBlogs, deleteBlog }: { filteredBlogs: Blog[], delete
 
                                 {/* OVERLAY ACTIONS */}
                                 <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-y-2.5 group-hover:translate-y-0">
-                                    <Link href={`/write-blog/${blog._id}`}>
+                                    <Link href={`/write-blog/${blog.slug}`}>
                                         <Button variant="secondary" size="icon" className="h-9 w-9 rounded-full  backdrop-blur shadow-md ">
                                             <Pencil className="w-4 h-4" />
                                         </Button>
@@ -109,7 +109,7 @@ const ListBlog = ({ filteredBlogs, deleteBlog }: { filteredBlogs: Blog[], delete
                                             <AlertDialogFooter className="mt-4">
                                                 <AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
                                                 <AlertDialogAction
-                                                    onClick={() => deleteBlog(blog._id)}
+                                                    onClick={() => deleteBlog(blog.slug)}
                                                     className="rounded-full bg-destructive hover:bg-destructive/90"
                                                 >
                                                     Delete Permanently
@@ -126,15 +126,15 @@ const ListBlog = ({ filteredBlogs, deleteBlog }: { filteredBlogs: Blog[], delete
                                     <div className="flex items-center gap-2">
                                         <Badge
                                             className={`text-[9px] uppercase tracking-widest px-2.5 py-0.5 rounded-full font-bold border-none shadow-none ${blog.isPublished
-                                                    ? "bg-emerald-500/10 text-emerald-600"
-                                                    : "bg-orange-500/10 text-orange-600"
+                                                ? "bg-emerald-500/10 text-emerald-600"
+                                                : "bg-orange-500/10 text-orange-600"
                                                 }`}
                                         >
                                             {blog.isPublished ? "Live" : "Draft"}
                                         </Badge>
                                         {/* Optional: Read Time indicator */}
                                         <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-tight">
-                                            {blog.readTime } : min read
+                                            {blog.readTime} : min read
                                         </span>
                                     </div>
                                     <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
@@ -148,7 +148,7 @@ const ListBlog = ({ filteredBlogs, deleteBlog }: { filteredBlogs: Blog[], delete
                                     </span>
                                 </div>
 
-                                <Link href={`/user/explore/${blog._id}`}>
+                                <Link href={`/user/explore/${blog.slug}`}>
                                     <h4 className="text-xl font-serif font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2 decoration-primary/30 underline-offset-4 group-hover:underline">
                                         {blog.title}
                                     </h4>

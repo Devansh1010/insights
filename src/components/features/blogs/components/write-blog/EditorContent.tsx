@@ -5,10 +5,10 @@ import { useController, useFormContext } from "react-hook-form";
 
 export function EditorField({
   articleContent,
-  articleId
+  articleSlug
 }: {
   articleContent?: TiptapContent;
-  articleId?: string;
+  articleSlug?: string;
 }) {
   const { control, setValue } = useFormContext();
   const isLoaded = useRef<string | null>(null); // Track the specific ID loaded
@@ -25,11 +25,11 @@ export function EditorField({
 
   useEffect(() => {
     // If we have content and it hasn't been loaded for THIS specific ID yet
-    if (articleContent && isLoaded.current !== articleId) {
+    if (articleContent && isLoaded.current !== articleSlug) {
       setValue("content", articleContent.content);
-      isLoaded.current = articleId || "new"; // Update the ref to the current ID
+      isLoaded.current = articleSlug || "new"; // Update the ref to the current ID
     }
-  }, [articleContent, articleId, setValue]);
+  }, [articleContent, articleSlug, setValue]);
 
   return (
     <div className="space-y-4">

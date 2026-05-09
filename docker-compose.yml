@@ -1,5 +1,6 @@
 services:
   nextjs_app:
+    build: .
     image: blogger-insights-article
     restart: always
     env_file:

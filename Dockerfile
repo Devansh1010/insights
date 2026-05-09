@@ -8,8 +8,8 @@ WORKDIR /app
 
 COPY pnpm-lock.yaml package*.json ./
 
-RUN pnpm config set side-effects-cache false && \
-    pnpm install --frozen-lockfile
+RUN pnpm install --no-frozen-lockfile --ignore-scripts
+
 COPY . .
 
 RUN pnpm run build

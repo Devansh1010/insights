@@ -1,8 +1,9 @@
+import ProfilePage from "@/components/features/user/ProfilePage"
 
-const ProfilePage = () => {
+const Profile = () => {
   return (
     <ProfilePage />
   )
 }
 
-export default ProfilePage
+export default Profile

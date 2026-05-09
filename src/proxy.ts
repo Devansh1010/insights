@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { auth } from './auth'
-import path from 'path'
+
 
 
 const AUTH_ROUTES = ['/auth/signin', '/auth/signup']
@@ -15,8 +15,6 @@ export async function proxy(request: NextRequest) {
   const session = await auth()
 
   const { pathname } = request.nextUrl
-
-  console.log(pathname)
 
   if (pathname === '/' && session) {
     return NextResponse.redirect(new URL('/user/explore', request.url))

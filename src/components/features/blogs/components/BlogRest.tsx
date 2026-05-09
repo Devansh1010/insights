@@ -29,7 +29,7 @@ const BlogRest = ({ rest }: { rest: Blog[] }) => {
         const isExpanded = expandedId === post._id;
 
         return (
-          <Link href={`/user/explore/${post._id}`} key={post._id} className="group block">
+          <Link href={`/user/explore/${post.slug}`} key={post._id} className="group block">
             <article className="flex flex-col h-full space-y-5 transition-all duration-500">
 
               {/* IMAGE CONTAINER - Sophisticated Shadow & Scale */}

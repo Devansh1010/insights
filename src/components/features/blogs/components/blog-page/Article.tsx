@@ -111,7 +111,7 @@ const Article = ({ blog }: { blog: Blog }) => {
         {/* Next Blog Section */}
         {blog.nextBlog ? (
             <Link 
-                href={`/user/explore/${blog.nextBlog._id}`} 
+                href={`/user/explore/${blog.nextBlog.slug}`} 
                 className="group block no-underline"
             >
                 <div className="space-y-10">

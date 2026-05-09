@@ -24,7 +24,7 @@ const TopSeries = ({ isInitialPage, featuredSeries }: { isInitialPage: boolean; 
                         {featuredSeries.map((series) => (
                             <CarouselItem key={series._id} className="basis-full">
                                 <div className="p-2 transition-all duration-500">
-                                    <Link href={`/user/series/${series._id}`}>
+                                    <Link href={`/user/series/${series.slug}`}>
                                         <Card className="relative h-112.5 md:h-130 overflow-hidden border-none bg-background rounded-[2.5rem] shadow-xl hover:shadow-2xl transition-all duration-500">
                                             <CardContent className="p-0 h-full">
                                                 {/* Background Image */}

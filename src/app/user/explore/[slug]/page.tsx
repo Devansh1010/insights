@@ -2,15 +2,15 @@ import BlogPage from "@/components/features/blogs/BlogPage";
 
 
 interface PageProps {
-    params: Promise<{ id: string }>;
+    params: Promise<{ slug: string }>;
 }
 
 const Page = async ({ params }: PageProps) => {
 
-    const { id } = await params;
+    const { slug } = await params;
 
     return (
-        <BlogPage id={id} />
+        <BlogPage slug={slug} />
     )
 }
 

@@ -6,7 +6,7 @@ import SeriesBlog from "@/models/series_models/series-blog.model";
 import Series from "@/models/series_models/series.model";
 import { NextRequest } from "next/server";
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
     try {
         const auth = await VerifyUser();
 
@@ -18,16 +18,16 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         // }
 
         const userId = auth?.user?._id;
-        const { id } = await params
+        const { slug } = await params
 
         //validate the Id
 
         await dbConnect()
 
         const series = await Series.findOne({
-            _id: id
+            slug
         })
-            .select('title desc coverImage tags views createdAt updatedAt isPublished')
+            .select('_id title desc coverImage tags views createdAt updatedAt isPublished')
             .populate('author', 'username _id avatar')
             .lean()
 
@@ -41,7 +41,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         const author = series.author as unknown as { _id: string, username: string, avatar: string };
 
         if (author._id.toString() !== userId?.toString() || !auth.user) {
-            await Series.findByIdAndUpdate(id, { $inc: { views: 1 } });
+            await Series.findOneAndUpdate({ slug }, { $inc: { views: 1 } });
         }
 
         const { searchParams } = new URL(req.url)
@@ -54,7 +54,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
         const blogs = await SeriesBlog.aggregate([
             // Match the mappings for the specific series first
-            { $match: { series: new mongoose.Types.ObjectId(id) } },
+            { $match: { series: new mongoose.Types.ObjectId(series._id) } },
 
             // Join with the Blogs collection (SQL-like Join)
             {
@@ -125,7 +125,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
     try {
         const auth = await VerifyUser();
 
@@ -139,11 +139,11 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
         // const { searchParams } = new URL(req.url);
         // const id = searchParams.get("id");
 
-        const { id } = await params
+        const { slug } = await params
 
         await dbConnect()
 
-        const deletedSeries = await Series.findByIdAndDelete(id)
+        const deletedSeries = await Series.findOneAndDelete({ slug })
 
         if (!deletedSeries) {
             return createResponse(
@@ -173,7 +173,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     }
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
     try {
         const auth = await VerifyUser();
 
@@ -184,7 +184,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
             );
         }
 
-        const { id } = await params
+        const userId = auth?.user?._id;
+
+        const { slug } = await params
 
         const { title, desc, blogs, coverImage, tags, isPublished } = await req.json()
 
@@ -195,7 +197,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         }
         await dbConnect()
 
-        const updatedSeries = await Series.findByIdAndUpdate(id, {
+        const updatedSeries = await Series.findOneAndUpdate({ slug, author: userId }, {
             title,
             desc,
             blogs,
@@ -208,7 +210,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         if (!updatedSeries) {
             return createResponse(
                 { success: false, message: "Series Not Updated" },
-                StatusCode.CONFLICT
+                StatusCode.NOT_FOUND
             );
         }
 

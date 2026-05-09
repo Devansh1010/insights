@@ -35,7 +35,7 @@ const UserBlogs = () => {
     // 1. Fetch data - 'data' will be of type BlogResponse
 
     const mutation = useMutation({
-        mutationFn: (id: string) => deleteBlog(id),
+        mutationFn: (slug: string) => deleteBlog(slug),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["user-blogs"] });
             toast.success("Blog deleted successfully!");

@@ -8,8 +8,8 @@ WORKDIR /app
 
 COPY pnpm-lock.yaml package*.json ./
 
-RUN pnpm install --frozen-lockfile --only-allow-defined-scripts
-
+RUN pnpm config set side-effects-cache false && \
+    pnpm install --frozen-lockfile
 COPY . .
 
 RUN pnpm run build

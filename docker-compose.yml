@@ -1,34 +1,17 @@
 services:
-  traefik:
-    image: traefik:v3.0
-    command:
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    networks:
-      - web-gateway
-
-  insights-article:
-    build: .
+  nextjs_app:
+    image: blogger-insights-article
     restart: always
-    
     env_file:
       - .env
     networks:
-      - web-gateway
+      - paperclip-rfqj_default  # This is the "hallway" name you found
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.nextjs.rule=Host(`insightsarticle.in`) || Host(`www.insightsarticle.in`)"
-      - "traefik.http.services.nextjs.loadbalancer.server.port=3000"
-
-volumes:
-  next_image_cache:
+      # This tells the EXISTING Traefik to watch for your domain name
+      - "traefik.http.routers.blogger-app.rule=Host(`insightsarticle.in`) || Host(`www.insightsarticle.in`)"
+      - "traefik.http.services.blogger-app.loadbalancer.server.port=3000"
 
 networks:
-  web-gateway:
-    driver: bridge
+  paperclip-rfqj_default:
+    external: true 

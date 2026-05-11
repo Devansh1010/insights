@@ -12,7 +12,10 @@ services:
     networks:
       - internal-network
   next-insights:
-    build: .
+    build:
+      context: .
+      args:
+        - MONGODB_URI=${MONGODB_URI}
     restart: always 
     depends_on:
       - mongodb

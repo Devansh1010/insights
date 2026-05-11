@@ -1,18 +1,38 @@
+version: '3.8'
 services:
-  nextjs_app:
-    build: .
-    image: blogger-insights-article
-    restart: always
+  mongodb:
+    image: mongo
+    ports: 
+      - "27017:27017"
     env_file:
-      - .env
+      - .env.local
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_DB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_DB_PASSWORD}
     networks:
-      - paperclip-rfqj_default  # This is the "hallway" name you found
+      - internal-network
+  next-insights:
+    build: .
+    restart: always 
+    depends_on:
+      - mongodb
+    networks:
+      - internal-network
+      - proxy
     labels:
       - "traefik.enable=true"
-      # This tells the EXISTING Traefik to watch for your domain name
-      - "traefik.http.routers.blogger-app.rule=Host(`insightsarticle.in`) || Host(`www.insightsarticle.in`)"
-      - "traefik.http.services.blogger-app.loadbalancer.server.port=3000"
-
+      - "traefik.http.routers.next-insights.rule=Host(`insightsarticle.in`)"
+      - "traefik.http.routers.next-insights.entrypoints=websecure" # For HTTPS
+      - "traefik.http.routers.next-insights.tls.certresolver=myresolver" # For Auto-SSL
+      - "traefik.http.services.next-insights.loadbalancer.server.port=3000"
+    env_file:
+      - .env.local
+    environment:
+      - DATABASE_URL=mongodb://${MONGO_DB_USERNAME}:${MONGO_DB_PASSWORD}@mongodb:27017/next_db?authSource=admin
 networks:
-  paperclip-rfqj_default:
-    external: true 
+  internal-network:
+    driver: bridge
+  proxy:
+    external: true      # This tells Docker the 'proxy' network already exists
+volumes:
+  mongo-data:

@@ -27,8 +27,6 @@ services:
       - "traefik.http.services.next-insights.loadbalancer.server.port=3000"
     env_file:
       - .env.local
-    environment:
-      - MONGODB_URI=mongodb://${MONGO_DB_USERNAME}:${MONGO_DB_PASSWORD}@mongodb:27017/next_db?authSource=admin
 networks:
   internal-network:
     driver: bridge

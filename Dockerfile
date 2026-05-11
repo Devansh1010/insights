@@ -4,6 +4,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
+ARG MONGODB_URI
+ENV MONGODB_URI=$MONGODB_URI
 RUN npm run build
 
 # Serve Stage (Using Node instead of Nginx)

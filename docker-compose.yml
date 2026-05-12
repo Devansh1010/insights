@@ -1,11 +1,8 @@
-version: '3.8'
 services:
   mongodb:
     image: mongo
     ports: 
       - "27017:27017"
-    env_file:
-      - .env.local
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_DB_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_DB_PASSWORD}
@@ -17,6 +14,7 @@ services:
   next-insights:
     build:
       context: .
+      dockerfile: Dockerfile
       args:
         - MONGODB_URI=${MONGODB_URI}
     restart: always 
@@ -31,8 +29,6 @@ services:
       - "traefik.http.routers.next-insights.entrypoints=websecure"
       - "traefik.http.routers.next-insights.tls.certresolver=myresolver"
       - "traefik.http.services.next-insights.loadbalancer.server.port=3000"
-    env_file:
-      - .env.local
 
 networks:
   internal-network:

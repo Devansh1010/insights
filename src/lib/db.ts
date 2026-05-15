@@ -1,6 +1,9 @@
 import mongoose from 'mongoose'
+import { sleep } from './wait';
 
 const MONGODB_URI = process.env.MONGODB_URI || '';
+const MAX_RETRIES = 5
+const INITIAL_DELAY = 2000
 
 if (!MONGODB_URI) {
   throw new Error('Please define mongodb uri on the env file.')
@@ -20,16 +23,31 @@ export async function dbConnect() {
     return cached.conn
   }
 
-  if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI).then(() => mongoose.connection)
-  }
 
-  try {
-    cached.conn = await cached.promise
-  } catch (error) {
-    cached.promise = null
-    throw error
+
+  for (let i = 0; i < MAX_RETRIES; i++) {
+    try {
+      if (!cached.promise) {
+        cached.promise =
+          mongoose
+            .connect(MONGODB_URI)
+            .then(() => mongoose.connection)
+      }
+
+      cached.conn = await cached.promise
+      console.log('DB Connected')
+      return cached.conn
+
+    } catch (error: unknown) {
+
+      cached.promise = null
+      console.log(`Attempt ${i + 1} failed: ${error}`);
+
+      if (i === MAX_RETRIES - 1) {
+        throw new Error("Max database connection retries reached.");
+      }
+
+      await sleep((INITIAL_DELAY * (i + 1)))
+    }
   }
-  console.log('DB Connected')
-  return cached.conn
 }

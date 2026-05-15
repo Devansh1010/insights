@@ -41,7 +41,7 @@ const VerifyCodePage: React.FC = () => {
             } else {
                 toast.error(res.data.message)
             }
-            router.push('/user/explore')
+            router.push('/auth/signin')
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred'
             console.error('Verification error:', errorMessage)

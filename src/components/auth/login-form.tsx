@@ -41,7 +41,7 @@ export function LoginForm() {
      
       toast.error("The email or password you entered is incorrect.");
     } else {
-      // Manually route them on success
+
       router.push("/user/explore");
     }
   }

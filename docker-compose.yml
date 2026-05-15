@@ -1,40 +1,83 @@
 services:
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik
+
+    command:
+      - "--api.dashboard=true"
+
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=YOUR_EMAIL"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+
+    ports:
+      - "80:80"
+      - "443:443"
+
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./letsencrypt:/letsencrypt"
+
+    networks:
+      - proxy
+
+    restart: always
+
   mongodb:
     image: mongo
-    ports: 
-      - "27017:27017"
+
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_DB_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_DB_PASSWORD}
+
     volumes:
-      - mongo-data:/data/db 
+      - mongo-data:/data/db
+
     networks:
       - internal-network
+
+    restart: always
 
   next-insights:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        - MONGODB_URI=${MONGODB_URI}
-    restart: always 
+
+    env_file:
+      - .env
+
     depends_on:
       - mongodb
+
+    restart: always
+
     networks:
       - internal-network
       - proxy
+
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.next-insights.rule=Host(`insightsarticle.in`)"
+
+      - "traefik.http.routers.next-insights.rule=Host(`insightsarticle.in`) || Host(`www.insightsarticle.in`)"
+
       - "traefik.http.routers.next-insights.entrypoints=websecure"
+
       - "traefik.http.routers.next-insights.tls.certresolver=myresolver"
+
       - "traefik.http.services.next-insights.loadbalancer.server.port=3000"
 
 networks:
   internal-network:
     driver: bridge
+
   proxy:
-    external: true
+    driver: bridge
 
 volumes:
   mongo-data:

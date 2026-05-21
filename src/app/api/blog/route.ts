@@ -23,7 +23,7 @@ const hasValidText = (nodes?: JSONContent[]): boolean => {
     });
 };
 
-const validateContent = (content: JSONContent): boolean => {
+export const validateContent = (content: JSONContent): boolean => {
     if (!content?.content || content.content.length === 0) {
         return false;
     }
@@ -39,7 +39,7 @@ function extractTextFromTiptap(node: TiptapNode): string {
 
 }
 
-function calculateReadTime(content: TiptapContent): number {
+export function calculateReadTime(content: TiptapContent): number {
 
     const fullText = content.content
         .map((node) => extractTextFromTiptap(node))
@@ -139,8 +139,6 @@ export async function POST(req: Request) {
 
         const readTime = calculateReadTime(content);
 
-        console.log(readTime)
-
         // ================= CREATE BLOG =================
         const newBlog = await Blog.create({
             title: title.trim(),
@@ -190,7 +188,6 @@ export async function POST(req: Request) {
         );
 
     } catch (error) {
-        console.error("Critical Error:", error);
 
         const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
         return createResponse(

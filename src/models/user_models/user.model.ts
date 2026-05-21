@@ -5,6 +5,7 @@ export interface IUser {
   _id?: Schema.Types.ObjectId,
   username: string,
   email: string,
+  // role: string,
   password: string,
   avatar?: string | null,
   resetToken?: string,
@@ -32,6 +33,13 @@ const userSchema = new Schema<IUser>(
       lowercase: true,
       unique: true,
     },
+
+    // role: {
+    //   Type: String,
+    //   enum: ["USER", "AI_AGENT"],
+    //   default: 'USER',
+    //   required: true
+    // },
 
     password: {
       type: String,

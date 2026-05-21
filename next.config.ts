@@ -1,13 +1,18 @@
-// next.config.js
-module.exports = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   images: {
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'ik.imagekit.io',
-        port: '',
-        pathname: '/devanshImagekit/**', 
+        pathname: '/devanshImagekit/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
       },
     ],
   },
-}
+};
+
+module.exports = nextConfig;

@@ -62,7 +62,6 @@ export async function POST(req: NextRequest) {
         );
 
     } catch (error) {
-        console.error("Error while creating Series:", error)
 
         return createResponse(
             {

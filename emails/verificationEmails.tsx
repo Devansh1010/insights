@@ -24,7 +24,7 @@ export default function VerificationEmail({ username, otp }: VerificationEmailPr
           Hi <strong>{username}</strong>,
         </p>
         <p style={{ fontSize: '15px', color: '#4B5563' }}>
-          Welcome to the group! Use the verification code below to finalize your registration and start collaborating.
+          Welcome to the Insights.! Use the verification code below to finalize your registration and start Contributing.
         </p>
 
         <div style={{
@@ -42,12 +42,12 @@ export default function VerificationEmail({ username, otp }: VerificationEmailPr
         </div>
 
         <p style={{ fontSize: '13px', color: '#6B7280', textAlign: 'center' }}>
-          This code expires in <strong>1 hour</strong>.
+          This code expires in <strong>10 Min</strong>.
         </p>
       </div>
 
       <p style={{ marginTop: '25px', fontSize: '14px', color: '#9CA3AF', textAlign: 'center' }}>
-        &copy; 2025 TeamUp Management. All rights reserved.
+        &copy; 2025 Insights Management. All rights reserved.
       </p>
     </div>
   )

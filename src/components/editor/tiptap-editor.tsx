@@ -22,7 +22,7 @@ import { Blockquote, RichTextBlockquote } from 'reactjs-tiptap-editor/blockquote
 import { Bold, RichTextBold } from 'reactjs-tiptap-editor/bold';
 import { BulletList, RichTextBulletList } from 'reactjs-tiptap-editor/bulletlist';
 import { Code, RichTextCode } from 'reactjs-tiptap-editor/code';
-// import { CodeBlock, RichTextCodeBlock } from 'reactjs-tiptap-editor/codeblock';
+import { CodeBlock, RichTextCodeBlock } from 'reactjs-tiptap-editor/codeblock';
 import { CodeView, RichTextCodeView } from 'reactjs-tiptap-editor/codeview';
 import { FontFamily, RichTextFontFamily } from 'reactjs-tiptap-editor/fontfamily';
 import { FontSize, RichTextFontSize } from 'reactjs-tiptap-editor/fontsize';
@@ -33,12 +33,13 @@ import { TextAlign, RichTextAlign } from 'reactjs-tiptap-editor/textalign';
 import { TextDirection, RichTextTextDirection } from 'reactjs-tiptap-editor/textdirection';
 import { TextUnderline, RichTextUnderline } from 'reactjs-tiptap-editor/textunderline';
 import { Clear, RichTextClear } from 'reactjs-tiptap-editor/clear';
+import { Image, RichTextImage } from 'reactjs-tiptap-editor/image'; 
 
-// import { createLowlight } from 'lowlight';
-// import css from 'highlight.js/lib/languages/css';
-// import js from 'highlight.js/lib/languages/javascript';
-// import ts from 'highlight.js/lib/languages/typescript';
-// import html from 'highlight.js/lib/languages/xml';
+import { createLowlight } from 'lowlight';
+import css from 'highlight.js/lib/languages/css';
+import js from 'highlight.js/lib/languages/javascript';
+import ts from 'highlight.js/lib/languages/typescript';
+import html from 'highlight.js/lib/languages/xml'; 
 
 // Bubble Menu
 import {
@@ -73,11 +74,11 @@ interface AppProps {
     onChange: (data: JSONContent) => void;
 }
 
-// const lowlight = createLowlight();
-// lowlight.register('html', html);
-// lowlight.register('css', css);
-// lowlight.register('js', js);
-// lowlight.register('ts', ts);
+const lowlight = createLowlight();
+lowlight.register('html', html);
+lowlight.register('css', css);
+lowlight.register('js', js);
+lowlight.register('ts', ts);
 
 
 const extensions = [
@@ -101,9 +102,9 @@ const extensions = [
     Bold,
     BulletList,
     Code,
-    // CodeBlock.configure({
-    //     lowlight: lowlight,
-    // }),
+    CodeBlock.configure({
+        lowlight: lowlight,
+    }),
     CodeView,
     FontFamily,
     FontSize,
@@ -113,7 +114,16 @@ const extensions = [
     TextAlign,
     TextDirection,
     TextUnderline,
-    Clear
+    Clear,
+    Image.configure({
+    upload: (file: File) => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(URL.createObjectURL(file))
+        }, 500)
+      })
+    },
+  }),
 
 ];
 
@@ -151,6 +161,8 @@ const RichTextToolbar = () => {
                 <RichTextBlockquote />
                 <RichTextCode />
                 <RichTextCodeView />
+                <RichTextCodeBlock/>
+                <RichTextImage />
             </div>
         </div>
     );
@@ -186,7 +198,7 @@ const RichTextBubbleMenu = () => {
 }
 
 const TipTapEditor = ({ content, onChange }: AppProps) => {
-    
+
     const debouncedUpdates = useMemo(
         () =>
             debounce((editor: Editor) => {
@@ -216,7 +228,7 @@ const TipTapEditor = ({ content, onChange }: AppProps) => {
         },
     });
 
-     useEffect(() => {
+    useEffect(() => {
         if (editor && content !== editor.getJSON()) {
             editor.commands.setContent(content);
         }

@@ -83,6 +83,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-hook-form": "^7.71.2",
+    "react-image-crop": "^11.0.10",
     "reactjs-tiptap-editor": "^1.0.21",
     "redis": "^5.11.0",
     "resend": "^6.9.3",
@@ -108,19 +109,22 @@
     "typescript": "^5"
   },
   "pnpm": {
-  "overrides": {
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "@tiptap/core": "3.22.4",
-    "@tiptap/pm": "3.22.4",
-    "@tiptap/react": "3.22.4"
-  },
-  "peerDependencyRules": {
-    "ignoreMissing": ["react", "react-dom"],
-    "allowedVersions": {
-      "react": "19",
-      "react-dom": "19"
+    "overrides": {
+      "@types/react": "^19.0.0",
+      "@types/react-dom": "^19.0.0",
+      "@tiptap/core": "3.22.4",
+      "@tiptap/pm": "3.22.4",
+      "@tiptap/react": "3.22.4"
+    },
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "react",
+        "react-dom"
+      ],
+      "allowedVersions": {
+        "react": "19",
+        "react-dom": "19"
+      }
     }
   }
-}
 }

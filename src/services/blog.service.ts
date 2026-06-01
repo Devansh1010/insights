@@ -1,4 +1,4 @@
-import blogApi from "@/lib/blogAxios";
+import blogApi from "@/lib/axios/blogAxios";
 // import { OutputData } from "@editorjs/editorjs";
 import { JSONContent } from "@tiptap/react";
 import { toast } from "sonner";

@@ -1,4 +1,4 @@
-import api from "@/lib/authAxios"
+import api from "@/lib/axios/authAxios"
 
 export const forgotPassword = async (email: string) => {
     try {

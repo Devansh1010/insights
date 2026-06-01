@@ -1,4 +1,5 @@
-import seriesApi from "@/lib/seriesAxios"
+import adminApi from "@/lib/axios/adminAxios";
+import seriesApi from "@/lib/axios/seriesAxios"
 import axios from "axios";
 
 type FormData = {
@@ -19,50 +20,6 @@ export const getSeries = async () => {
         if (axios.isAxiosError(error)) {
             throw new Error(
                 error.response?.data?.message || "Failed to fetch series"
-            );
-        }
-
-        throw new Error("Something went wrong");
-    }
-}
-
-export const updateSeries = async (slug: string, data: FormData) => {
-    try {
-        const res = await seriesApi.patch(`/${slug}`, data)
-        return res.data;
-    } catch (error: unknown) {
-        if (axios.isAxiosError(error)) {
-            throw new Error(
-                error.response?.data?.message || "Failed to create series"
-            );
-        }
-
-        throw new Error("Something went wrong");
-    }
-}
-export const createSeries = async (data: FormData) => {
-    try {
-        const res = await seriesApi.post('', data)
-        return res.data;
-    } catch (error: unknown) {
-        if (axios.isAxiosError(error)) {
-            throw new Error(
-                error.response?.data?.message || "Failed to create series"
-            );
-        }
-
-        throw new Error("Something went wrong");
-    }
-}
-
-export const deleteSeries = async (slug: string) => {
-    try {
-        const res = await seriesApi.delete(`/${slug}`)
-        return res.data;
-    } catch (error: unknown) {
-        if (axios.isAxiosError(error)) {
-            throw new Error(
-                error.response?.data?.message || "Failed to delete series"
             );
         }
 
@@ -95,6 +52,69 @@ export const getUserSeries = async () => {
         if (axios.isAxiosError(error)) {
             throw new Error(
                 error.response?.data?.message || "Failed to fetch series"
+            );
+        }
+
+        throw new Error("Something went wrong");
+    }
+}
+
+export const getTags = async () => {
+    try {
+
+        const res = await adminApi.get(``);
+
+        return res.data.data.categories;
+
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            throw new Error(
+                error.response?.data?.message || "Failed to fetch tags"
+            );
+        }
+
+        throw new Error("Something went wrong");
+    }
+}
+
+export const updateSeries = async (slug: string, data: FormData) => {
+    try {
+        const res = await seriesApi.patch(`/${slug}`, data)
+        return res.data;
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            throw new Error(
+                error.response?.data?.message || "Failed to create series"
+            );
+        }
+
+        throw new Error("Something went wrong");
+    }
+}
+
+export const createSeries = async (data: FormData) => {
+    try {
+        const res = await seriesApi.post('', data)
+        return res.data;
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            throw new Error(
+                error.response?.data?.message || "Failed to create series"
+            );
+        }
+
+        throw new Error("Something went wrong");
+    }
+}
+
+export const deleteSeries = async (slug: string) => {
+    try {
+        const res = await seriesApi.delete(`/${slug}`)
+        return res.data;
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            throw new Error(
+                error.response?.data?.message || "Failed to delete series"
             );
         }
 

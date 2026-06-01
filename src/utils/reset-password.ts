@@ -1,4 +1,4 @@
-import api from "@/lib/authAxios"
+import api from "@/lib/axios/authAxios"
 
 export const resetPassword = async (password: string, token: string) => {
 

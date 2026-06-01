@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, memo } from "react"
+import { useEffect, useRef, useId, memo } from "react"
 import type EditorJS from "@editorjs/editorjs"
 import type { OutputData } from "@editorjs/editorjs"
 import type { ToolConstructable } from '@editorjs/editorjs';
@@ -12,8 +12,8 @@ interface EditorProps {
 
 const Editor = ({ onChange, data }: EditorProps) => {
   const editorRef = useRef<EditorJS | null>(null)
-  const holderId = useRef(`editorjs-${Math.random().toString(36).slice(2, 9)}`)
-
+  const holderId = useId()
+  
   useEffect(() => {
     let isMounted = true;
     let editorInstance: EditorJS | null = null;
@@ -32,7 +32,7 @@ const Editor = ({ onChange, data }: EditorProps) => {
       if (!isMounted) return;
 
       editorInstance = new EditorJS({
-        holder: holderId.current,
+        holder: holderId,
         tools: {
           header: {
             class: Header as unknown as ToolConstructable,
@@ -74,7 +74,7 @@ const Editor = ({ onChange, data }: EditorProps) => {
 
   return (
     <div
-      id={holderId.current}
+      id={holderId}
       className="
     prose prose-neutral max-w-none min-h-125 
     /* Light Mode Styles */

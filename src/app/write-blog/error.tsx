@@ -19,7 +19,7 @@ export default function Error({
     reset: () => void
 }) {
     useEffect(() => {
-        // Log the error to your analytics (e.g., Sentry)
+      
         console.error("Editor Crash:", error)
     }, [error])
 

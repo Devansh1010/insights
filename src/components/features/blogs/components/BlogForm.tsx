@@ -20,7 +20,7 @@ import { WriteBlogError } from "@/components/features/blogs/error/WriteBlogError
 import { WriteBlogLoader } from "@/components/features/blogs/loader/WriteBlogLoader";
 import { createBlogSchema } from "@/lib/schemas/blog/blog-create";
 import { createBlog, CreateBlogVariables, getBlog, updateBlog } from "@/services/blog.service";
-import { getUserSeries } from "@/services/series.service";
+import { getTags, getUserSeries } from "@/services/series.service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
@@ -39,6 +39,12 @@ export default function BlogForm({ slug }: { slug?: string }) {
     queryKey: ['blog', slug],
     queryFn: () => getBlog(slug!),
     enabled: !!slug, // Only run this query if slug is truthy
+  });
+
+  // Series Tags
+   const { data: Tags, isPending: isTagPendding } = useQuery({
+    queryKey: ['tags'],
+    queryFn: () => getTags(), 
   });
 
   const methods = useForm<CreateBlogVariables>({
@@ -98,16 +104,14 @@ export default function BlogForm({ slug }: { slug?: string }) {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (isDirty) {
         e.preventDefault();
-        e.returnValue = "";
       }
     };
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [isDirty]);
 
-  const categories = ['All Series', 'Architecture', 'Frontend', 'Backend', 'System Design', 'Soft Skills']
-
-  if (isPending || (slug && isBlogLoading)) return <WriteBlogLoader />
+  
+  if (isPending || (slug && isBlogLoading) || isTagPendding ) return <WriteBlogLoader />
   if (isError) return <WriteBlogError />
 
   return (
@@ -127,7 +131,7 @@ export default function BlogForm({ slug }: { slug?: string }) {
             <div className="flex items-center gap-3 pb-4 border-b border-border/40">
               <SeriesSelector availableSeries={data} articleSeries={existingBlog?.seriesPartOf} />
               <div className="h-4 w-px bg-border/60" />
-              <TagSelector availableTags={categories} articleTags={existingBlog?.tags || []} />
+              <TagSelector availableTags={Tags} articleTags={existingBlog?.tags || []} />
             </div>
 
             {/* Technical Configuration: Using shadcn Accordion */}

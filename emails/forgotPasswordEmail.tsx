@@ -14,15 +14,15 @@ export default function ForgotPasswordEmail({ username, resetLink }: ForgotPassw
       padding: '40px 20px',
       color: '#1F2937',
     }}>
-      <h2 style={{ color: primaryColor, textAlign: 'center', fontWeight: '800' }}>TEAMUP</h2>
+      <h2 style={{ color: primaryColor, textAlign: 'center', fontWeight: '800' }}>Insights.</h2>
       
       <div style={{ padding: '30px', border: '1px solid #E5E7EB', borderRadius: '12px' }}>
         <h3 style={{ marginTop: 0 }}>Reset your password?</h3>
         <p>Hello {username},</p>
-        <p>We received a request to reset the password for your TeamUp account. Click the button below to choose a new one:</p>
+        <p>We received a request to reset the password for your Insights account. Click the button below to choose a new one:</p>
         
         <div style={{ textAlign: 'center', margin: '30px 0' }}>
-          <a href={`localhost:3000/auth/reset-password?token=${resetLink}`} style={{
+          <a href={`https://insightsarticle.in/auth/reset-password?token=${resetLink}`} style={{
             backgroundColor: primaryColor,
             color: 'white',
             padding: '14px 28px',
@@ -37,7 +37,7 @@ export default function ForgotPasswordEmail({ username, resetLink }: ForgotPassw
 
         <p style={{ fontSize: '12px', color: '#6B7280' }}>
           If the button does not work, copy and paste this link into your browser:<br/>
-          <span style={{ color: primaryColor }}>{resetLink}</span>
+          <span style={{ color: primaryColor }}>{`https://insightsarticle.in/auth/reset-password?token=${resetLink}`}</span>
         </p>
         
         <hr style={{ border: 'none', borderTop: '1px solid #F3F4F6', margin: '20px 0' }} />

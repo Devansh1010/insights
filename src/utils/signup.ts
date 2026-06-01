@@ -1,4 +1,4 @@
-import api from "@/lib/authAxios"
+import api from "@/lib/axios/authAxios"
 import { toast } from "sonner"
 
 interface SignUpData {

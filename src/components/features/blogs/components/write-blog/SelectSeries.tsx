@@ -19,6 +19,7 @@ type Series = {
 
 export function SeriesSelector({ availableSeries, articleSeries }: { availableSeries: Series[]; articleSeries?: string }) {
 
+    console.log(availableSeries)
     const [openCreate, setOpenCreate] = useState(false);
     
     const { control, setValue } = useFormContext();

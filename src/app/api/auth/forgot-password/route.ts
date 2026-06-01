@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
 
         // 6. Send Email with Token and Username
         const emailResponse = await sendForgotPassword(
-            "devanshprajapati36@gmail.com",
+            email,
             token,
             isUserExist.username
         );

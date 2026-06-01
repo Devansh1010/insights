@@ -109,16 +109,24 @@ export const { handlers, auth } = NextAuth({
 
       if (account?.provider === "github") {
 
+        if (!user.email) {
+          throw new Error(
+            "GitHub account does not provide an email"
+          );
+        }
+
         await dbConnect()
 
-        const existingUser = await User.findOne({ email: user.email })
+        const existingUser
+          = await User
+            .findOne({ email: user.email })
 
         if (!existingUser) {
           await User.create({
             email: user.email,
-            username: user.name,
+            username: user.email?.split("@")[0],
             avatar: user.image,
-            // provider: "github",
+            provider: "github",
             isVerified: true
           })
         } else if (!existingUser.avatar) {

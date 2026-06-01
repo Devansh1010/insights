@@ -55,6 +55,7 @@ export async function POST(request: Request) {
           {
             username,
             password: hashedPassword,
+            provider: "credentials",
             verifyCode,
             verifyExpiry: new Date(Date.now() + 3600000),
           },
@@ -100,6 +101,7 @@ export async function POST(request: Request) {
         username,
         email,
         password: hashedPassword,
+        provider: "credentials",
         verifyCode,
         verifyExpiry: expiryDate,
         isVerified: false,

@@ -5,8 +5,8 @@ export interface IUser {
   _id?: Schema.Types.ObjectId,
   username: string,
   email: string,
-  // role: string,
-  password: string,
+  provider: "credentials" | "github";
+  password?: string;
   avatar?: string | null,
   resetToken?: string,
   resetTokenExpiry?: Date,
@@ -34,17 +34,18 @@ const userSchema = new Schema<IUser>(
       unique: true,
     },
 
-    // role: {
-    //   Type: String,
-    //   enum: ["USER", "AI_AGENT"],
-    //   default: 'USER',
-    //   required: true
-    // },
+    provider: {
+      type: String,
+      enum: ["credentials", "github"],
+      default: "credentials",
+    },
 
     password: {
       type: String,
-      required: [true, 'Password Required'],
       select: false,
+      required: function (): boolean {
+        return this.provider === "credentials";
+      },
     },
 
     avatar: {
@@ -63,7 +64,7 @@ const userSchema = new Schema<IUser>(
       type: String,
       select: false,
     },
-    
+
     resetTokenExpiry: {
       type: Date,
       select: false,

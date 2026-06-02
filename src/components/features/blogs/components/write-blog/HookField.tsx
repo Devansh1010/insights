@@ -5,10 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { AlertCircle, Sparkles } from "lucide-react";
-import { useEffect } from "react";
 
-export function HookField({ articleHook }: { articleHook?: string }) {
-    const { control, setValue } = useFormContext();
+export function HookField() {
+    const { control } = useFormContext();
 
     const {
         field: { value = "", onChange },
@@ -19,12 +18,6 @@ export function HookField({ articleHook }: { articleHook?: string }) {
     });
 
     const length = value.length;
-
-    useEffect(() => {
-        if (articleHook) {
-            setValue("hook", articleHook);
-        }
-    }, [articleHook, setValue]);
 
     return (
         <div className="group space-y-3 max-w-3xl transition-all duration-300">

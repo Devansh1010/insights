@@ -2,25 +2,16 @@ import UploadImage, { ImageKitData } from "@/components/Imagekit/ImageUpload";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
 import Image from "next/image";
-import { useEffect } from "react";
 import { useController, useFormContext } from "react-hook-form";
 
-export function CoverImageSection({ url }: { url?: string }) {
+export function CoverImageSection() {
 
-    const { control, setValue } = useFormContext();
+    const { control } = useFormContext();
 
     const { field, fieldState } = useController({
         name: "coverImage",
         control,
     });
-
-    // 1. Sync the incoming URL to the form state ONCE
-    useEffect(() => {
-        if (url && !field.value) {
-            // Assuming your form expects a string URL or an object with a URL
-            setValue("coverImage", url);
-        }
-    }, [url, setValue, field.value]);
 
     return (
         <section className="relative group">

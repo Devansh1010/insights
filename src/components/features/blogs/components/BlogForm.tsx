@@ -42,24 +42,24 @@ export default function BlogForm({ slug }: { slug?: string }) {
   });
 
   // Series Tags
-   const { data: Tags, isPending: isTagPendding } = useQuery({
+  const { data: Tags, isPending: isTagPendding } = useQuery({
     queryKey: ['tags'],
-    queryFn: () => getTags(), 
+    queryFn: () => getTags(),
   });
 
   const methods = useForm<CreateBlogVariables>({
     resolver: zodResolver(createBlogSchema),
     mode: "onChange",
     defaultValues: {
-      title: "",
-      hook: '',
-      tags: [],
+      title: existingBlog?.title || "",
+      hook: existingBlog?.hook ?? "",
+      level: existingBlog?.level ?? "Beginner",
+      insights: existingBlog?.insights ?? [""],
+      tags: existingBlog?.tags || [],
       content: {},
-      insights: [],
-      level: '',
       isPublished: false,
-      seriesId: "",
-      coverImage: '',
+      seriesId: existingBlog?.seriesPartOf || "",
+      coverImage: existingBlog?.coverImage || '',
     }
   });
 
@@ -110,28 +110,34 @@ export default function BlogForm({ slug }: { slug?: string }) {
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [isDirty]);
 
-  
-  if (isPending || (slug && isBlogLoading) || isTagPendding ) return <WriteBlogLoader />
+
+  if (isPending || (slug && isBlogLoading) || isTagPendding) return <WriteBlogLoader />
   if (isError) return <WriteBlogError />
 
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} className="min-h-screen bg-background selection:bg-primary/20">
+
         <EditorHeader isPending={isPending} isEditMode={!!slug} />
 
         <main className="max-w-4xl mx-auto px-6 pt-6 pb-32">
           {/* 1. Cover Image - Reduced margin to pull content up */}
-          <section className="mb-6">
-            <CoverImageSection url={existingBlog?.coverImage || ''} />
-          </section>
+          <div className="mb-6">
+
+            <CoverImageSection />
+
+          </div>
 
           {/* 2. Unified Meta & Configuration Row */}
           <div className="space-y-4 mb-8">
             {/* Core Metadata: Series & Tags */}
             <div className="flex items-center gap-3 pb-4 border-b border-border/40">
-              <SeriesSelector availableSeries={data} articleSeries={existingBlog?.seriesPartOf} />
+
+              <SeriesSelector availableSeries={data} />
               <div className="h-4 w-px bg-border/60" />
+
               <TagSelector availableTags={Tags} articleTags={existingBlog?.tags || []} />
+
             </div>
 
             {/* Technical Configuration: Using shadcn Accordion */}
@@ -150,11 +156,16 @@ export default function BlogForm({ slug }: { slug?: string }) {
                   {/* Using a grid to save even more vertical space */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-muted/20 p-6 rounded-2xl border border-muted/50">
                     <div className="space-y-6">
-                      <HookField articleHook={existingBlog?.hook || ''} />
-                      <LevelSelector articleLevel={existingBlog?.level || ''} />
+
+                      <HookField />
+
+                      <LevelSelector />
+
                     </div>
                     <div>
-                      <InsightsField articleInsights={existingBlog?.insights || ['']} />
+
+                      <InsightsField />
+                      
                     </div>
                   </div>
                 </AccordionContent>
@@ -164,11 +175,13 @@ export default function BlogForm({ slug }: { slug?: string }) {
 
           {/* 3. The Main Writing Canvas */}
           <article className="space-y-4">
-            {/* The user is now only ~250px from the top when they start writing */}
-            <TitleField articleTitle={existingBlog?.title || ''} />
+
+            <TitleField />
 
             <div className="relative">
+
               <EditorField articleContent={existingBlog?.content} articleSlug={slug} />
+
             </div>
           </article>
         </main>

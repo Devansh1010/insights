@@ -9,7 +9,7 @@ import {
     ComboboxList,
 } from "@/components/ui/combobox";
 import SeriesForm from "@/components/features/series/components/SeriesForm";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
 type Series = {
@@ -17,12 +17,12 @@ type Series = {
     title: string;
 };
 
-export function SeriesSelector({ availableSeries, articleSeries }: { availableSeries: Series[]; articleSeries?: string }) {
+export function SeriesSelector({ availableSeries }: { availableSeries: Series[] }) {
 
     console.log(availableSeries)
     const [openCreate, setOpenCreate] = useState(false);
     
-    const { control, setValue } = useFormContext();
+    const { control } = useFormContext();
 
     const {
         field: { value, onChange },
@@ -31,12 +31,6 @@ export function SeriesSelector({ availableSeries, articleSeries }: { availableSe
         control,
         name: 'seriesId'
     });
-
-    useEffect(() => {
-        if (articleSeries) {
-            setValue("seriesId", articleSeries);
-        }
-    }, [articleSeries, setValue]);
 
     const currentSeries = availableSeries.find(s => s._id === value);
 

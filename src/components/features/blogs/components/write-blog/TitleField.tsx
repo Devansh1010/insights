@@ -2,25 +2,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useRef } from "react";
 import { useFormContext } from "react-hook-form";
 
-export function TitleField({ articleTitle }: { articleTitle?: string }) {
-    const { register, watch, setValue } = useFormContext();
+export function TitleField() {
+    const { register, watch } = useFormContext();
     const titleRef = useRef<HTMLTextAreaElement | null>(null);
     const titleValue = watch("title");
 
-    useEffect(() => {
-        if (articleTitle) {
-            setValue("title", articleTitle);
-        }
-    }, [articleTitle, setValue]);
 
     // Auto-resize logic
-    // useEffect(() => {
-    //     if (titleRef.current) {
-    //         titleRef.current.style.height = "auto";
-    //         titleRef.current.style.height = `${titleRef.current.scrollHeight}px`;
-    //     }
+    useEffect(() => {
+        if (titleRef.current) {
+            titleRef.current.style.height = "auto";
+            titleRef.current.style.height = `${titleRef.current.scrollHeight}px`;
+        }
 
-    // }, [titleValue]);
+    }, [titleValue]);
 
     const { ref, ...rest } = register("title");
 

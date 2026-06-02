@@ -42,7 +42,7 @@ const Header = ({ blog }: { blog: Blog }) => {
                 <div className="flex flex-wrap items-center gap-6 text-sm md:text-base font-medium text-muted-foreground">
                     <div className="flex items-center gap-3">
                         <Image
-                            src={blog.author.avatar || "https://avatars.githubusercontent.com/u/9919?s=200&v=4"}
+                            src={blog.author.avatar || "https://ik.imagekit.io/devanshImagekit/user.png"}
                             alt="Author Avatar"
                             width={40}
                             height={40}

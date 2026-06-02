@@ -6,10 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { useEffect } from "react";
 
-export function InsightsField({ articleInsights }: { articleInsights?: string[] }) {
-  const { control, register, watch, setValue } = useFormContext();
+export function InsightsField() {
+  const { control, register, watch } = useFormContext();
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -17,12 +16,6 @@ export function InsightsField({ articleInsights }: { articleInsights?: string[] 
   });
 
   const insights = watch("insights") || [];
-
-  useEffect(() => {
-    if (articleInsights) {
-      setValue("insights", articleInsights);
-    }
-  }, [articleInsights, setValue]);
 
   const handleAdd = () => {
     if (insights.length >= 5) return;

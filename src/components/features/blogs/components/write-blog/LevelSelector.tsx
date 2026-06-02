@@ -12,12 +12,11 @@ import {
 } from "@/components/ui/combobox"
 import { AlertCircle, BarChart3, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useEffect } from "react";
 
 const LEVELS = ["Beginner", "Intermediate", "Advanced"] as const;
 
-export function LevelSelector({ articleLevel }: { articleLevel?: string }) {
-    const { control, setValue } = useFormContext();
+export function LevelSelector() {
+    const { control } = useFormContext();
 
     const {
         field: { value, onChange },
@@ -26,12 +25,6 @@ export function LevelSelector({ articleLevel }: { articleLevel?: string }) {
             name: 'level',
             defaultValue: "Beginner",
         })
-
-    useEffect(() => {
-        if (articleLevel) {
-            setValue("level", articleLevel);
-        }
-    }, [articleLevel, setValue]);
 
 
     return (

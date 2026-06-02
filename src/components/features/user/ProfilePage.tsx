@@ -19,6 +19,7 @@ const ProfilePage = () => {
 
     if (isPending) return <CenterScreen text="Loading profile..." />
     if (isError) return <CenterScreen text="Failed to load profile" error />
+
     return (
         <div className="min-h-screen bg-background">
             {/* MINIMAL TOP BANNER - Switched from gradients to a subtle border/muted look */}

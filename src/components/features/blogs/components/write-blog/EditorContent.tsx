@@ -39,7 +39,11 @@ export function EditorField({
           onChange={onChange}
         />
       </div>
-      {/* ... error display ... */}
+      {error && (
+        <span className="text-[9px] font-bold text-destructive uppercase animate-pulse">
+          Required
+        </span>
+      )}
     </div>
   );
 }

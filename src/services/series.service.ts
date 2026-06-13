@@ -9,10 +9,10 @@ type FormData = {
     isPublished: boolean;
 };
 
-export const getSeries = async () => {
+export const getSeries = async ({tag, q}: {tag: string | null, q: string | null}) => {
     try {
 
-        const res = await seriesApi.get("");
+        const res = await seriesApi.get(`?tag=${tag}&q=${q}`);
 
         return res.data;
 

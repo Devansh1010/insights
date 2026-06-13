@@ -41,7 +41,7 @@ export default function BlogForm({ slug }: { slug?: string }) {
     enabled: !!slug, // Only run this query if slug is truthy
   });
 
-  // Series Tags
+  // Fetching Tags
   const { data: Tags, isPending: isTagPendding } = useQuery({
     queryKey: ['tags'],
     queryFn: () => getTags(),

@@ -7,6 +7,12 @@ import Series from "@/models/series_models/series.model";
 import { NextRequest } from "next/server";
 
 
+interface SeriesFilter {
+    isPublished: boolean;
+    tags?: string | { $in: string[] } | { $regex: string, $options: string };
+    $or?: Array<{ [key: string]: { $regex: string; $options: string } }>;
+}
+
 export async function POST(req: NextRequest) {
     try {
         const auth = await VerifyUser();
@@ -77,29 +83,63 @@ export async function GET(req: NextRequest) {
 
     try {
 
-        const auth = await VerifyUser();
-
-        // if (!auth.success || !auth.user?._id) {
-        //     return createResponse(
-        //         { success: false, message: "Unauthorized" },
-        //         StatusCode.UNAUTHORIZED
-        //     );
-        // }
-
-
-        /* 
-        ? Pagination Logic (Optional, can be enhanced later with filters)
-
         const { searchParams } = new URL(req.url);
 
         const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
         const limit = Math.min(20, parseInt(searchParams.get("limit") || "10"));
+        const tag = searchParams.get("tag");
+        const q = searchParams.get("q");
 
         const skip = (page - 1) * limit;
 
-        */
-
         await dbConnect()
+
+        const filter: SeriesFilter = {
+            isPublished: true,
+        };
+
+        if (tag && tag !== 'null' && tag !== 'undefined') {
+            filter.tags = { $in: [tag] };
+        }
+
+        // 3. Handle search query safely
+        if (q && q.trim() !== '' && q !== 'null' && q !== 'undefined') {
+            const escapedQuery = q.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+
+            filter.$or = [
+                {
+                    title: {
+                        $regex: escapedQuery,
+                        $options: "i",
+                    },
+                },
+                {
+                    desc: {
+                        $regex: escapedQuery,
+                        $options: "i",
+                    },
+                },
+            ];
+        }
+
+        if (tag || q) {
+            const filteredSeries = await Series.find(filter)
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit)
+                .lean();
+
+            if (filteredSeries) {
+                return createResponse(
+                    {
+                        success: true,
+                        message: "Found Series",
+                        data: filteredSeries
+                    },
+                    StatusCode.OK
+                )
+            }
+        }
 
         const topSeries = await Series.aggregate([
             { $match: { isPublished: true } },

@@ -77,10 +77,20 @@ export const getBlog = async (slug: string) => {
     }
 }
 
-export const getBlogs = async ({ page, limit }: { page: number, limit: number }) => {
+export const getBlogs = async ({
+    page,
+    limit,
+    tag,
+    q,
+}: {
+    page: number;
+    limit: number;
+    tag?: string | null;
+    q?: string | null;
+}) => {
     try {
 
-        const response = await blogApi.get(`?page=${page}&limit=${limit}`);
+        const response = await blogApi.get(`?page=${page}&limit=${limit}&tag=${tag}&q=${q}`);
         if (response.status === 200) {
 
             return response.data.data;

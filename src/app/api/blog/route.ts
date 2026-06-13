@@ -13,6 +13,13 @@ import { TiptapContent, TiptapNode } from "@/types/blog";
 // import { TiptapContent, TiptapNode } from "@/types/blog";
 
 
+interface BlogFilter {
+    isPublished: boolean;
+    tags?: string | { $in: string[] } | { $regex: string, $options: string };
+    $or?: Array<{ [key: string]: { $regex: string; $options: string } }>;
+}
+
+
 const hasValidText = (nodes?: JSONContent[]): boolean => {
     if (!nodes) return false;
 
@@ -200,31 +207,45 @@ export async function POST(req: Request) {
 export async function GET(req: NextRequest) {
     try {
 
-        // const auth = await VerifyUser();
-
-        // if (!auth.success || !auth.user?._id) {
-        //     return createResponse(
-        //         { success: false, message: "Unauthorized" },
-        //         StatusCode.UNAUTHORIZED
-        //     );
-        // }
-
-
         const { searchParams } = new URL(req.url);
 
         const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
         const limit = Math.min(20, parseInt(searchParams.get("limit") || "10"));
+        const tag = searchParams.get("tag");
+        const q = searchParams.get("q");
 
         const skip = (page - 1) * limit;
 
         await dbConnect()
 
-        const blogs = await Blog.find({ isPublished: true })
+        const filter: BlogFilter = {
+            isPublished: true,
+        };
+
+        // 2. Handle tags safely
+        if (tag && tag !== 'null' && tag !== 'undefined') {
+            filter.tags = { $in: [tag] };
+        }
+
+        // 3. Handle search query safely
+        if (q && q.trim() !== '' && q !== 'null' && q !== 'undefined') {
+            const escapedQuery = q.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+
+            filter.$or = [
+                { title: { $regex: escapedQuery, $options: "i" } },
+                { excerpt: { $regex: escapedQuery, $options: "i" } },
+                { hook: { $regex: escapedQuery, $options: "i" } }
+            ];
+        }
+
+        const blogs = await Blog.find(filter)
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit)
-            .select('username title slug excerpt coverImage tags publishedAt hook insights level readTime views likes')
-            .lean()
+            .select(
+                "username title slug excerpt coverImage tags publishedAt hook insights level readTime views likes"
+            )
+            .lean();
 
         const total = await Blog.countDocuments({ isPublished: true });
 

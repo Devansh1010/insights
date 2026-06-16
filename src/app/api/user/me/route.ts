@@ -20,7 +20,6 @@ export async function GET() {
     const userId = auth.user._id;
 
     await dbConnect()
-    console.log(userId)
 
     //try to fetch from catchMemory
     // const cachedUser = await valkey.get(`user_profile_${userId}`)

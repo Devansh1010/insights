@@ -61,18 +61,41 @@ export default function Home() {
             </p>
 
             {/* Search */}
-            <div className="mx-auto mt-10 max-w-2xl">
+            <div className="mx-auto mt-10 w-full max-w-2xl">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+                <Search
+                  className="
+                absolute
+                left-4
+                top-1/2
+                h-5
+                w-5
+                -translate-y-1/2
+                text-muted-foreground
+                pointer-events-none
+            "
+                />
 
                 <Input
                   value={search}
+                  placeholder="Search articles..."
                   onChange={(e) => setSearch(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       handleSearch();
                     }
                   }}
+                  className="
+                h-12
+                pl-12
+                pr-4
+                rounded-xl
+                border-border
+                bg-background
+                shadow-sm
+                text-base
+                focus-visible:ring-2
+            "
                 />
               </div>
             </div>

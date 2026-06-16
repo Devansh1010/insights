@@ -31,11 +31,13 @@ export async function dbConnect() {
         cached.promise =
           mongoose
             .connect(MONGODB_URI)
-            .then(() => mongoose.connection)
+            .then(() => {
+              console.log("Mongo connected successfully");
+              return mongoose.connection;
+            });
       }
 
       cached.conn = await cached.promise
-      console.log('DB Connected')
       return cached.conn
 
     } catch (error: unknown) {

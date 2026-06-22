@@ -19,7 +19,6 @@ type Series = {
 
 export function SeriesSelector({ availableSeries }: { availableSeries: Series[] }) {
 
-    console.log(availableSeries)
     const [openCreate, setOpenCreate] = useState(false);
     
     const { control } = useFormContext();

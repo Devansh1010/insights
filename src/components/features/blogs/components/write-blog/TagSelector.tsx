@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
 
 import { Badge } from "@/components/ui/badge";
@@ -35,16 +35,14 @@ interface Tag {
 
 interface TagSelectorProps {
     availableTags: Tag[];
-    articleTags?: string[];
 }
 
 export function TagSelector({
     availableTags,
-    articleTags,
 }: TagSelectorProps) {
     const [open, setOpen] = useState(false);
 
-    const { control, setValue } = useFormContext();
+    const { control } = useFormContext();
 
     const {
         field: { value = [], onChange },
@@ -56,12 +54,6 @@ export function TagSelector({
     });
 
     const selectedTags = value as string[];
-
-    useEffect(() => {
-        if (articleTags?.length) {
-            setValue("tags", articleTags);
-        }
-    }, [articleTags, setValue]);
 
     const addTag = (tag: string) => {
         if (!selectedTags.includes(tag)) {
@@ -90,10 +82,9 @@ export function TagSelector({
                         uppercase
                         tracking-[0.2em]
                         leading-none
-                        ${
-                            error
-                                ? "text-destructive"
-                                : "text-muted-foreground"
+                        ${error
+                            ? "text-destructive"
+                            : "text-muted-foreground"
                         }
                     `}
                 >
@@ -103,10 +94,9 @@ export function TagSelector({
                 <div
                     className={`
                         h-px w-3
-                        ${
-                            error
-                                ? "bg-destructive/40"
-                                : "bg-primary/20"
+                        ${error
+                            ? "bg-destructive/40"
+                            : "bg-primary/20"
                         }
                     `}
                 />
@@ -123,10 +113,9 @@ export function TagSelector({
                     duration-300
                     flex-wrap
 
-                    ${
-                        error
-                            ? "border-destructive bg-destructive/5 ring-4 ring-destructive/10"
-                            : "border-input bg-background/50 hover:border-primary/30"
+                    ${error
+                        ? "border-destructive bg-destructive/5 ring-4 ring-destructive/10"
+                        : "border-input bg-background/50 hover:border-primary/30"
                     }
                 `}
             >
@@ -137,10 +126,9 @@ export function TagSelector({
                             p-1.5 rounded-lg
                             transition-all
 
-                            ${
-                                error
-                                    ? "bg-destructive text-white"
-                                    : "bg-primary/10 text-primary"
+                            ${error
+                                ? "bg-destructive text-white"
+                                : "bg-primary/10 text-primary"
                             }
                         `}
                     >
@@ -248,10 +236,9 @@ export function TagSelector({
                                                     <Check
                                                         className={`
                                                             mr-2 h-4 w-4
-                                                            ${
-                                                                isSelected
-                                                                    ? "opacity-100"
-                                                                    : "opacity-0"
+                                                            ${isSelected
+                                                                ? "opacity-100"
+                                                                : "opacity-0"
                                                             }
                                                         `}
                                                     />

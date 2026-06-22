@@ -51,17 +51,33 @@ export default function BlogForm({ slug }: { slug?: string }) {
     resolver: zodResolver(createBlogSchema),
     mode: "onChange",
     defaultValues: {
-      title: existingBlog?.title || "",
-      hook: existingBlog?.hook ?? "",
-      level: existingBlog?.level ?? "Beginner",
-      insights: existingBlog?.insights ?? [""],
-      tags: existingBlog?.tags || [],
+      title: "",
+      hook: "",
+      level: "Beginner",
+      insights: [""],
+      tags: [],
       content: {},
       isPublished: false,
-      seriesId: existingBlog?.seriesPartOf || "",
-      coverImage: existingBlog?.coverImage || '',
-    }
+      seriesId: "",
+      coverImage: "",
+    },
   });
+
+  useEffect(() => {
+    if (!existingBlog) return;
+
+    methods.reset({
+      title: existingBlog.title,
+      hook: existingBlog.hook ?? "",
+      level: existingBlog.level ?? "Beginner",
+      insights: existingBlog.insights ?? [""],
+      tags: existingBlog.tags ?? [],
+      content: existingBlog.content ?? {},
+      isPublished: existingBlog.isPublished ?? false,
+      seriesId: existingBlog.seriesPartOf ?? "",
+      coverImage: existingBlog.coverImage ?? "",
+    });
+  }, [existingBlog, methods]);
 
   const { handleSubmit, formState: { isDirty } } = methods;
 
@@ -136,7 +152,7 @@ export default function BlogForm({ slug }: { slug?: string }) {
               <SeriesSelector availableSeries={data} />
               <div className="h-4 w-px bg-border/60" />
 
-              <TagSelector availableTags={Tags} articleTags={existingBlog?.tags || []} />
+              <TagSelector availableTags={Tags} />
 
             </div>
 
@@ -165,7 +181,7 @@ export default function BlogForm({ slug }: { slug?: string }) {
                     <div>
 
                       <InsightsField />
-                      
+
                     </div>
                   </div>
                 </AccordionContent>

@@ -27,7 +27,7 @@ export const getUserEvents = async (articleId: string) => {
     if (res.data.success) {
         return res.data.data
     } else {
-        return {}
+        return []
     }
 
 }

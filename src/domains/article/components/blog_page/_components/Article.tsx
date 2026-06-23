@@ -62,7 +62,7 @@ const Article = ({ blog }: { blog: Blog }) => {
         ])
     }, [blog.content]);
 
-    const { data: userEvents, isPending: userEvnetsPendding } = useQuery({
+    const { data: userEvents, isPending: isLoadingEvents } = useQuery({
         queryKey: ['impact', blog._id],
         queryFn: () => getUserEvents(blog._id),
     })
@@ -116,7 +116,7 @@ const Article = ({ blog }: { blog: Blog }) => {
                                 articleId={blog._id}
                                 authorId={blog.author._id}
                                 isEventExist={isLearned}
-                                isPending={userEvnetsPendding}
+                                isPending={isLoadingEvents}
                             />
 
                             <Button variant="ghost" size="icon" className="rounded-full h-10 w-10 border border-border/50">

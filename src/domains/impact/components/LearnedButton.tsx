@@ -32,6 +32,7 @@ export function LearnedButton({
   return (
     <Button
       disabled={pending}
+      aria-pressed={isEventExist}
       variant={isEventExist ? "default" : "outline"}
       onClick={() =>
         mutation.mutate({
@@ -41,22 +42,15 @@ export function LearnedButton({
         })
       }
     >
-      {pending ? (
-        <>
-          <Loader2 className="h-4 w-4 animate-spin" />
-          Updating...
-        </>
-      ) : isEventExist ? (
-        <>
-          <Lightbulb className="h-4 w-4" />
-          Learned
-        </>
-      ) : (
-        <>
-          <Lightbulb className="h-4 w-4" />
-          Mark as Learned
-        </>
+      {pending && (
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
       )}
+
+      <Lightbulb className="h-4 w-4" />
+
+      {isEventExist
+        ? "Learned"
+        : "Mark as Learned"}
     </Button>
   );
 }

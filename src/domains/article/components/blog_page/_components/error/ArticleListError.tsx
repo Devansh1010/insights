@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 
-export const BlogListError = ({ reset }: { reset: () => void }) => {
+export const ArticleListError = ({ reset }: { reset: () => void }) => {
     return (
         <div className="max-w-4xl mx-auto min-h-screen flex flex-col items-center justify-center text-center px-6">
             <div className="mb-6 rounded-full bg-destructive/10 p-4">

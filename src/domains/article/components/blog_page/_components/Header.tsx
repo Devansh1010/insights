@@ -2,7 +2,7 @@ import { TagBadge } from '@/components/features/badges/MetaBedge'
 import { Blog } from '@/types/frontend/blog'
 import { Calendar, Clock } from 'lucide-react'
 import Image from 'next/image'
-import React from 'react'
+
 
 const Header = ({ blog }: { blog: Blog }) => {
 

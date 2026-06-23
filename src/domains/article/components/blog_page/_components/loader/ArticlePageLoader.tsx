@@ -1,7 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton"
 import { Separator } from "@/components/ui/separator"
 
-export default function BlogPageLoader() {
+export default function ArticlePageLoader() {
   return (
     <div className="w-full">
       {/* HEADER SKELETON */}

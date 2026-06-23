@@ -1,6 +1,4 @@
-import BlogPage from "@/components/features/blogs/BlogPage";
-
-
+import ArticlePage from "@/domains/article/components/blog_page/ArticlePage";
 interface PageProps {
     params: Promise<{ slug: string }>;
 }
@@ -10,7 +8,7 @@ const Page = async ({ params }: PageProps) => {
     const { slug } = await params;
 
     return (
-        <BlogPage slug={slug} />
+        <ArticlePage slug={slug} />
     )
 }
 

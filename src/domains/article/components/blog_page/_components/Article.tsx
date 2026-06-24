@@ -23,17 +23,13 @@ import Typography from '@tiptap/extension-typography'
 import { generateHTML } from '@tiptap/html'
 import StarterKit from '@tiptap/starter-kit'
 import Footer_Article from './Footer'
-import { useArticle } from '@/domains/article/hooks/useArticle'
-import ArticlePageLoader from './loader/ArticlePageLoader'
-import { ArticleListError } from './error/ArticleListError'
+import { Blog } from '@/types/frontend/blog'
 // import Placeholder from '@tiptap/extension-placeholder'
 
-const Article = ({ articleSlug }: { articleSlug: string }) => {
-    const { article, isArticleFetching, isErrorOccured, refetchArticles } = useArticle(articleSlug);
-
+const Article = ({ article }: { article: Blog }) => {
 
     const htmlContent = useMemo(() => {
-
+        
         return generateHTML(article.content, [
             StarterKit.configure({
                 // Disable extensions that we are configuring manually below
@@ -64,7 +60,7 @@ const Article = ({ articleSlug }: { articleSlug: string }) => {
             // Placeholder and History aren't needed for read-only HTML, 
             // but including the schema-related ones is vital.
         ])
-    }, [article.content]);
+    }, [article]);
 
     const { data: userEvents, isPending: isLoadingEvents } = useQuery({
         queryKey: ['impact', article._id],
@@ -77,9 +73,7 @@ const Article = ({ articleSlug }: { articleSlug: string }) => {
                 event.eventType === IMPACT_EVENTS.LEARNED
         ) ?? false;
 
-    if (isArticleFetching) return <ArticlePageLoader />;
-
-    if (isErrorOccured) return <ArticleListError reset={refetchArticles} />;
+  
 
     return (
         <div className="container max-w-4xl mx-auto px-6 flex flex-col gap-20 py-20">
@@ -88,7 +82,7 @@ const Article = ({ articleSlug }: { articleSlug: string }) => {
             <main className="w-full max-w-3xl mx-auto">
                 {/* Tags */}
                 <div className="flex flex-wrap gap-3 mb-8">
-                    {article.tags?.map((tag: string) => (
+                    {article?.tags?.map((tag: string) => (
                         <span key={tag} className="px-3 py-1 bg-secondary/50 text-[10px] font-bold uppercase tracking-[0.2em] text-secondary-foreground rounded-full border border-border/50">
                             {tag}
                         </span>
@@ -136,7 +130,7 @@ const Article = ({ articleSlug }: { articleSlug: string }) => {
 
             {/* FOOTER CONTENT */}
             <Footer_Article
-                articleSlug={article}
+                articleSlug={article.slug}
             />
 
         </div>

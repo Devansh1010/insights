@@ -1,6 +1,5 @@
 import axios from "axios"
 import { ImpactEventType } from "../constants"
-import { toast } from "sonner"
 
 const impactApi = axios.create({
     baseURL: "/api/impact",
@@ -15,11 +14,7 @@ type CreateRequestData = {
 }
 
 export const createImpact = async ({ articleId, authorId, eventType, metadata }: CreateRequestData) => {
-    const res = await impactApi.post('/', { articleId, authorId, eventType, metadata })
-
-    if (res.data.success) {
-        toast.success(res.data.message || "Event Saved Successfully")
-    }
+    await impactApi.post('/', { articleId, authorId, eventType, metadata })
 }
 
 export const getUserEvents = async (articleId: string) => {

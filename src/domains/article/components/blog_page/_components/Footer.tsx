@@ -1,17 +1,27 @@
-import { Blog } from '@/types/frontend/blog'
+
 import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
+import ArticlePageLoader from './loader/ArticlePageLoader'
+import { ArticleListError } from './error/ArticleListError'
+import { useArticle } from '@/domains/article/hooks/useArticle'
 
-const Footer_Article = ({ blog }: { blog: Blog }) => {
+const Footer_Article = ({ articleSlug }: { articleSlug: string }) => {
+
+  const { article, isArticleFetching, isErrorOccured, refetchArticles } = useArticle(articleSlug);
+
+  if (isArticleFetching) return <ArticlePageLoader />;
+
+  if (isErrorOccured) return <ArticleListError reset={refetchArticles} />;
+
   return (
     <footer className="w-full max-w-3xl mx-auto border-t border-border/30 mt-20 pt-16">
       <div className="space-y-24">
         {/* Next Blog Section */}
-        {blog.nextBlog ? (
+        {article.nextBlog ? (
           <Link
-            href={`/user/explore/${blog.nextBlog.slug}`}
+            href={`/user/explore/${article.nextBlog.slug}`}
             className="group block no-underline"
           >
             <div className="space-y-10">
@@ -27,8 +37,8 @@ const Footer_Article = ({ blog }: { blog: Blog }) => {
                 {/* Image: Fixed CLS with Aspect Ratio and Fill */}
                 <div className="relative w-full md:w-80 aspect-16/10 rounded-2xl overflow-hidden bg-muted shadow-sm ring-1 ring-border/50 group-hover:ring-primary/20 group-hover:shadow-2xl group-hover:shadow-primary/5 transition-all duration-700">
                   <Image
-                    src={blog.nextBlog.coverImage || '/fallback.jpg'}
-                    alt={blog.nextBlog.title}
+                    src={article.nextBlog.coverImage || '/fallback.jpg'}
+                    alt={article.nextBlog.title}
                     fill
                     className="object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, 320px"
@@ -41,10 +51,10 @@ const Footer_Article = ({ blog }: { blog: Blog }) => {
                 {/* Text Details: Improved Typography and Spacing */}
                 <div className="flex-1 min-w-0 space-y-4">
                   <h5 className="font-serif text-3xl md:text-4xl leading-tight text-foreground group-hover:text-primary transition-colors duration-500 line-clamp-2">
-                    {blog.nextBlog.title}
+                    {article.nextBlog.title}
                   </h5>
                   <p className="text-muted-foreground/70 leading-relaxed line-clamp-2 text-base md:text-lg font-light">
-                    {blog.nextBlog.desc || "Dive into the next chapter of this series to explore more technical insights and architectural deep dives."}
+                    {article.nextBlog.desc || "Dive into the next chapter of this series to explore more technical insights and architectural deep dives."}
                   </p>
 
                   {/* Animated CTA */}

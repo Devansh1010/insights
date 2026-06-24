@@ -9,7 +9,6 @@ import { useMemo } from 'react'
 import { getUserEvents } from '@/domains/impact/axios/impact.axios'
 import { LearnedButton } from '@/domains/impact/components/LearnedButton'
 import { IMPACT_EVENTS, ImpactEventType } from '@/domains/impact/constants'
-import { Blog } from '@/types/frontend/blog'
 import { useQuery } from '@tanstack/react-query'
 import Blockquote from '@tiptap/extension-blockquote'
 import Bold from '@tiptap/extension-bold'
@@ -24,13 +23,18 @@ import Typography from '@tiptap/extension-typography'
 import { generateHTML } from '@tiptap/html'
 import StarterKit from '@tiptap/starter-kit'
 import Footer_Article from './Footer'
+import { useArticle } from '@/domains/article/hooks/useArticle'
+import ArticlePageLoader from './loader/ArticlePageLoader'
+import { ArticleListError } from './error/ArticleListError'
 // import Placeholder from '@tiptap/extension-placeholder'
 
-const Article = ({ blog }: { blog: Blog }) => {
+const Article = ({ articleSlug }: { articleSlug: string }) => {
+    const { article, isArticleFetching, isErrorOccured, refetchArticles } = useArticle(articleSlug);
+
 
     const htmlContent = useMemo(() => {
 
-        return generateHTML(blog.content, [
+        return generateHTML(article.content, [
             StarterKit.configure({
                 // Disable extensions that we are configuring manually below
                 heading: false,
@@ -60,11 +64,11 @@ const Article = ({ blog }: { blog: Blog }) => {
             // Placeholder and History aren't needed for read-only HTML, 
             // but including the schema-related ones is vital.
         ])
-    }, [blog.content]);
+    }, [article.content]);
 
     const { data: userEvents, isPending: isLoadingEvents } = useQuery({
-        queryKey: ['impact', blog._id],
-        queryFn: () => getUserEvents(blog._id),
+        queryKey: ['impact', article._id],
+        queryFn: () => getUserEvents(article._id),
     })
 
     const isLearned =
@@ -73,15 +77,18 @@ const Article = ({ blog }: { blog: Blog }) => {
                 event.eventType === IMPACT_EVENTS.LEARNED
         ) ?? false;
 
+    if (isArticleFetching) return <ArticlePageLoader />;
+
+    if (isErrorOccured) return <ArticleListError reset={refetchArticles} />;
+
     return (
-        /* Changed grid-cols-1 lg:grid-cols-[1fr_300px] to a single centered column */
         <div className="container max-w-4xl mx-auto px-6 flex flex-col gap-20 py-20">
 
             {/* MAIN CONTENT COLUMN - Now centered */}
             <main className="w-full max-w-3xl mx-auto">
                 {/* Tags */}
                 <div className="flex flex-wrap gap-3 mb-8">
-                    {blog.tags?.map((tag: string) => (
+                    {article.tags?.map((tag: string) => (
                         <span key={tag} className="px-3 py-1 bg-secondary/50 text-[10px] font-bold uppercase tracking-[0.2em] text-secondary-foreground rounded-full border border-border/50">
                             {tag}
                         </span>
@@ -113,8 +120,8 @@ const Article = ({ blog }: { blog: Blog }) => {
                             </Button>
 
                             <LearnedButton
-                                articleId={blog._id}
-                                authorId={blog.author._id}
+                                articleId={article._id}
+                                authorId={article.author._id}
                                 isEventExist={isLearned}
                                 isPending={isLoadingEvents}
                             />
@@ -129,7 +136,7 @@ const Article = ({ blog }: { blog: Blog }) => {
 
             {/* FOOTER CONTENT */}
             <Footer_Article
-                blog={blog}
+                articleSlug={article}
             />
 
         </div>

@@ -1,79 +1,26 @@
 
 'use client'
-import { Bookmark, Share2 } from 'lucide-react'
-
-// Shadcn
-import { Button } from '@/components/ui/button'
-import { useMemo } from 'react'
 
 import { getUserEvents } from '@/domains/impact/axios/impact.axios'
 import { LearnedButton } from '@/domains/impact/components/LearnedButton'
-import { IMPACT_EVENTS, ImpactEventType } from '@/domains/impact/constants'
 import { useQuery } from '@tanstack/react-query'
-import Blockquote from '@tiptap/extension-blockquote'
-import Bold from '@tiptap/extension-bold'
-import Code from '@tiptap/extension-code'
-import Color from '@tiptap/extension-color'
-import Heading from '@tiptap/extension-heading'
-import Italic from '@tiptap/extension-italic'
-import { BulletList, ListItem, OrderedList } from '@tiptap/extension-list'
-import TextAlign from '@tiptap/extension-text-align'
-import { FontFamily, TextStyle } from '@tiptap/extension-text-style'
-import Typography from '@tiptap/extension-typography'
-import { generateHTML } from '@tiptap/html'
-import StarterKit from '@tiptap/starter-kit'
+
 import Footer_Article from './Footer'
 import { Blog } from '@/types/frontend/blog'
-// import Placeholder from '@tiptap/extension-placeholder'
+import { useGeneratHtml } from '@/domains/article/hooks/useGeneratHtml'
+import { SaveButton } from '@/domains/impact/components/SavedButton'
+import { useEventExist } from '@/domains/article/hooks/useEventExist'
 
 const Article = ({ article }: { article: Blog }) => {
 
-    const htmlContent = useMemo(() => {
-        
-        return generateHTML(article.content, [
-            StarterKit.configure({
-                // Disable extensions that we are configuring manually below
-                heading: false,
-                blockquote: false,
-                bold: false,
-                italic: false,
-            }),
-            // Manually configured extensions to match your editor
-            Heading.configure({
-                levels: [1, 2, 3, 4, 5, 6],
-            }),
-            Blockquote,
-            Bold,
-            Italic,
-            BulletList,
-            OrderedList,
-            ListItem,
-            Code,
-            TextStyle,
-            Color,
-            FontFamily,
-            Typography,
-            // TextUnderline,
-            TextAlign.configure({
-                types: ['heading', 'paragraph'],
-            }),
-            // Placeholder and History aren't needed for read-only HTML, 
-            // but including the schema-related ones is vital.
-        ])
-    }, [article]);
+    const htmlContent = useGeneratHtml(article.content)
 
     const { data: userEvents, isPending: isLoadingEvents } = useQuery({
         queryKey: ['impact', article._id],
         queryFn: () => getUserEvents(article._id),
     })
 
-    const isLearned =
-        userEvents?.some(
-            (event: { eventType: ImpactEventType }) =>
-                event.eventType === IMPACT_EVENTS.LEARNED
-        ) ?? false;
-
-  
+    const eventExist = useEventExist(userEvents)
 
     return (
         <div className="container max-w-4xl mx-auto px-6 flex flex-col gap-20 py-20">
@@ -109,20 +56,19 @@ const Article = ({ article }: { article: Blog }) => {
                 <div className="mt-20 pt-10 border-t border-border/60">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <Button variant="secondary" size="sm" className="rounded-full h-10 px-6 font-medium hover:bg-primary hover:text-primary-foreground transition-all gap-2">
-                                <Share2 className="w-4 h-4" /> Share
-                            </Button>
+                            <SaveButton
+                                articleId={article._id}
+                                authorId={article.author._id}
+                                isSaved={eventExist.saved}
+                                isPending={isLoadingEvents}
+                            />
 
                             <LearnedButton
                                 articleId={article._id}
                                 authorId={article.author._id}
-                                isEventExist={isLearned}
+                                isEventExist={eventExist.learned}
                                 isPending={isLoadingEvents}
                             />
-
-                            <Button variant="ghost" size="icon" className="rounded-full h-10 w-10 border border-border/50">
-                                <Bookmark className="w-4 h-4" />
-                            </Button>
                         </div>
                     </div>
                 </div>

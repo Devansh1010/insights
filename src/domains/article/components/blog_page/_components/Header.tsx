@@ -2,17 +2,17 @@ import { TagBadge } from '@/components/features/badges/MetaBedge'
 import { useArticle } from '@/domains/article/hooks/useArticle'
 import { Calendar, Clock } from 'lucide-react'
 import Image from 'next/image'
-import ArticlePageLoader from './loader/ArticlePageLoader'
 import { ArticleListError } from './error/ArticleListError'
+import Header_loader from './loader/Header.loader'
 
 
 const Header = ({ articleSlug }: { articleSlug: string }) => {
 
     const { article, isArticleFetching, isErrorOccured, refetchArticles } = useArticle(articleSlug)
 
-     if (isArticleFetching) return <ArticlePageLoader />
-    
-        if (isErrorOccured) return <ArticleListError reset={refetchArticles} />
+    if (isArticleFetching) return <Header_loader />
+
+    if (isErrorOccured) return <ArticleListError reset={refetchArticles} />
 
     return (
         <header className="relative w-full h-[60vh] md:h-[70vh] flex items-end">

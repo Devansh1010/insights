@@ -3,7 +3,7 @@ import { IMPACT_EVENTS } from "@/domains/impact/constants";
 import { ImpactButton } from "./_components/ImpactButton";
 
 
-export function SaveButton({
+function SaveButton({
     articleId,
     authorId,
     isSaved,
@@ -30,3 +30,5 @@ export function SaveButton({
         </>
     );
 }
+
+export default SaveButton

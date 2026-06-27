@@ -3,7 +3,7 @@ import { Lightbulb } from "lucide-react";
 import { IMPACT_EVENTS } from "../constants";
 import { ImpactButton } from "./_components/ImpactButton";
 
-export function LearnedButton({
+function LearnedButton({
   articleId,
   authorId,
   isEventExist,
@@ -30,3 +30,5 @@ export function LearnedButton({
     </>
   );
 }
+
+export default LearnedButton

@@ -1,5 +1,6 @@
 import axios from "axios"
 import { ImpactEventType } from "../constants"
+import { toast } from "sonner"
 
 const impactApi = axios.create({
     baseURL: "/api/impact",
@@ -14,7 +15,15 @@ type CreateRequestData = {
 }
 
 export const createImpact = async ({ articleId, authorId, eventType, metadata }: CreateRequestData) => {
-    await impactApi.post('/', { articleId, authorId, eventType, metadata })
+    try {
+     await impactApi.post('/', { articleId, authorId, eventType, metadata })
+
+    } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+        if(errorMessage === 'Request failed with status code 429')
+        toast.error("Too many requests")
+    }
+
 }
 
 export const getUserEvents = async (articleId: string) => {

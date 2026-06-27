@@ -1,6 +1,7 @@
 import { createResponse, StatusCode } from "@/lib/createResponse";
 import { CreateImpactEvent, ImpactModel } from "../models/impact.model";
 import { Types } from "mongoose";
+import { rateLimit } from "../utils/rate_limit";
 
 export async function createImpactEvent({ actorId, articleId, authorId, eventType, metadata }: CreateImpactEvent) {
 
@@ -12,6 +13,34 @@ export async function createImpactEvent({ actorId, articleId, authorId, eventTyp
         eventType
       })
       .lean()
+
+    const global = await rateLimit(
+      `rate-impact:user:${actorId}`,
+      60,
+      60
+    );
+
+    if (!global.allowed) {
+      return createResponse({
+        success: false,
+        message: 'Too many requests'
+      }, StatusCode.FORBIDDEN)
+    }
+
+    const article = await rateLimit(
+      `rate-impact:user:${actorId}:article:${articleId}`,
+      20,
+      60
+    );
+
+    if (!article.allowed) {
+      return createResponse({
+        success: false,
+        message: 'Too many requests for this article'
+      }, StatusCode.TOO_MANY_REQUESTS)
+    }
+
+    // Save the event
 
     if (eventAlreadyExist) {
       const deletedEvent = await ImpactModel.findOneAndDelete({
@@ -53,6 +82,7 @@ export async function createImpactEvent({ actorId, articleId, authorId, eventTyp
         );
       }
     }
+
   } catch (error) {
     console.log(error)
     return createResponse(
@@ -74,7 +104,7 @@ export async function getAllUserEvents({ filter }: { filter: { articleId: Types.
         {
           success: false,
           message: "No Events Found for User",
-          data : []
+          data: []
         },
         StatusCode.OK
       )

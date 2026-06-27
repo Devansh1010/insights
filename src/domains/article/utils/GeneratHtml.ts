@@ -11,7 +11,8 @@ import { FontFamily, TextStyle } from '@tiptap/extension-text-style'
 import Typography from '@tiptap/extension-typography'
 import { generateHTML } from '@tiptap/html'
 import StarterKit from '@tiptap/starter-kit'
-export const useGeneratHtml = (content: JSONContent) => {
+
+export const GeneratHtml = (content: JSONContent) => {
     return generateHTML(content, [
         StarterKit.configure({
             // Disable extensions that we are configuring manually below

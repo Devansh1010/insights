@@ -1,9 +1,10 @@
 import { IMPACT_EVENTS, ImpactEventType } from "@/domains/impact/constants"
 
-type userEventProps = {
+type EventProps = {
     eventType: ImpactEventType
 }
-export const useEventExist = (userEvents: userEventProps[]) => {
+
+export const EventExist = (userEvents: EventProps[]) => {
     const eventStates = userEvents?.reduce(
         (acc, event) => {
             switch (event.eventType) {

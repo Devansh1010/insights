@@ -1,28 +1,28 @@
 
 'use client'
 
-import { getUserEvents } from '@/domains/impact/axios/impact.axios'
-import { LearnedButton } from '@/domains/impact/components/LearnedButton'
-import { useQuery } from '@tanstack/react-query'
+
 
 import Footer_Article from './Footer'
 import { Blog } from '@/types/frontend/blog'
-import { useGeneratHtml } from '@/domains/article/hooks/useGeneratHtml'
-import { SaveButton } from '@/domains/impact/components/SavedButton'
-import { useEventExist } from '@/domains/article/hooks/useEventExist'
+import { GeneratHtml } from '@/domains/article/utils/GeneratHtml'
+import { useImpact } from '@/domains/impact/hooks/userImpact'
+import { EventExist } from '@/domains/article/utils/EventExist'
+
+// Action Button Imports
 import AppliedButton from '@/domains/impact/components/AppliedButton'
 import ThankYouButton from '@/domains/impact/components/ThankYouButton'
+import LearnedButton from '@/domains/impact/components/LearnedButton'
+import SaveButton from '@/domains/impact/components/SavedButton'
+
 
 const Article = ({ article }: { article: Blog }) => {
 
-    const htmlContent = useGeneratHtml(article.content)
-
-    const { data: userEvents, isPending: isLoadingEvents } = useQuery({
-        queryKey: ['impact', article._id],
-        queryFn: () => getUserEvents(article._id),
-    })
-
-    const eventExist = useEventExist(userEvents)
+    const { userEvents, isLoadingEvents } = useImpact(article._id)
+    
+    const htmlContent = GeneratHtml(article.content)
+    
+    const eventExist = EventExist(userEvents)
 
     return (
         <div className="container max-w-4xl mx-auto px-6 flex flex-col gap-20 py-20">
@@ -55,34 +55,35 @@ const Article = ({ article }: { article: Blog }) => {
                     </div>
                 </article>
 
+                {/* Action Buttons */}
                 <div className="mt-20 pt-10 border-t border-border/60">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <SaveButton
                                 articleId={article._id}
                                 authorId={article.author._id}
-                                isSaved={eventExist.saved}
+                                isSaved={eventExist?.saved}
                                 isPending={isLoadingEvents}
                             />
 
                             <LearnedButton
                                 articleId={article._id}
                                 authorId={article.author._id}
-                                isEventExist={eventExist.learned}
+                                isEventExist={eventExist?.learned}
                                 isPending={isLoadingEvents}
                             />
 
                             <AppliedButton
                                 articleId={article._id}
                                 authorId={article.author._id}
-                                isApplied={eventExist.applied}
+                                isApplied={eventExist?.applied}
                                 isPending={isLoadingEvents}
                             />
 
                             <ThankYouButton
                                 articleId={article._id}
                                 authorId={article.author._id}
-                                isThanked={eventExist.thankYou}
+                                isThanked={eventExist?.thankYou}
                                 isPending={isLoadingEvents}
                             />
                         </div>

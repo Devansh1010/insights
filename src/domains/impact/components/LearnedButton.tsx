@@ -1,8 +1,7 @@
-import { Button } from "@/components/ui/button";
-import { Loader2, Lightbulb } from "lucide-react";
-import { createImpact } from "../axios/impact.axios";
+
+import { Lightbulb } from "lucide-react";
 import { IMPACT_EVENTS } from "../constants";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ImpactButton } from "./_components/ImpactButton";
 
 export function LearnedButton({
   articleId,
@@ -16,41 +15,18 @@ export function LearnedButton({
   isPending: boolean;
 }) {
 
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation({
-    mutationFn: createImpact,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["impact", articleId],
-      });
-    },
-  });
-
-  const pending = isPending || mutation.isPending;
-
   return (
-    <Button
-      disabled={pending}
-      aria-pressed={isEventExist}
-      variant={isEventExist ? "default" : "outline"}
-      onClick={() =>
-        mutation.mutate({
-          articleId,
-          authorId,
-          eventType: IMPACT_EVENTS.LEARNED,
-        })
-      }
-    >
-      {pending && (
-        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-      )}
-
-      <Lightbulb className="h-4 w-4" />
-
-      {isEventExist
-        ? "Learned"
-        : "Mark as Learned"}
-    </Button>
+    <>
+      <ImpactButton
+        articleId={articleId}
+        authorId={authorId}
+        isEventExist={isEventExist}
+        isPending={isPending}
+        eventType={IMPACT_EVENTS.LEARNED}
+        icon={Lightbulb}
+        activeText="Learned"
+        inactiveText="Mark as Learned"
+      />
+    </>
   );
 }

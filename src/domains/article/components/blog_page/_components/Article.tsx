@@ -10,6 +10,8 @@ import { Blog } from '@/types/frontend/blog'
 import { useGeneratHtml } from '@/domains/article/hooks/useGeneratHtml'
 import { SaveButton } from '@/domains/impact/components/SavedButton'
 import { useEventExist } from '@/domains/article/hooks/useEventExist'
+import AppliedButton from '@/domains/impact/components/AppliedButton'
+import ThankYouButton from '@/domains/impact/components/ThankYouButton'
 
 const Article = ({ article }: { article: Blog }) => {
 
@@ -67,6 +69,20 @@ const Article = ({ article }: { article: Blog }) => {
                                 articleId={article._id}
                                 authorId={article.author._id}
                                 isEventExist={eventExist.learned}
+                                isPending={isLoadingEvents}
+                            />
+
+                            <AppliedButton
+                                articleId={article._id}
+                                authorId={article.author._id}
+                                isApplied={eventExist.applied}
+                                isPending={isLoadingEvents}
+                            />
+
+                            <ThankYouButton
+                                articleId={article._id}
+                                authorId={article.author._id}
+                                isThanked={eventExist.thankYou}
                                 isPending={isLoadingEvents}
                             />
                         </div>

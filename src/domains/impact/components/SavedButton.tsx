@@ -1,9 +1,6 @@
-import { Bookmark, Loader2 } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import { createImpact } from "@/domains/impact/axios/impact.axios";
+import { Bookmark } from "lucide-react";
 import { IMPACT_EVENTS } from "@/domains/impact/constants";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ImpactButton } from "./_components/ImpactButton";
 
 
 export function SaveButton({
@@ -17,39 +14,19 @@ export function SaveButton({
     isSaved: boolean;
     isPending: boolean;
 }) {
-    const queryClient = useQueryClient();
-
-    const mutation = useMutation({
-        mutationFn: createImpact,
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: ["impact", articleId],
-            });
-        },
-    });
-
-    const pending = isPending || mutation.isPending;
 
     return (
-        <Button
-            disabled={pending}
-            aria-pressed={isSaved}
-            variant={isSaved ? "default" : "outline"}
-            onClick={() =>
-                mutation.mutate({
-                    articleId,
-                    authorId,
-                    eventType: IMPACT_EVENTS.SAVED,
-                })
-            }
-        >
-            {pending && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
-
-            <Bookmark className="h-4 w-4" />
-
-            {isSaved ? "Saved" : "Save"}
-        </Button>
+        <>
+            <ImpactButton
+                articleId={articleId}
+                authorId={authorId}
+                isEventExist={isSaved}
+                isPending={isPending}
+                eventType={IMPACT_EVENTS.SAVED}
+                icon={Bookmark}
+                activeText="Save"
+                inactiveText="Saved"
+            />
+        </>
     );
 }

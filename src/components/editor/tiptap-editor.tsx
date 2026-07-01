@@ -1,5 +1,5 @@
 import { RichTextProvider } from 'reactjs-tiptap-editor'
-import { EditorContent,  useEditor } from "@tiptap/react";
+import { EditorContent, useEditor } from "@tiptap/react";
 
 // Base Kit
 import { Document } from '@tiptap/extension-document'
@@ -65,6 +65,7 @@ import {
 } from 'reactjs-tiptap-editor/bubble';
 import TiptapLoader from './TiptapLoader';
 import { useFormContext } from 'react-hook-form';
+
 
 
 const lowlight = createLowlight();
@@ -217,6 +218,7 @@ const RichTextBubbleMenu = () => {
     );
 };
 
+
 const TipTapEditor = () => {
 
     const { setValue, watch } = useFormContext();
@@ -242,7 +244,7 @@ const TipTapEditor = () => {
     if (!editor) return <TiptapLoader />
 
     return (
-        
+
         <div className="relative w-full border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm transition-all focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-400">
 
             <RichTextProvider editor={editor}>

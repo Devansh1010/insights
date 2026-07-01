@@ -15,12 +15,12 @@ export const useResetFormSchema = ({ existingArticle, methods }: { existingArtic
             level: existingArticle.level ?? "Beginner",
             insights: existingArticle.insights ?? [""],
             tags: existingArticle.tags ?? [],
-            content: existingArticle.content ?? {},
+            content: existingArticle.content,
             isPublished: existingArticle.isPublished ?? false,
             seriesId: existingArticle.seriesPartOf ?? "",
             coverImage: existingArticle.coverImage ?? "",
         });
-        
+
     }, [existingArticle, methods]);
 
 }

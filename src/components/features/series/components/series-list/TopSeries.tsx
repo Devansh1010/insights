@@ -57,7 +57,9 @@ const TopSeries = ({ isInitialPage, featuredSeries }: { isInitialPage: boolean; 
                                                         {/* Author Info */}
                                                         <div className="flex items-center gap-3 pt-4">
                                                             <div className="h-9 w-9 rounded-full border border-white/30 overflow-hidden relative">
-                                                                <Image src={series.author.avatar} fill alt="author" className="object-cover" />
+
+                                                                {series.author.avatar &&
+                                                                    <Image src={series.author.avatar} fill alt="author" className="object-cover" />}
                                                             </div>
                                                             <span className="text-sm font-medium text-white/90">{series.author.username}</span>
                                                         </div>

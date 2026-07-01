@@ -142,7 +142,7 @@ export default function ArticleForm({ slug }: { slug?: string }) {
 
                         <div className="relative">
 
-                            <EditorField articleContent={article?.content} articleSlug={slug} />
+                            <EditorField existingArticleId={article?._id}/>
 
                         </div>
                     </article>

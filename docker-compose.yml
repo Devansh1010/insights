@@ -45,7 +45,19 @@ services:
       - internal-network
 
     restart: always
+  valkey:
 
+    image: valkey/valkey
+
+    container_name: valkey
+
+    volumes:
+    - valkey-data:/data
+
+    networks:
+      - internal-network
+
+    restart : always
   next-insights:
     build:
       context: .
@@ -78,29 +90,7 @@ services:
       - "traefik.http.services.next-insights.loadbalancer.server.port=3000"
 
       - "traefik.docker.network=proxy"
-
-  valkey:
-
-    image: valkey/valkey
-
-    container_name: valkey
-
-    ports:
-      - "6379:6379"
-
-    # command: >
-    #   valkey-server
-    #   --requirepass ${VALKEY_PASSWORD}
-
-    volumes:
-    - valkey-data:/data
-
-    networks:
-      - internal-network
-
-    restart : always
-     
-
+    
 networks:
   internal-network:
     driver: bridge

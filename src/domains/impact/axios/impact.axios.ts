@@ -15,11 +15,15 @@ type CreateRequestData = {
 }
 
 export const createImpact = async ({ articleId, authorId, eventType, metadata }: CreateRequestData) => {
-    const res = await impactApi.post('/', { articleId, authorId, eventType, metadata })
+    try {
+     await impactApi.post('/', { articleId, authorId, eventType, metadata })
 
-    if (res.data.success) {
-        toast.success(res.data.message || "Event Saved Successfully")
+    } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+        if(errorMessage === 'Request failed with status code 429')
+        toast.error("Too many requests")
     }
+
 }
 
 export const getUserEvents = async (articleId: string) => {
@@ -27,7 +31,7 @@ export const getUserEvents = async (articleId: string) => {
     if (res.data.success) {
         return res.data.data
     } else {
-        return {}
+        return []
     }
 
 }

@@ -1,10 +1,10 @@
 // page.tsx
 "use client"
-import BlogForm from "@/components/features/blogs/components/BlogForm"
+import ArticleForm from "@/domains/article/components/write_article/ArticleForm"
 
 const Page = () => {
 
-    return <BlogForm  />
+    return <ArticleForm  />
 }
 
 export default Page

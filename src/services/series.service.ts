@@ -9,7 +9,7 @@ type FormData = {
     isPublished: boolean;
 };
 
-export const getSeries = async ({tag, q}: {tag: string | null, q: string | null}) => {
+export const getSeries = async ({ tag, q }: { tag: string | null, q: string | null }) => {
     try {
 
         const res = await seriesApi.get(`?tag=${tag}&q=${q}`);
@@ -44,37 +44,18 @@ export const getSeriesById = async ({ slug, page, limit, search }: { slug: strin
 }
 
 export const getUserSeries = async () => {
-    try {
-        const res = await axios.get('/api/user/get-user-series');
 
-        return res.data.data;
-    } catch (error: unknown) {
-        if (axios.isAxiosError(error)) {
-            throw new Error(
-                error.response?.data?.message || "Failed to fetch series"
-            );
-        }
+    const res = await axios.get('/api/user/get-user-series');
 
-        throw new Error("Something went wrong");
-    }
+    return res.data.data;
 }
 
 export const getTags = async () => {
-    try {
 
-        const res = await adminApi.get(``);
+    const res = await adminApi.get(``);
 
-        return res.data.data.categories;
+    return res.data.data.categories;
 
-    } catch (error: unknown) {
-        if (axios.isAxiosError(error)) {
-            throw new Error(
-                error.response?.data?.message || "Failed to fetch tags"
-            );
-        }
-
-        throw new Error("Something went wrong");
-    }
 }
 
 export const updateSeries = async (slug: string, data: FormData) => {

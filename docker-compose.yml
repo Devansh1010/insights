@@ -30,6 +30,7 @@ services:
       - proxy
 
     restart: always
+  
   mongodb:
     image: mongo
 
@@ -78,6 +79,28 @@ services:
 
       - "traefik.docker.network=proxy"
 
+  valkey:
+
+    image: valkey/valkey
+
+    container_name: valkey
+
+    ports:
+      - "6379:6379"
+
+    # command: >
+    #   valkey-server
+    #   --requirepass ${VALKEY_PASSWORD}
+
+    volumes:
+    - valkey-data:/data
+
+    networks:
+      - internal-network
+
+    restart : always
+     
+
 networks:
   internal-network:
     driver: bridge
@@ -87,3 +110,4 @@ networks:
 
 volumes:
   mongo-data:
+  valkey-data:

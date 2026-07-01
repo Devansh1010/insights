@@ -11,7 +11,7 @@ const TopSeries = ({ isInitialPage, featuredSeries }: { isInitialPage: boolean; 
 
     return (
         <section className="py-12 px-4 md:px-16 overflow-hidden">
-            
+
             <div className="relative max-w-6xl mx-auto group">
                 <Carousel
                     opts={{
@@ -28,12 +28,13 @@ const TopSeries = ({ isInitialPage, featuredSeries }: { isInitialPage: boolean; 
                                         <Card className="relative h-112.5 md:h-130 overflow-hidden border-none bg-background rounded-[2.5rem] shadow-xl hover:shadow-2xl transition-all duration-500">
                                             <CardContent className="p-0 h-full">
                                                 {/* Background Image */}
-                                                <Image
-                                                    src={series.coverImage || "/fallback.jpg"}
-                                                    alt={series.title}
-                                                    fill
-                                                    className="object-cover transition-transform duration-1000 group-hover:scale-105"
-                                                />
+                                                {series.coverImage &&
+                                                    <Image
+                                                        src={series.coverImage || "/fallback.jpg"}
+                                                        alt={series.title}
+                                                        fill
+                                                        className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                                                    />}
 
                                                 {/* Cinematic Gradient */}
                                                 <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/30 to-transparent" />

@@ -4,7 +4,7 @@ import BlogRest from './components/BlogRest';
 import { PaginationUI } from '../series/components/PaginationUi';
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { BlogListError } from './error/BlogsListError';
+import { ArticleListError } from '@/domains/article/components/blog_page/_components/error/ArticleListError';
 import { getTags } from '@/services/series.service';
 import TopSeries from '../series/components/series-list/TopSeries';
 import { EmptyState } from './components/EmptyState';
@@ -121,7 +121,7 @@ const ExploreBlogs = () => {
                 {isSeriesLoading ? (
                     <SeriesSkeleton />
                 ) : isSeriesError ? (
-                    <BlogListError reset={refetchSeries} />
+                    <ArticleListError reset={refetchSeries} />
                 ) : (
                     <TopSeries
                         isInitialPage={isInitialPage}
@@ -154,7 +154,7 @@ const ExploreBlogs = () => {
                     {isBlogsLoading ? (
                         <BlogsGridSkeleton />
                     ) : isBlogsError ? (
-                        <BlogListError reset={refetchBlogs} />
+                        <ArticleListError reset={refetchBlogs} />
                     ) : (
                         <>
                             {/* Featured Blog */}

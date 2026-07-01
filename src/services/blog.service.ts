@@ -14,23 +14,8 @@ export interface CreateBlogVariables {
     seriesId?: string;
     coverImage?: string;
     tags?: string[];
+    seriesPartOf: string
 }
-
-export const createBlog = async (data: CreateBlogVariables) => {
-    try {
-
-        const res = await blogApi.post("", data);
-
-        if (res.data.success) {
-            return res.data;
-        }
-        console.log(res.data)
-    } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Failed to fetch blog";
-        toast.error(errorMessage);
-        throw new Error("Failed to create blog");
-    }
-};
 
 export const deleteBlog = async (slug: string) => {
     try {
@@ -60,21 +45,10 @@ export const updateBlog = async (data: CreateBlogVariables, slug?: string) => {
     }
 }
 
-export const getBlog = async (slug: string) => {
-    try {
-        const response = await blogApi.get(`/${slug}`)
-        if (response.status === 200) {
-            return response.data.data;
-        } else {
-            toast.error(response.data.message || "Failed to fetch blog")
-            return {};
-        }
-    } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Failed to fetch blog";
-        toast.error(errorMessage);
-        console.error("Error fetching blogs:", error);
-        return {};
-    }
+export async function getBlog(slug: string) {
+    const response = await blogApi.get(`/${slug}`);
+
+    return response.data.data;
 }
 
 export const getBlogs = async ({

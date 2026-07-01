@@ -1,28 +1,25 @@
 'use client'
-import Article from '@/domains/article/components/blog_page/_components/Article'
-import { getBlog } from '@/services/blog.service'
-import { useQuery } from '@tanstack/react-query'
-import Header from '@/domains/article/components/blog_page/_components/Header'
 
-import { ArticleListError } from './_components/error/ArticleListError'
-import ArticlePageLoader from './_components/loader/ArticlePageLoader'
+import Article from '@/domains/article/components/blog_page/_components/Article'
+import Header from '@/domains/article/components/blog_page/_components/Header'
+import { useArticle } from '@/domains/article/hooks/useArticle';
+
+import ArticlePageLoader from './_components/loader/ArticlePageLoader';
+import { ArticleListError } from './_components/error/ArticleListError';
+
 
 const ArticlePage = ({ slug }: { slug: string }) => {
 
-    const { data, isPending, isError, refetch } = useQuery({
-        queryKey: ['blog', { slug }],
-        queryFn: () => getBlog(slug),
-    })
+    const { article, isArticleFetching, isErrorOccured, refetchArticles } = useArticle(slug);
 
-    if (isPending) return <ArticlePageLoader />
+    if (isArticleFetching) { return <ArticlePageLoader /> };
 
-    if (isError) return <ArticleListError reset={refetch} />
-
+    if (isErrorOccured) { return <ArticleListError reset={refetchArticles} /> };
     return (
         <div className="min-h-screen bg-background">
-            <Header blog={data} />
+            <Header articleSlug={slug} />
 
-            <Article blog={data} />
+            <Article article={article} />
         </div>
     )
 }

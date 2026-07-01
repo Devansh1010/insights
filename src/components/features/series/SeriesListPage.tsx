@@ -3,12 +3,12 @@ import { Layers, PlusCircle } from "lucide-react";
 import { ExploreBlogsLoader } from "../blogs/loader/ExploreBlogsLoader";
 import { useQuery } from "@tanstack/react-query";
 import { getUserSeries } from "@/services/series.service";
-import { BlogListError } from "../blogs/error/BlogsListError";
 import { SeriesCard } from "./components/series-list/SeriesCard";
 import SeriesForm from "./components/SeriesForm";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Series } from "@/types/frontend/series";
+import { SeriesError } from "./error/SeriesError";
 
     const SeriesList = () => {
         const [openCreate, setOpenCreate] = useState(false);
@@ -19,7 +19,7 @@ import { Series } from "@/types/frontend/series";
         });
 
         if (isPending) return <ExploreBlogsLoader />;
-        if (isError) return <BlogListError reset={refetch} />;
+        if (isError) return <SeriesError reset={refetch} />;
 
 
         return (

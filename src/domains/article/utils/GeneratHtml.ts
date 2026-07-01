@@ -11,6 +11,7 @@ import { FontFamily, TextStyle } from '@tiptap/extension-text-style'
 import Typography from '@tiptap/extension-typography'
 import { generateHTML } from '@tiptap/html'
 import StarterKit from '@tiptap/starter-kit'
+import { Image } from 'reactjs-tiptap-editor/image';
 
 export const GeneratHtml = (content: JSONContent) => {
     return generateHTML(content, [
@@ -39,7 +40,14 @@ export const GeneratHtml = (content: JSONContent) => {
         TextAlign.configure({
             types: ['heading', 'paragraph'],
         }),
-        // Placeholder and History aren't needed for read-only HTML, 
-        // but including the schema-related ones is vital.
+        Image.configure({
+            upload: (file: File) => {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        resolve(URL.createObjectURL(file))
+                    }, 500)
+                })
+            },
+        }),
     ])
 }

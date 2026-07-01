@@ -24,6 +24,13 @@ export async function getBlog(slug: string) {
     return response.data.data;
 }
 
+export const createArticle = async (data: CreateBlogVariables) => {
+    const res = await blogApi.post("", data);
+
+    return res.data
+};
+
+
 export const updateArticle = async (data: CreateBlogVariables, slug?: string) => {
 
     const res = await blogApi.patch(`/${slug}`, data)

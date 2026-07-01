@@ -152,10 +152,12 @@ export const SeriesCard = ({ series }: { series: Series }) => {
           <div className="flex items-center justify-between pt-4 border-t border-border/50">
             <div className="flex items-center gap-2">
               <div className="h-6 w-6 rounded-full relative overflow-hidden border">
-                <Image
-                  src={series.author?.avatar || '/fallback.jpg'}
-                  fill alt="author"
-                  className="object-cover" />
+
+                {series.author?.avatar &&
+                  <Image
+                    src={series.author?.avatar || '/fallback.jpg'}
+                    fill alt="author"
+                    className="object-cover" />}
               </div>
               <span className="text-xs font-medium">{series.author?.username}</span>
             </div>

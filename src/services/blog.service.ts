@@ -17,22 +17,6 @@ export interface CreateBlogVariables {
     seriesPartOf: string
 }
 
-export const createBlog = async (data: CreateBlogVariables) => {
-    try {
-
-        const res = await blogApi.post("", data);
-
-        if (res.data.success) {
-            return res.data;
-        }
-        console.log(res.data)
-    } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Failed to fetch blog";
-        toast.error(errorMessage);
-        throw new Error("Failed to create blog");
-    }
-};
-
 export const deleteBlog = async (slug: string) => {
     try {
         const res = await blogApi.delete(`/${slug}`)

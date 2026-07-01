@@ -1,9 +1,10 @@
 
-import { createBlog, CreateBlogVariables } from "@/services/blog.service";
+import { CreateBlogVariables } from "@/services/blog.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { updateArticle } from "../axios/article.axios";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import { createArticle, updateArticle } from "../axios/article.axios";
 
 export const useCreateArticle = () => {
 
@@ -11,15 +12,21 @@ export const useCreateArticle = () => {
     const queryClient = useQueryClient();
 
     const mutation = useMutation({
-        mutationFn: (variables: CreateBlogVariables) => createBlog(variables),
+        mutationFn: (variables: CreateBlogVariables) => createArticle(variables),
 
-        onSuccess: () => {
+        onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ["blogs"] });
-            toast.success("Blog published successfully!");
+            toast.success(data.message || "Blog published successfully!");
             router.push("/user/explore");
         },
 
-        onError: () => toast.error("Failed to create blog"),
+        onError: (error) => {
+
+            if (axios.isAxiosError(error)) {
+
+                toast.error(error.response?.data.message || "Failed to create article")
+            }
+        }
     });
 
     return mutation
@@ -35,14 +42,23 @@ export const useUpdateArticle = (slug?: string) => {
         mutationFn: (variables: CreateBlogVariables & { slug: string }) =>
             updateArticle(variables, slug),
 
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["blogs"] });
-            queryClient.invalidateQueries({ queryKey: ["blog", slug] });
-            toast.success("Blog updated successfully!");
+        onSuccess: (data) => {
+            queryClient
+                .invalidateQueries({ queryKey: ["blogs"] });
+
+            queryClient
+                .invalidateQueries({ queryKey: ["blog", slug] });
+
+            toast.success(data.message || "Article updated successfully!");
             router.push("/user/explore");
         },
 
-        onError: () => toast.error("Failed to update blog"),
+        onError: (error) => {
+            if (axios.isAxiosError(error)) {
+
+                toast.error(error.response?.data.message || "Failed to update article")
+            }
+        }
     });
 
     return updateMutation

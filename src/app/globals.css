@@ -163,7 +163,7 @@
 }
 
 /* Tiptap */
-/* Add this to your global CSS or a styled component */
+
 @layer components {
   .dynamic-content-wrapper {
     /* 1. Typography & Spacing */

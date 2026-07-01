@@ -20,6 +20,7 @@ export const useResetFormSchema = ({ existingArticle, methods }: { existingArtic
             seriesId: existingArticle.seriesPartOf ?? "",
             coverImage: existingArticle.coverImage ?? "",
         });
+        
     }, [existingArticle, methods]);
 
 }

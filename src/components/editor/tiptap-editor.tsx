@@ -1,5 +1,5 @@
 import { RichTextProvider } from 'reactjs-tiptap-editor'
-import { Editor, EditorContent, JSONContent, useEditor } from "@tiptap/react";
+import { EditorContent,  useEditor } from "@tiptap/react";
 
 // Base Kit
 import { Document } from '@tiptap/extension-document'
@@ -33,18 +33,17 @@ import { TextAlign, RichTextAlign } from 'reactjs-tiptap-editor/textalign';
 import { TextDirection, RichTextTextDirection } from 'reactjs-tiptap-editor/textdirection';
 import { TextUnderline, RichTextUnderline } from 'reactjs-tiptap-editor/textunderline';
 import { Clear, RichTextClear } from 'reactjs-tiptap-editor/clear';
-import { Image, RichTextImage } from 'reactjs-tiptap-editor/image'; 
+import { Image, RichTextImage } from 'reactjs-tiptap-editor/image';
 
 import { createLowlight } from 'lowlight';
 import css from 'highlight.js/lib/languages/css';
 import js from 'highlight.js/lib/languages/javascript';
 import ts from 'highlight.js/lib/languages/typescript';
-import html from 'highlight.js/lib/languages/xml'; 
+import html from 'highlight.js/lib/languages/xml';
 
 // Bubble Menu
 import {
     RichTextBubbleColumns,
-    RichTextBubbleDrawer,
     RichTextBubbleExcalidraw,
     RichTextBubbleIframe,
     RichTextBubbleKatex,
@@ -65,14 +64,8 @@ import {
     // ... other bubble menu components
 } from 'reactjs-tiptap-editor/bubble';
 import TiptapLoader from './TiptapLoader';
-import { useEffect, useMemo } from 'react';
-import { debounce } from 'lodash';
-// import { Count } from './Count';
+import { useFormContext } from 'react-hook-form';
 
-interface AppProps {
-    content: JSONContent;
-    onChange: (data: JSONContent) => void;
-}
 
 const lowlight = createLowlight();
 lowlight.register('html', html);
@@ -116,104 +109,120 @@ const extensions = [
     TextUnderline,
     Clear,
     Image.configure({
-    upload: (file: File) => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(URL.createObjectURL(file))
-        }, 500)
-      })
-    },
-  }),
+        upload: (file: File) => {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve(URL.createObjectURL(file))
+                }, 500)
+            })
+        },
+    }),
 
 ];
 
 const RichTextToolbar = () => {
-    const groupClass = "flex items-center gap-1 px-2 border-r border-slate-200 last:border-0";
+    const groupClass =
+        "flex items-center gap-1 px-2 border-r border-slate-200 last:border-0";
 
     return (
-        <div className="flex items-center gap-1 flex-wrap">
+        <div className="flex items-center flex-wrap gap-1">
+
+            {/* History */}
             <div className={groupClass}>
                 <RichTextUndo />
                 <RichTextRedo />
-                <RichTextClear />
             </div>
 
+            {/* Text Style */}
+            <div className={groupClass}>
+                <RichTextBold />
+                <RichTextItalic />
+                <RichTextUnderline />
+                <RichTextCode />
+            </div>
+
+            {/* Headings & Typography */}
             <div className={groupClass}>
                 <RichTextHeading />
                 <RichTextFontFamily />
                 <RichTextFontSize />
             </div>
 
+            {/* Lists & Alignment */}
             <div className={groupClass}>
-                <RichTextBold />
-                <RichTextItalic />
-                <RichTextUnderline />
+                <RichTextBulletList />
+                <RichTextOrderedList />
+                <RichTextAlign />
                 <RichTextTextDirection />
             </div>
 
-            <div className={groupClass}>
-                <RichTextOrderedList />
-                <RichTextBulletList />
-                <RichTextAlign />
-            </div>
-
+            {/* Block Elements */}
             <div className={groupClass}>
                 <RichTextBlockquote />
-                <RichTextCode />
+                <RichTextCodeBlock />
                 <RichTextCodeView />
-                <RichTextCodeBlock/>
+            </div>
+
+            {/* Media */}
+            <div className={groupClass}>
                 <RichTextImage />
             </div>
+
+            {/* Utilities */}
+            <div className={groupClass}>
+                <RichTextClear />
+            </div>
+
         </div>
     );
 };
 
 const RichTextBubbleMenu = () => {
     return (
-        <div>
-            <RichTextBubbleColumns />
-            <RichTextBubbleDrawer />
-            <RichTextBubbleExcalidraw />
-            <RichTextBubbleIframe />
-            <RichTextBubbleKatex />
+        <>
+            {/* Text */}
+            <RichTextBubbleText />
             <RichTextBubbleLink />
 
+            {/* Images & Media */}
             <RichTextBubbleImage />
             <RichTextBubbleVideo />
             <RichTextBubbleImageGif />
 
-            <RichTextBubbleMermaid />
+            {/* Tables */}
             <RichTextBubbleTable />
-            <RichTextBubbleText />
-            <RichTextBubbleTwitter />
-            <RichTextBubbleCallout />
 
-            <RichTextBubbleMenuDragHandle />
-
+            {/* Code */}
             <RichTextBubbleCodeBlock />
 
-            <SlashCommandList /> {/* Optional: If you want to use Slash Command inside Bubble Menu */}
-        </div>
-    )
-}
+            {/* Layout */}
+            <RichTextBubbleColumns />
+            <RichTextBubbleCallout />
 
-const TipTapEditor = ({ content, onChange }: AppProps) => {
+            {/* Math & Diagrams */}
+            <RichTextBubbleKatex />
+            <RichTextBubbleMermaid />
+            <RichTextBubbleExcalidraw />
 
-    const debouncedUpdates = useMemo(
-        () =>
-            debounce((editor: Editor) => {
-                const json = editor.getJSON();
-                onChange(json);
-            }, 500),
-        [onChange]
+            {/* Embeds */}
+            <RichTextBubbleIframe />
+            <RichTextBubbleTwitter />
+
+            {/* Drag Handle */}
+            <RichTextBubbleMenuDragHandle />
+
+            {/* Slash Command */}
+            <SlashCommandList />
+        </>
     );
+};
 
-    // Clean up the debounce if the component unmounts
-    useEffect(() => {
-        return () => {
-            debouncedUpdates.cancel();
-        };
-    }, [debouncedUpdates]);
+const TipTapEditor = () => {
+
+    const { setValue, watch } = useFormContext();
+
+    const content = watch('content')
+
     const editor = useEditor({
         extensions,
         content,
@@ -224,24 +233,20 @@ const TipTapEditor = ({ content, onChange }: AppProps) => {
             },
         },
         onUpdate: ({ editor }) => {
-            onChange(editor.getJSON());
-        },
-    });
-
-    useEffect(() => {
-        if (editor && content !== editor.getJSON()) {
-            editor.commands.setContent(content);
+            setValue("content", editor.getJSON(), {
+                shouldDirty: true,
+            });
         }
-    }, [content, editor]);
+    });
 
     if (!editor) return <TiptapLoader />
 
     return (
-        // 1. The Outer Shell: Border, shadow, and rounded corners
+        
         <div className="relative w-full border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm transition-all focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-400">
 
             <RichTextProvider editor={editor}>
-                {/* 2. The Sticky Toolbar: Stays visible while scrolling long docs */}
+
                 <div className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-slate-100 p-2">
                     <RichTextToolbar />
                 </div>
@@ -250,13 +255,7 @@ const TipTapEditor = ({ content, onChange }: AppProps) => {
                 <div className="relative min-h-125 cursor-text bg-slate-50/30">
                     <RichTextBubbleMenu />
 
-                    {/* Only show CodeBlock bubble when specifically inside a code block */}
-                    <RichTextBubbleCodeBlock />
-
                     <EditorContent editor={editor} />
-                </div>
-                <div>
-                    {/* <Count editor={editor} /> */}
                 </div>
             </RichTextProvider>
         </div>

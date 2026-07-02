@@ -118,7 +118,6 @@ const extensions = [
             })
         },
     }),
-
 ];
 
 const RichTextToolbar = () => {
@@ -166,7 +165,7 @@ const RichTextToolbar = () => {
 
             {/* Media */}
             <div className={groupClass}>
-                <RichTextImage />
+                <RichTextImage /> {}
             </div>
 
             {/* Utilities */}
@@ -245,7 +244,7 @@ const TipTapEditor = () => {
 
     return (
 
-        <div className="relative w-full border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm transition-all focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-400">
+        <div className="relative w-full border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm transition-all ">
 
             <RichTextProvider editor={editor}>
 

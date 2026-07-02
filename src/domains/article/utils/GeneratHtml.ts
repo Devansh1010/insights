@@ -5,11 +5,12 @@ import Color from '@tiptap/extension-color'
 import Heading from '@tiptap/extension-heading'
 import Italic from '@tiptap/extension-italic'
 import TextAlign from '@tiptap/extension-text-align'
+import Image from '@tiptap/extension-image';
 import { FontFamily, TextStyle } from '@tiptap/extension-text-style'
 import Typography from '@tiptap/extension-typography'
 import { generateHTML } from '@tiptap/html'
 import StarterKit from '@tiptap/starter-kit'
-import { Image } from 'reactjs-tiptap-editor/image';
+
 
 export const GeneratHtml = (content: JSONContent) => {
     return generateHTML(content, [
@@ -35,13 +36,7 @@ export const GeneratHtml = (content: JSONContent) => {
             types: ['heading', 'paragraph'],
         }),
         Image.configure({
-            upload: (file: File) => {
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        resolve(URL.createObjectURL(file))
-                    }, 500)
-                })
-            },
-        }),
+            inline: false,
+        })
     ])
 }

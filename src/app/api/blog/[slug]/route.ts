@@ -34,6 +34,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
                     as: "author"
                 }
             },
+
             { $unwind: "$author" },
 
             // 2. Look up the "Current" entry in seriesblogs to find the order
@@ -137,6 +138,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
             },
             StatusCode.OK
         )
+        
     } catch (error: unknown) {
         console.error("Error getting blog:", error)
 

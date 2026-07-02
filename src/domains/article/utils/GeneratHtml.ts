@@ -1,11 +1,9 @@
 import { JSONContent } from '@tiptap/react'
 import Blockquote from '@tiptap/extension-blockquote'
 import Bold from '@tiptap/extension-bold'
-import Code from '@tiptap/extension-code'
 import Color from '@tiptap/extension-color'
 import Heading from '@tiptap/extension-heading'
 import Italic from '@tiptap/extension-italic'
-import { BulletList, ListItem, OrderedList } from '@tiptap/extension-list'
 import TextAlign from '@tiptap/extension-text-align'
 import { FontFamily, TextStyle } from '@tiptap/extension-text-style'
 import Typography from '@tiptap/extension-typography'
@@ -29,10 +27,6 @@ export const GeneratHtml = (content: JSONContent) => {
         Blockquote,
         Bold,
         Italic,
-        BulletList,
-        OrderedList,
-        ListItem,
-        Code,
         TextStyle,
         Color,
         FontFamily,

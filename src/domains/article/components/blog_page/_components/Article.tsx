@@ -93,7 +93,7 @@ const Article = ({ article }: { article: Blog }) => {
 
             {/* FOOTER CONTENT */}
             <Footer_Article
-                articleSlug={article.slug}
+                article={article}
             />
 
         </div>

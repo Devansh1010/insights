@@ -1,19 +1,13 @@
 
+import { Blog } from '@/types/frontend/blog'
 import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-import ArticlePageLoader from './loader/ArticlePageLoader'
-import { ArticleListError } from './error/ArticleListError'
-import { useArticle } from '@/domains/article/hooks/useArticle'
 
-const Footer_Article = ({ articleSlug }: { articleSlug: string }) => {
 
-  const { article, isArticleFetching, isErrorOccured, refetchArticles } = useArticle(articleSlug);
+const Footer_Article = ({ article }: { article: Blog }) => {
 
-  if (isArticleFetching) return <ArticlePageLoader />;
-
-  if (isErrorOccured) return <ArticleListError reset={refetchArticles} />;
 
   return (
     <footer className="w-full max-w-3xl mx-auto border-t border-border/30 mt-20 pt-16">
